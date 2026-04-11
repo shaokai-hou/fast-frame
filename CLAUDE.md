@@ -142,15 +142,11 @@ code 为 401 时跳转到登录页。
 - `@vue-office/pptx` - PowerPoint 演示文稿预览
 
 ### 文件下载
-使用 `file-saver` 包处理文件下载：
+使用 `file-saver` 包处理文件下载，通过 `request.js` 导出的 `download()` 函数：
 ```js
-import { saveAs } from 'file-saver'
-saveAs(blob, 'filename.xlsx')
+import { download } from '@/utils/request'
+download('/file/download?id=1', 'filename.xlsx')
 ```
-
-### Excel 导入导出
-- **前端**: `xlsx` (0.18.5) - 读取和生成 Excel 文件
-- **后端**: EasyExcel (3.3.4) - 高性能 Excel 处理，配合 `ExcelUtil` 工具类
 
 ## Java 注释规范
 
