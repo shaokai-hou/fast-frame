@@ -7,23 +7,24 @@ import cn.hutool.captcha.LineCaptcha;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
-import com.fast.common.constant.Constants;
+import com.fast.common.constant.RedisKeyConstants;
 import com.fast.common.exception.BusinessException;
-import com.fast.modules.auth.dto.LoginDTO;
+import com.fast.modules.auth.domain.dto.LoginDTO;
+import com.fast.modules.auth.domain.vo.CaptchaVO;
+import com.fast.modules.auth.domain.vo.LoginVO;
+import com.fast.modules.auth.domain.vo.RoutesVO;
+import com.fast.modules.auth.domain.vo.UserInfoVO;
 import com.fast.modules.auth.service.AuthService;
-import com.fast.modules.auth.vo.CaptchaVO;
-import com.fast.modules.auth.vo.LoginVO;
-import com.fast.modules.auth.vo.RoutesVO;
-import com.fast.modules.auth.vo.UserInfoVO;
-import com.fast.modules.log.entity.LoginLog;
+import com.fast.modules.log.domain.entity.LoginLog;
 import com.fast.modules.log.service.LoginLogService;
-import com.fast.modules.system.entity.Menu;
-import com.fast.modules.system.entity.User;
+import com.fast.modules.system.domain.entity.Menu;
+import com.fast.modules.system.domain.entity.User;
+import com.fast.modules.system.domain.vo.MenuVO;
+import com.fast.modules.system.domain.vo.RoleVO;
 import com.fast.modules.system.mapper.MenuMapper;
+import com.fast.modules.system.service.ConfigService;
 import com.fast.modules.system.service.MenuService;
 import com.fast.modules.system.service.UserService;
-import com.fast.modules.system.vo.MenuVO;
-import com.fast.modules.system.vo.RoleVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,7 @@ public class AuthServiceImpl implements AuthService {
     private final MenuMapper menuMapper;
     private final LoginLogService loginLogService;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final ConfigService configService;
 
     /**
      * 生成验证码
@@ -61,7 +63,7 @@ public class AuthServiceImpl implements AuthService {
         String code = captcha.getCode();
 
         // 存入Redis，5分钟过期
-        String key = Constants.CAPTCHA_CODE_KEY + uuid;
+        String key = RedisKeyConstants.CAPTCHA_CODE_PREFIX + uuid;
         redisTemplate.opsForValue().set(key, code, 5, TimeUnit.MINUTES);
 
         // 返回验证码信息
@@ -81,8 +83,14 @@ public class AuthServiceImpl implements AuthService {
      */
     @Override
     public LoginVO login(LoginDTO dto, String ip) {
+        String lockKey = RedisKeyConstants.LOGIN_LOCK_PREFIX + dto.getUsername();
+        if (redisTemplate.hasKey(lockKey)) {
+            recordLoginLog(dto.getUsername(), ip, "1", "账户已锁定");
+            throw new BusinessException("账户已锁定，请联系管理员解锁");
+        }
+
         // 校验验证码
-        String captchaKey = Constants.CAPTCHA_CODE_KEY + dto.getUuid();
+        String captchaKey = RedisKeyConstants.CAPTCHA_CODE_PREFIX + dto.getUuid();
         Object cacheCode = redisTemplate.opsForValue().get(captchaKey);
         if (cacheCode == null) {
             recordLoginLog(dto.getUsername(), ip, "1", "验证码已过期");
@@ -96,18 +104,25 @@ public class AuthServiceImpl implements AuthService {
 
         // 校验用户
         User user = userService.getByUsername(dto.getUsername());
-        if (user == null) {
-            recordLoginLog(dto.getUsername(), ip, "1", "用户不存在");
-            throw new BusinessException("用户不存在");
-        }
-        if (!BCrypt.checkpw(dto.getPassword(), user.getPassword())) {
-            recordLoginLog(dto.getUsername(), ip, "1", "密码错误");
-            throw new BusinessException("密码错误");
+
+        if (user == null || !BCrypt.checkpw(dto.getPassword(), user.getPassword())) {
+            // 增加失败计数
+            incrementLoginFailCount(dto.getUsername());
+            recordLoginLog(dto.getUsername(), ip, "1", "认证失败");
+            int remaining = getRemainingAttempts(dto.getUsername());
+            if (remaining > 0) {
+                throw new BusinessException("用户名或密码错误，剩余" + remaining + "次机会");
+            } else {
+                throw new BusinessException("账户已锁定，请联系管理员解锁");
+            }
         }
         if ("1".equals(user.getStatus())) {
             recordLoginLog(dto.getUsername(), ip, "1", "账号已被禁用");
             throw new BusinessException("账号已被禁用");
         }
+
+        // 登录成功，清除失败计数
+        clearLoginFailCount(dto.getUsername());
 
         // 登录
         StpUtil.login(user.getId());
@@ -131,6 +146,65 @@ public class AuthServiceImpl implements AuthService {
             vo.setAvatar("/api/file/avatar/" + user.getAvatar());
         }
         return vo;
+    }
+
+    /**
+     * 增加登录失败计数
+     * 达到阈值后锁定账户
+     *
+     * @param username 用户名
+     */
+    private void incrementLoginFailCount(String username) {
+        String failKey = RedisKeyConstants.LOGIN_FAIL_PREFIX + username;
+        Long failCount = redisTemplate.opsForValue().increment(failKey);
+
+        if (failCount != null && failCount >= getMaxFailCount()) {
+            // 永久锁定账户（需管理员手动解锁）
+            redisTemplate.opsForValue().set(RedisKeyConstants.LOGIN_LOCK_PREFIX + username, "1");
+            redisTemplate.delete(failKey);
+        }
+    }
+
+    /**
+     * 清除登录失败计数
+     *
+     * @param username 用户名
+     */
+    private void clearLoginFailCount(String username) {
+        redisTemplate.delete(RedisKeyConstants.LOGIN_FAIL_PREFIX + username);
+    }
+
+    /**
+     * 获取剩余尝试次数
+     *
+     * @param username 用户名
+     * @return 剩余次数，已锁定返回 0
+     */
+    private int getRemainingAttempts(String username) {
+        if (redisTemplate.hasKey(RedisKeyConstants.LOGIN_LOCK_PREFIX + username)) {
+            return 0;
+        }
+        String failKey = RedisKeyConstants.LOGIN_FAIL_PREFIX + username;
+        Object count = redisTemplate.opsForValue().get(failKey);
+        int currentCount = count == null ? 0 : Integer.parseInt(count.toString());
+        return getMaxFailCount() - currentCount;
+    }
+
+    /**
+     * 获取登录失败锁定阈值
+     *
+     * @return 最大失败次数
+     */
+    private int getMaxFailCount() {
+        String value = configService.getConfigValue("sys.login.maxFailCount");
+        if (StrUtil.isBlank(value)) {
+            throw new BusinessException("系统参数缺失：sys.login.maxFailCount");
+        }
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            throw new BusinessException("系统参数配置异常：sys.login.maxFailCount=" + value);
+        }
     }
 
     /**

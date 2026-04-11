@@ -2,11 +2,11 @@ package com.fast.framework.aspect;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.fast.framework.annotation.DataScope;
-import com.fast.modules.system.entity.User;
+import com.fast.modules.system.domain.entity.User;
 import com.fast.modules.system.service.DeptService;
 import com.fast.modules.system.service.RoleService;
 import com.fast.modules.system.service.UserService;
-import com.fast.modules.system.vo.RoleVO;
+import com.fast.modules.system.domain.vo.RoleVO;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -41,6 +41,11 @@ public class DataScopeAspect {
      * 合法字段名正则（只允许字母、数字、下划线）
      */
     private static final Pattern VALID_FIELD_PATTERN = Pattern.compile("^[a-zA-Z_][a-zA-Z0-9_]*$");
+
+    /**
+     * SQL 最大长度限制（防止超长 SQL 拼接攻击）
+     */
+    private static final int MAX_SQL_LENGTH = 500;
 
     /**
      * 数据权限过滤
@@ -155,6 +160,11 @@ public class DataScopeAspect {
      * @return 是否合法
      */
     private boolean validateDataScopeSql(String sql) {
+        // 长度限制：防止超长 SQL 拼接攻击
+        if (sql == null || sql.length() > MAX_SQL_LENGTH) {
+            log.warn("[DataScope] SQL 长度超限或为空: length={}, userId: {}", sql == null ? 0 : sql.length(), StpUtil.getLoginIdAsLong());
+            return false;
+        }
         // 基本格式验证：只允许特定格式
         Pattern pattern = Pattern.compile(
                 "^\\s*AND\\s+\\([a-zA-Z_]+\\.(dept_id|id)\\s+(IN\\s*\\([\\d,]+\\)|=\\s*\\d+)\\s*(OR\\s+[a-zA-Z_]+\\.(dept_id|id)\\s+(IN\\s*\\([\\d,]+\\)|=\\s*\\d+))*\\s*\\)$",

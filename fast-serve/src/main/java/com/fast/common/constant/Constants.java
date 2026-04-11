@@ -66,14 +66,4 @@ public class Constants {
      * 性别 - 女
      */
     public static final String GENDER_FEMALE = "2";
-
-    /**
-     * 验证码Redis缓存Key前缀
-     */
-    public static final String CAPTCHA_CODE_KEY = "captcha_codes:";
-
-    /**
-     * 登录用户Redis缓存Key前缀
-     */
-    public static final String LOGIN_TOKEN_KEY = "login_tokens:";
 }

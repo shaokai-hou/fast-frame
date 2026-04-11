@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { login, logout, getUserInfo, getRoutes, getProfile } from '@/api/auth'
+import { login, logout, getUserInfo, getRoutes } from '@/api/auth'
+import { getProfile } from '@/api/profile'
 import { setToken, removeToken, getToken, setUserInfo } from '@/utils/auth'
-import router from '@/router'
+import router, { resetRouter } from '@/router'
 import { usePermissionStore } from './permission'
 
 export const useUserStore = defineStore('user', () => {
@@ -57,6 +58,14 @@ export const useUserStore = defineStore('user', () => {
     await logout()
     token.value = ''
     userInfo.value = {}
+
+    // 清除权限和路由状态
+    const permissionStore = usePermissionStore()
+    permissionStore.reset()
+
+    // 清除动态路由
+    resetRouter()
+
     removeToken()
     router.push('/login')
   }

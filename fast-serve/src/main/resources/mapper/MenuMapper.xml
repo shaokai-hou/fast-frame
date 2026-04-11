@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fast.modules.system.mapper.MenuMapper">
-
+    
     <!-- 根据用户ID查询菜单列表 -->
-    <select id="selectMenusByUserId" resultType="com.fast.modules.system.entity.Menu">
+    <select id="selectMenusByUserId" resultType="com.fast.modules.system.domain.entity.Menu">
         SELECT DISTINCT m.*
         FROM sys_menu m
         LEFT JOIN sys_role_menu rm ON m.id = rm.menu_id
@@ -12,6 +12,19 @@
           AND m.del_flag = '0'
           AND m.status = '0'
         ORDER BY m.menu_sort
+    </select>
+
+    <!-- 根据用户ID查询权限标识列表 -->
+    <select id="selectPermissionsByUserId" resultType="java.lang.String">
+        SELECT DISTINCT m.perms
+        FROM sys_menu m
+                 LEFT JOIN sys_role_menu rm ON m.id = rm.menu_id
+                 LEFT JOIN sys_user_role ur ON rm.role_id = ur.role_id
+        WHERE ur.user_id = #{userId}
+          AND m.del_flag = '0'
+          AND m.status = '0'
+          AND m.perms IS NOT NULL
+          AND m.perms != ''
     </select>
 
     <!-- 根据角色ID查询菜单ID列表 -->

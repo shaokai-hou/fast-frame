@@ -56,6 +56,10 @@ src/main/java/com/fast/
 │   ├── log/       # 操作日志、登录日志
 │   ├── online/    # 在线用户管理
 │   └── system/    # 用户、角色、菜单、部门、字典、配置 CRUD
+│       └── domain/
+│           ├── entity/    # 数据库实体类（与表结构对应）
+│           ├── dto/       # 数据传输对象（接收请求参数）
+│           └── vo/        # 视图对象（返回给前端）
 ```
 
 ### 关键模式
@@ -81,6 +85,12 @@ code 为 401 时跳转到登录页。
 **日志记录**: 使用 `@Log` 注解进行 AOP 操作日志记录。
 
 ## 共享组件
+
+### 全局组件
+以下组件在 `main.js` 中全局注册，无需导入即可直接使用：
+- **Pagination** - 分页组件
+- **TreeSelect** - 树形选择组件
+- **Element Plus Icons** - 所有 `@element-plus/icons-vue` 图标（如 `<Edit />`、`<Delete />`）
 
 ### TreeSelect
 支持单选和多选模式：
@@ -120,12 +130,34 @@ code 为 401 时跳转到登录页。
 - MyBatis Plus 逻辑删除字段为 `delFlag`
 - Vite 别名 `@` 映射到 `src/` 目录
 - 树形数据结构：`{ id, label, children }` 或通过 `fieldProps` 映射
+- **Redis 缓存 Key**: 所有 Redis 缓存 key 常量统一在 `RedisKeyConstants.java` 管理，不与通用常量混用
+
+## 文件处理能力
+
+### 前端文件预览
+浏览器内直接预览 Office 文档，使用 `@vue-office` 系列：
+- `@vue-office/pdf` - PDF 文件预览
+- `@vue-office/docx` - Word 文档预览
+- `@vue-office/excel` - Excel 表格预览
+- `@vue-office/pptx` - PowerPoint 演示文稿预览
+
+### 文件下载
+使用 `file-saver` 包处理文件下载：
+```js
+import { saveAs } from 'file-saver'
+saveAs(blob, 'filename.xlsx')
+```
+
+### Excel 导入导出
+- **前端**: `xlsx` (0.18.5) - 读取和生成 Excel 文件
+- **后端**: EasyExcel (3.3.4) - 高性能 Excel 处理，配合 `ExcelUtil` 工具类
 
 ## Java 注释规范
 
+- **类级别 Javadoc**: 必须有 `@author` 标注
 - **方法级别 Javadoc**: 必须有 `@param`（每个参数）和 `@return`（有返回值时）
 - **方法内代码注释**: 单行注释 `//`，独立写在代码上方（禁止使用多行注释 `/* */`）
-- **类级别 Javadoc**: 必须有 `@author` 标注
+- **禁止分隔注释**: 方法间不使用 `// ==================== xxx ====================` 分隔注释，通过 Javadoc 自然分组。
 
 ## 后端快速验证
 

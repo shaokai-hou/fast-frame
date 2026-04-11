@@ -150,8 +150,8 @@ import { ref, reactive, getCurrentInstance, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import TreeSelect from '@/components/TreeSelect/index.vue'
 import { Search, Refresh, Plus, Delete } from '@element-plus/icons-vue'
-import { listRole, getRole, addRole, updateRole, deleteRole, getMenuTree, getRoleMenuIds } from '@/api/role'
-import { getDeptTree, getRoleDeptIds } from '@/api/dept'
+import { listRole, getRole, addRole, updateRole, deleteRole, getMenuTree, getRoleMenuIds } from '@/api/system/role'
+import { getDeptTree, getRoleDeptIds } from '@/api/system/dept'
 
 const { proxy } = getCurrentInstance()
 

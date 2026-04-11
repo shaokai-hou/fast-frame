@@ -2,9 +2,10 @@ package com.fast.modules.system.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fast.common.result.PageResult;
-import com.fast.modules.system.entity.DictType;
-import com.fast.modules.system.vo.DictVO;
-import com.fast.modules.system.vo.DictDataVO;
+import com.fast.modules.system.domain.entity.DictType;
+import com.fast.modules.system.domain.entity.DictData;
+import com.fast.modules.system.domain.vo.DictVO;
+import com.fast.modules.system.domain.vo.DictDataVO;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ public interface DictService extends IService<DictType> {
      * @param pageSize 每页数量
      * @return 字典类型分页结果
      */
-    PageResult<DictVO> listDictTypePage(DictType query, Integer pageNum, Integer pageSize);
+    PageResult<DictVO> pageDictTypes(DictType query, Integer pageNum, Integer pageSize);
 
     /**
      * 根据字典类型查询字典数据
@@ -44,7 +45,7 @@ public interface DictService extends IService<DictType> {
      * @param pageSize   每页数量
      * @return 字典数据分页结果
      */
-    PageResult<DictDataVO> listDictDataPage(String dictType, String dictLabel, String dictValue, String status, Integer pageNum, Integer pageSize);
+    PageResult<DictDataVO> pageDictData(String dictType, String dictLabel, String dictValue, String status, Integer pageNum, Integer pageSize);
 
     /**
      * 新增字典类型
@@ -72,14 +73,14 @@ public interface DictService extends IService<DictType> {
      *
      * @param dictData 字典数据信息
      */
-    void addDictData(com.fast.modules.system.entity.DictData dictData);
+    void addDictData(DictData dictData);
 
     /**
      * 修改字典数据
      *
      * @param dictData 字典数据信息
      */
-    void updateDictData(com.fast.modules.system.entity.DictData dictData);
+    void updateDictData(DictData dictData);
 
     /**
      * 删除字典数据

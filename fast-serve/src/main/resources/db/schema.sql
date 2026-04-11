@@ -459,32 +459,32 @@ INSERT INTO sys_dept (id, parent_id, dept_name, dept_key, leader, phone, sort, s
 VALUES (109, 102, '销售部', 'SL', '郑经理', '13800138009', 3, '0', '0', '0,100,102', 1);
 
 -- 用户数据
--- admin 密码: admin123 (MD5: 0192023a7bbd73250516f069df18b500)
--- 其他用户密码: 123456 (MD5: e10adc3949ba59abbe56e057f20f883e)
+-- admin 密码: admin123 (BCrypt哈希)
+-- 其他用户密码: 123456 (BCrypt哈希)
+INSERT INTO sys_user (id, dept_id, username, password, nickname, email, phone, gender, avatar, status, del_flag, create_by)
+VALUES (1, 100, 'admin', '$2a$10$FBX4UiUUE0mRcJQ3yaAvDuBw1P6cTVBCubLyyq.NDXgSmLOtnhzRK', '管理员', 'admin@fast.com', '13800000000', '1', '2026/04/12/5a3b4d4913884d2e8c7efbd204eb75e8.gif', '0', '0', 1);
 INSERT INTO sys_user (id, dept_id, username, password, nickname, email, phone, gender, status, del_flag, create_by)
-VALUES (1, 100, 'admin', '0192023a7bbd73250516f069df18b500', '管理员', 'admin@fast.com', '13800000000', '1', '0', '0', 1);
+VALUES (2, 101, 'liling', '$2a$10$u0.MCRF1WfbRvQTgGr9sWOJ2jhryl2xNnTCos.mj.n6KY5qhmWQXG', '李玲', 'liling@fast.com', '13800000001', '2', '0', '0', 1);
 INSERT INTO sys_user (id, dept_id, username, password, nickname, email, phone, gender, status, del_flag, create_by)
-VALUES (2, 101, 'liling', 'e10adc3949ba59abbe56e057f20f883e', '李玲', 'liling@fast.com', '13800000001', '2', '0', '0', 1);
+VALUES (3, 102, 'wangqiang', '$2a$10$u0.MCRF1WfbRvQTgGr9sWOJ2jhryl2xNnTCos.mj.n6KY5qhmWQXG', '王强', 'wangqiang@fast.com', '13800000002', '1', '0', '0', 1);
 INSERT INTO sys_user (id, dept_id, username, password, nickname, email, phone, gender, status, del_flag, create_by)
-VALUES (3, 102, 'wangqiang', 'e10adc3949ba59abbe56e057f20f883e', '王强', 'wangqiang@fast.com', '13800000002', '1', '0', '0', 1);
+VALUES (4, 103, 'chenwei', '$2a$10$u0.MCRF1WfbRvQTgGr9sWOJ2jhryl2xNnTCos.mj.n6KY5qhmWQXG', '陈伟', 'chenwei@fast.com', '13800000003', '1', '0', '0', 1);
 INSERT INTO sys_user (id, dept_id, username, password, nickname, email, phone, gender, status, del_flag, create_by)
-VALUES (4, 103, 'chenwei', 'e10adc3949ba59abbe56e057f20f883e', '陈伟', 'chenwei@fast.com', '13800000003', '1', '0', '0', 1);
+VALUES (5, 103, 'zhangsan', '$2a$10$u0.MCRF1WfbRvQTgGr9sWOJ2jhryl2xNnTCos.mj.n6KY5qhmWQXG', '张三', 'zhangsan@fast.com', '13800000004', '1', '0', '0', 1);
 INSERT INTO sys_user (id, dept_id, username, password, nickname, email, phone, gender, status, del_flag, create_by)
-VALUES (5, 103, 'zhangsan', 'e10adc3949ba59abbe56e057f20f883e', '张三', 'zhangsan@fast.com', '13800000004', '1', '0', '0', 1);
+VALUES (6, 103, 'lisi', '$2a$10$u0.MCRF1WfbRvQTgGr9sWOJ2jhryl2xNnTCos.mj.n6KY5qhmWQXG', '李四', 'lisi@fast.com', '13800000005', '1', '0', '0', 1);
 INSERT INTO sys_user (id, dept_id, username, password, nickname, email, phone, gender, status, del_flag, create_by)
-VALUES (6, 103, 'lisi', 'e10adc3949ba59abbe56e057f20f883e', '李四', 'lisi@fast.com', '13800000005', '1', '0', '0', 1);
+VALUES (7, 104, 'wangwu', '$2a$10$u0.MCRF1WfbRvQTgGr9sWOJ2jhryl2xNnTCos.mj.n6KY5qhmWQXG', '王五', 'wangwu@fast.com', '13800000006', '1', '0', '0', 1);
 INSERT INTO sys_user (id, dept_id, username, password, nickname, email, phone, gender, status, del_flag, create_by)
-VALUES (7, 104, 'wangwu', 'e10adc3949ba59abbe56e057f20f883e', '王五', 'wangwu@fast.com', '13800000006', '1', '0', '0', 1);
+VALUES (8, 105, 'zhaoliu', '$2a$10$u0.MCRF1WfbRvQTgGr9sWOJ2jhryl2xNnTCos.mj.n6KY5qhmWQXG', '赵六', 'zhaoliu@fast.com', '13800000007', '1', '0', '0', 1);
 INSERT INTO sys_user (id, dept_id, username, password, nickname, email, phone, gender, status, del_flag, create_by)
-VALUES (8, 105, 'zhaoliu', 'e10adc3949ba59abbe56e057f20f883e', '赵六', 'zhaoliu@fast.com', '13800000007', '1', '0', '0', 1);
+VALUES (9, 106, 'sunqi', '$2a$10$u0.MCRF1WfbRvQTgGr9sWOJ2jhryl2xNnTCos.mj.n6KY5qhmWQXG', '孙七', 'sunqi@fast.com', '13800000008', '1', '0', '0', 1);
 INSERT INTO sys_user (id, dept_id, username, password, nickname, email, phone, gender, status, del_flag, create_by)
-VALUES (9, 106, 'sunqi', 'e10adc3949ba59abbe56e057f20f883e', '孙七', 'sunqi@fast.com', '13800000008', '1', '0', '0', 1);
+VALUES (10, 107, 'zhouba', '$2a$10$u0.MCRF1WfbRvQTgGr9sWOJ2jhryl2xNnTCos.mj.n6KY5qhmWQXG', '周八', 'zhouba@fast.com', '13800000009', '1', '0', '0', 1);
 INSERT INTO sys_user (id, dept_id, username, password, nickname, email, phone, gender, status, del_flag, create_by)
-VALUES (10, 107, 'zhouba', 'e10adc3949ba59abbe56e057f20f883e', '周八', 'zhouba@fast.com', '13800000009', '1', '0', '0', 1);
+VALUES (11, 108, 'wujiu', '$2a$10$u0.MCRF1WfbRvQTgGr9sWOJ2jhryl2xNnTCos.mj.n6KY5qhmWQXG', '吴九', 'wujiu@fast.com', '13800000010', '1', '0', '0', 1);
 INSERT INTO sys_user (id, dept_id, username, password, nickname, email, phone, gender, status, del_flag, create_by)
-VALUES (11, 108, 'wujiu', 'e10adc3949ba59abbe56e057f20f883e', '吴九', 'wujiu@fast.com', '13800000010', '1', '0', '0', 1);
-INSERT INTO sys_user (id, dept_id, username, password, nickname, email, phone, gender, status, del_flag, create_by)
-VALUES (12, 109, 'zhengshi', 'e10adc3949ba59abbe56e057f20f883e', '郑十', 'zhengshi@fast.com', '13800000011', '1', '0', '0', 1);
+VALUES (12, 109, 'zhengshi', '$2a$10$u0.MCRF1WfbRvQTgGr9sWOJ2jhryl2xNnTCos.mj.n6KY5qhmWQXG', '郑十', 'zhengshi@fast.com', '13800000011', '1', '0', '0', 1);
 
 -- 角色数据
 INSERT INTO sys_role (id, role_name, role_key, role_sort, data_scope, status, del_flag, remark, create_by)
@@ -613,17 +613,17 @@ VALUES (30, 0, '日志管理', 'D', '/log', 'Document', 2, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon, menu_sort, status, del_flag, create_by)
 VALUES (31, 30, '登录日志', 'M', '/log/loginlog', 'log/loginlog/index', 'Document', 1, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (32, 31, '日志查询', 'B', 'system:loginlog:query', 1, '0', '0', 1);
+VALUES (32, 31, '日志查询', 'B', 'log:loginlog:query', 1, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (33, 31, '日志删除', 'B', 'system:loginlog:delete', 2, '0', '0', 1);
+VALUES (33, 31, '日志删除', 'B', 'log:loginlog:delete', 2, '0', '0', 1);
 
 -- 操作日志
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon, menu_sort, status, del_flag, create_by)
 VALUES (34, 30, '操作日志', 'M', '/log/operlog', 'log/operlog/index', 'DocumentCopy', 2, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (35, 34, '日志查询', 'B', 'system:operlog:query', 1, '0', '0', 1);
+VALUES (35, 34, '日志查询', 'B', 'log:operlog:query', 1, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (36, 34, '日志删除', 'B', 'system:operlog:delete', 2, '0', '0', 1);
+VALUES (36, 34, '日志删除', 'B', 'log:operlog:delete', 2, '0', '0', 1);
 
 -- 文件管理
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon, menu_sort, status, del_flag, create_by)
@@ -633,28 +633,78 @@ VALUES (38, 37, '文件上传', 'B', 'system:file:upload', 1, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
 VALUES (39, 37, '文件删除', 'B', 'system:file:delete', 2, '0', '0', 1);
 
+-- ==================== 补充权限按钮 ====================
+
+-- 用户列表权限
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (48, 2, '用户列表', 'B', 'system:user:list', 0, '0', '0', 1);
+
+-- 角色列表权限
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (49, 8, '角色列表', 'B', 'system:role:list', 0, '0', '0', 1);
+
+-- 菜单列表权限
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (50, 13, '菜单列表', 'B', 'system:menu:list', 0, '0', '0', 1);
+
+-- 部门列表权限
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (51, 41, '部门列表', 'B', 'system:dept:list', 0, '0', '0', 1);
+
+-- 字典列表权限
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (52, 18, '字典列表', 'B', 'system:dict:list', 0, '0', '0', 1);
+
+-- 参数列表权限
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (53, 23, '参数列表', 'B', 'system:config:list', 0, '0', '0', 1);
+
+-- 在线用户列表权限
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (54, 28, '在线列表', 'B', 'system:online:list', 0, '0', '0', 1);
+
+-- 文件列表权限
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (55, 37, '文件列表', 'B', 'system:file:list', 0, '0', '0', 1);
+
+-- 文件下载权限
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (56, 37, '文件下载', 'B', 'system:file:download', 3, '0', '0', 1);
+
+-- 登录日志列表权限
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (57, 31, '日志列表', 'B', 'log:loginlog:list', 0, '0', '0', 1);
+
+-- 操作日志列表权限
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (58, 34, '日志列表', 'B', 'log:operlog:list', 0, '0', '0', 1);
+
 -- 角色菜单关联(管理员拥有所有菜单权限)
 INSERT INTO sys_role_menu (role_id, menu_id) SELECT 1, id FROM sys_menu;
 
 -- 分公司经理角色菜单权限(用户管理、角色管理、部门管理)
+-- 新增 list 权限按钮: 48(用户), 49(角色), 51(部门)
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES
-(2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (2, 46), (2, 47),
-(2, 8), (2, 9), (2, 10), (2, 11), (2, 12),
-(2, 41), (2, 42), (2, 43), (2, 44), (2, 45);
+(2, 1), (2, 2), (2, 48), (2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (2, 46), (2, 47),
+(2, 8), (2, 49), (2, 9), (2, 10), (2, 11), (2, 12),
+(2, 41), (2, 51), (2, 42), (2, 43), (2, 44), (2, 45);
 
 -- 部门经理角色菜单权限(用户管理、部门管理)
+-- 新增 list 权限按钮: 48(用户), 51(部门)
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES
-(3, 1), (3, 2), (3, 3), (3, 4), (3, 5), (3, 6), (3, 7), (3, 46), (3, 47),
-(3, 41), (3, 42), (3, 43), (3, 44), (3, 45);
+(3, 1), (3, 2), (3, 48), (3, 3), (3, 4), (3, 5), (3, 6), (3, 7), (3, 46), (3, 47),
+(3, 41), (3, 51), (3, 42), (3, 43), (3, 44), (3, 45);
 
 -- 普通员工角色菜单权限(查看用户、查看部门)
+-- 新增 list 权限按钮: 48(用户), 51(部门)
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES
-(4, 1), (4, 2), (4, 3), (4, 41), (4, 42);
+(4, 1), (4, 2), (4, 48), (4, 3), (4, 41), (4, 51), (4, 42);
 
 -- 自定义权限角色菜单权限
+-- 新增 list 权限按钮: 48(用户), 51(部门)
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES
-(5, 1), (5, 2), (5, 3), (5, 4), (5, 5), (5, 6), (5, 7), (5, 46), (5, 47),
-(5, 41), (5, 42), (5, 43), (5, 44), (5, 45);
+(5, 1), (5, 2), (5, 48), (5, 3), (5, 4), (5, 5), (5, 6), (5, 7), (5, 46), (5, 47),
+(5, 41), (5, 51), (5, 42), (5, 43), (5, 44), (5, 45);
 
 -- 角色部门关联(自定义数据权限角色5，可查看深圳研发部和市场部)
 INSERT INTO sys_role_dept (role_id, dept_id) VALUES (5, 103), (5, 104);
@@ -731,3 +781,5 @@ INSERT INTO sys_config (id, config_name, config_key, config_value, config_type, 
 VALUES (2, '验证码开关', 'sys.captcha.enabled', 'true', '0', 1);
 INSERT INTO sys_config (id, config_name, config_key, config_value, config_type, create_by)
 VALUES (3, '账号初始密码', 'sys.user.initPassword', '123456', '0', 1);
+INSERT INTO sys_config (id, config_name, config_key, config_value, config_type, create_by)
+VALUES (4, '登录失败锁定阈值', 'sys.login.maxFailCount', '3', '0', 1);

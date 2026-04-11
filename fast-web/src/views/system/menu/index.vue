@@ -169,8 +169,8 @@
 import { ref, reactive, getCurrentInstance, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh, Plus, Sort } from '@element-plus/icons-vue'
-import { listMenu, getMenu, addMenu, updateMenu, deleteMenu, getMenuTree } from '@/api/menu'
-import { getDictData } from '@/api/dict'
+import { listMenu, getMenu, addMenu, updateMenu, deleteMenu, getMenuTree } from '@/api/system/menu'
+import { getDictData } from '@/api/system/dict'
 import IconSelect from '@/components/IconSelect/index.vue'
 
 const { proxy } = getCurrentInstance()
@@ -231,7 +231,7 @@ const rules = {
 const getList = async () => {
   loading.value = true
   try {
-    const res = await listMenu()
+    const res = await listMenu(queryParams)
     menuList.value = handleTree(res.data, 'id', 'parentId')
   } finally {
     loading.value = false

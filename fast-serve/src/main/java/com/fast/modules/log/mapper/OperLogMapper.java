@@ -1,7 +1,7 @@
 package com.fast.modules.log.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.fast.modules.log.entity.OperLog;
+import com.fast.modules.log.domain.entity.OperLog;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

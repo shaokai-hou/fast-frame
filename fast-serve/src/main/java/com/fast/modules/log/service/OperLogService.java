@@ -2,7 +2,7 @@ package com.fast.modules.log.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fast.common.result.PageResult;
-import com.fast.modules.log.entity.OperLog;
+import com.fast.modules.log.domain.entity.OperLog;
 
 import java.util.List;
 
@@ -13,6 +13,7 @@ import java.util.List;
  */
 public interface OperLogService extends IService<OperLog> {
 
+
     /**
      * 分页查询操作日志
      *
@@ -21,7 +22,8 @@ public interface OperLogService extends IService<OperLog> {
      * @param pageSize 每页数量
      * @return 操作日志分页结果
      */
-    PageResult<OperLog> listPage(OperLog query, Integer pageNum, Integer pageSize);
+    PageResult<OperLog> pageOperLogs(OperLog query, Integer pageNum, Integer pageSize);
+
 
     /**
      * 清空操作日志

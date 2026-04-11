@@ -2,6 +2,7 @@ import axios from 'axios'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getToken, removeToken } from '@/utils/auth'
 import router from '@/router'
+import { saveAs } from 'file-saver'
 
 const service = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -18,7 +19,6 @@ service.interceptors.request.use(
     return config
   },
   error => {
-    console.error('请求错误:', error)
     return Promise.reject(error)
   }
 )
@@ -49,7 +49,6 @@ service.interceptors.response.use(
     return res
   },
   error => {
-    console.error('响应错误:', error)
     let message = '请求失败'
     if (error.response) {
       switch (error.response.status) {
@@ -81,3 +80,65 @@ service.interceptors.response.use(
 )
 
 export default service
+
+/**
+ * 检查 blob 是否为 JSON 错误响应
+ * @param {Blob} blob
+ * @returns {Promise<{isError: boolean, data: any}>}
+ */
+async function checkBlobError(blob) {
+  if (blob.type && blob.type.includes('application/json')) {
+    try {
+      const text = await blob.text()
+      const data = JSON.parse(text)
+      return { isError: true, data }
+    } catch {
+      // 解析失败，不是 JSON
+    }
+  }
+  return { isError: false, data: null }
+}
+
+/**
+ * 获取文件 Blob（带认证和错误处理）
+ * @param {string} url 请求地址
+ * @returns {Promise<Blob>}
+ */
+export async function getBlob(url) {
+  const response = await service({
+    url,
+    method: 'get',
+    responseType: 'blob'
+  })
+  // response 已经被拦截器处理，如果是 blob 类型直接返回 response.data
+  // 但拦截器返回的是 response.data，所以这里 response 就是 blob
+  // 需要检查是否为错误响应
+  const blob = response
+  const { isError, data } = await checkBlobError(blob)
+  if (isError) {
+    const message = data?.msg || data?.message || '获取文件失败'
+    if (data?.code === 401) {
+      ElMessage.error('未授权，请重新登录')
+    } else {
+      ElMessage.error(message)
+    }
+    throw new Error(message)
+  }
+  return blob
+}
+
+/**
+ * 下载文件（带认证和错误处理）
+ * @param {string} url 下载地址
+ * @param {string} filename 保存的文件名
+ * @returns {Promise}
+ */
+export async function download(url, filename) {
+  try {
+    const blob = await getBlob(url)
+    saveAs(blob, filename)
+  } catch (error) {
+    // getBlob 已经处理了错误消息，这里只需要继续抛出
+    throw error
+  }
+}

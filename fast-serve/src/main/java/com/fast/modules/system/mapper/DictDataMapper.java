@@ -1,7 +1,7 @@
 package com.fast.modules.system.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.fast.modules.system.entity.DictData;
+import com.fast.modules.system.domain.entity.DictData;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

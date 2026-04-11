@@ -1,18 +1,18 @@
 package com.fast.modules.system.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.fast.common.enums.BusinessType;
+import com.fast.common.exception.BusinessException;
 import com.fast.common.result.PageResult;
 import com.fast.common.result.Result;
 import com.fast.common.util.ExcelUtil;
 import com.fast.framework.annotation.Log;
-import com.fast.framework.annotation.RequiresPermission;
 import com.fast.framework.web.BaseController;
-import com.fast.modules.system.dto.UserDTO;
-import com.fast.modules.system.dto.UserImportDTO;
-import com.fast.modules.system.entity.User;
+import com.fast.modules.system.domain.dto.UserDTO;
+import com.fast.modules.system.domain.dto.UserImportDTO;
+import com.fast.modules.system.domain.vo.UserExportVO;
+import com.fast.modules.system.domain.vo.UserVO;
 import com.fast.modules.system.service.UserService;
-import com.fast.modules.system.vo.UserExportVO;
-import com.fast.modules.system.vo.UserVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -41,10 +41,10 @@ public class UserController extends BaseController {
      * @param dto 查询参数
      * @return 用户分页结果
      */
-    @RequiresPermission("system:user:list")
+    @SaCheckPermission("system:user:list")
     @GetMapping("/list")
     public Result<PageResult<UserVO>> list(UserDTO dto) {
-        return success(userService.listUserPage(dto));
+        return success(userService.pageUsers(dto));
     }
 
     /**
@@ -101,7 +101,7 @@ public class UserController extends BaseController {
      * @param id 用户ID
      * @return 用户详情
      */
-    @RequiresPermission("system:user:query")
+    @SaCheckPermission("system:user:query")
     @GetMapping("/{id}")
     public Result<UserVO> getInfo(@PathVariable Long id) {
         return success(userService.getUserDetailById(id));
@@ -113,7 +113,7 @@ public class UserController extends BaseController {
      * @param dto 用户参数
      * @return 成功结果
      */
-    @RequiresPermission("system:user:add")
+    @SaCheckPermission("system:user:add")
     @Log(title = "用户管理", businessType = BusinessType.INSERT)
     @PostMapping
     public Result<Void> add(@Validated @RequestBody UserDTO dto) {
@@ -127,7 +127,7 @@ public class UserController extends BaseController {
      * @param dto 用户参数
      * @return 成功结果
      */
-    @RequiresPermission("system:user:edit")
+    @SaCheckPermission("system:user:edit")
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public Result<Void> edit(@Validated @RequestBody UserDTO dto) {
@@ -141,7 +141,7 @@ public class UserController extends BaseController {
      * @param ids 用户ID数组
      * @return 成功结果
      */
-    @RequiresPermission("system:user:delete")
+    @SaCheckPermission("system:user:delete")
     @Log(title = "用户管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public Result<Void> remove(@PathVariable Long[] ids) {
@@ -155,7 +155,7 @@ public class UserController extends BaseController {
      * @param userId 用户ID
      * @return 成功结果
      */
-    @RequiresPermission("system:user:resetPwd")
+    @SaCheckPermission("system:user:resetPwd")
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping("/resetPwd/{userId}")
     public Result<Void> resetPwd(@PathVariable Long userId) {
@@ -169,7 +169,7 @@ public class UserController extends BaseController {
      * @param dto 用户参数（包含用户ID和状态）
      * @return 成功结果
      */
-    @RequiresPermission("system:user:edit")
+    @SaCheckPermission("system:user:edit")
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping("/changeStatus")
     public Result<Void> changeStatus(@RequestBody UserDTO dto) {
@@ -183,7 +183,7 @@ public class UserController extends BaseController {
      * @param dto      查询参数
      * @param response HTTP 响应
      */
-    @RequiresPermission("system:user:export")
+    @SaCheckPermission("system:user:export")
     @Log(title = "用户管理", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public void export(UserDTO dto, HttpServletResponse response) {
@@ -197,22 +197,15 @@ public class UserController extends BaseController {
      * @param file Excel 文件
      * @return 导入结果
      */
-    @RequiresPermission("system:user:import")
+    @SaCheckPermission("system:user:import")
     @Log(title = "用户管理", businessType = BusinessType.INSERT)
     @PostMapping("/import")
     public Result<Map<String, Object>> importUsers(@RequestParam("file") MultipartFile file) {
         try {
-            ExcelUtil.ImportResult<UserImportDTO> importResult = ExcelUtil.importExcelWithErrors(file.getInputStream(), UserImportDTO.class);
-            Map<String, Object> result = userService.importUsers(importResult.getSuccessList());
-            // 合并解析错误和导入错误
-            List<String> allErrors = new java.util.ArrayList<>();
-            importResult.getErrorList().forEach(e -> allErrors.add("第 " + e.getRow() + " 行解析失败: " + e.getMessage()));
-            List<String> importErrors = (List<String>) result.get("errorMessages");
-            if (importErrors != null) {
-                allErrors.addAll(importErrors);
-            }
-            result.put("errorMessages", allErrors);
-            return success(result);
+            List<UserImportDTO> dataList = ExcelUtil.importExcel(file.getInputStream(), UserImportDTO.class);
+            return success(userService.importUsers(dataList));
+        } catch (BusinessException e) {
+            return fail(e.getMessage());
         } catch (Exception e) {
             return fail("导入失败: " + e.getMessage());
         }
@@ -225,6 +218,20 @@ public class UserController extends BaseController {
      */
     @GetMapping("/template")
     public void downloadTemplate(HttpServletResponse response) {
-        ExcelUtil.downloadTemplate(UserImportDTO.class, "用户导入", response);
+        ExcelUtil.exportExcel(UserImportDTO.class, "用户导入", response);
+    }
+
+    /**
+     * 解锁用户
+     *
+     * @param userId 用户ID
+     * @return 成功结果
+     */
+    @SaCheckPermission("system:user:edit")
+    @Log(title = "用户管理", businessType = BusinessType.UPDATE)
+    @PutMapping("/unlock/{userId}")
+    public Result<Void> unlock(@PathVariable Long userId) {
+        userService.unlockUser(userId);
+        return success();
     }
 }

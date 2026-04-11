@@ -5,9 +5,10 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.fast.common.util.IpUtils;
 import com.fast.framework.annotation.Log;
-import com.fast.modules.log.entity.OperLog;
+import com.fast.modules.log.domain.entity.OperLog;
 import com.fast.modules.log.service.OperLogService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 @Aspect
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class LogAspect {
 
     private final OperLogService operLogService;
@@ -42,35 +44,35 @@ public class LogAspect {
      * 处理完请求后执行
      *
      * @param joinPoint 切点
-     * @param log       日志注解
+     * @param logAnnotation 日志注解
      * @param jsonResult 方法返回结果
      */
-    @AfterReturning(pointcut = "@annotation(log)", returning = "jsonResult")
-    public void doAfterReturning(JoinPoint joinPoint, Log log, Object jsonResult) {
-        handleLog(joinPoint, log, null, jsonResult);
+    @AfterReturning(pointcut = "@annotation(logAnnotation)", returning = "jsonResult")
+    public void doAfterReturning(JoinPoint joinPoint, Log logAnnotation, Object jsonResult) {
+        handleLog(joinPoint, logAnnotation, null, jsonResult);
     }
 
     /**
      * 拦截异常操作
      *
      * @param joinPoint 切点
-     * @param log       日志注解
+     * @param logAnnotation 日志注解
      * @param e         异常
      */
-    @AfterThrowing(value = "@annotation(log)", throwing = "e")
-    public void doAfterThrowing(JoinPoint joinPoint, Log log, Exception e) {
-        handleLog(joinPoint, log, e, null);
+    @AfterThrowing(value = "@annotation(logAnnotation)", throwing = "e")
+    public void doAfterThrowing(JoinPoint joinPoint, Log logAnnotation, Exception e) {
+        handleLog(joinPoint, logAnnotation, e, null);
     }
 
     /**
      * 处理日志记录
      *
      * @param joinPoint  切点
-     * @param log        日志注解
+     * @param logAnnotation 日志注解
      * @param e          异常（可选）
      * @param jsonResult 方法返回结果（可选）
      */
-    protected void handleLog(JoinPoint joinPoint, Log log, Exception e, Object jsonResult) {
+    protected void handleLog(JoinPoint joinPoint, Log logAnnotation, Exception e, Object jsonResult) {
         try {
             // 获取当前用户名
             String username = StpUtil.getTokenSession().get("username", "");
@@ -87,8 +89,8 @@ public class LogAspect {
 
             // 构建日志对象
             OperLog operLog = new OperLog();
-            operLog.setTitle(log.title());
-            operLog.setBusinessType(log.businessType().getCode());
+            operLog.setTitle(logAnnotation.title());
+            operLog.setBusinessType(logAnnotation.businessType().getCode());
             operLog.setMethod(joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName());
             operLog.setOperName(username);
             operLog.setOperTime(LocalDateTime.now());
@@ -111,13 +113,13 @@ public class LogAspect {
             }
 
             // 保存请求参数
-            if (log.isSaveRequestData()) {
+            if (logAnnotation.isSaveRequestData()) {
                 String params = getRequestParams(joinPoint);
                 operLog.setOperParam(StrUtil.sub(params, 0, 2000));
             }
 
             // 保存响应参数
-            if (log.isSaveResponseData() && jsonResult != null) {
+            if (logAnnotation.isSaveResponseData() && jsonResult != null) {
                 operLog.setJsonResult(StrUtil.sub(JSONUtil.toJsonStr(jsonResult), 0, 2000));
             }
 
@@ -125,7 +127,7 @@ public class LogAspect {
             operLogService.saveAsync(operLog);
         } catch (Exception ex) {
             // 日志记录失败不影响业务
-            ex.printStackTrace();
+            log.error("[LogAspect] 日志记录失败", ex);
         }
     }
 

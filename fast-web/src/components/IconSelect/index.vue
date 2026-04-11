@@ -100,6 +100,10 @@ const filteredIcons = computed(() => {
 
 // 选择图标
 const selectIcon = (icon) => {
+  // 安全修复：验证图标是否在预定义列表中，防止 XSS
+  if (!iconList.includes(icon)) {
+    return
+  }
   emit('update:modelValue', icon)
   popoverVisible.value = false
   searchText.value = ''

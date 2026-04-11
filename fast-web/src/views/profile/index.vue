@@ -142,7 +142,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { UserFilled, Camera, User, Phone, Message, Calendar, ArrowLeft } from '@element-plus/icons-vue'
 import { useUserStore } from '@/store/user'
-import { getProfile, updateProfile, uploadAvatar, updatePassword } from '@/api/auth'
+import { getProfile, updateProfile, uploadAvatar, updatePassword } from '@/api/profile'
 
 const route = useRoute()
 const router = useRouter()
@@ -223,7 +223,7 @@ const initProfile = async () => {
     profileForm.email = data.email || ''
     profileForm.gender = data.gender || '0'
   } catch (e) {
-    console.error('获取个人信息失败', e)
+    // 获取个人信息失败，静默处理
   }
 }
 
@@ -340,34 +340,41 @@ onMounted(() => {
 .profile-container {
   display: flex;
   gap: 24px;
-  min-height: 100%;
+  height: calc(100vh - 60px - 48px);
   padding: 24px;
 }
 
 .profile-aside {
   width: 320px;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .back-button {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
-  margin-bottom: 16px;
-  border-radius: 8px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--color-surface);
   cursor: pointer;
   color: var(--color-foreground-muted);
   font-size: 14px;
+  font-weight: 500;
   transition: all 0.2s ease;
+  border: 1px solid var(--color-border-light);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
 
   &:hover {
-    background: var(--gray-100);
+    background: var(--color-primary-lighter);
     color: var(--color-primary);
+    border-color: var(--color-primary-light);
   }
 
   .el-icon {
-    font-size: 16px;
+    font-size: 18px;
   }
 }
 
@@ -378,6 +385,10 @@ onMounted(() => {
   text-align: center;
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
   border: 1px solid var(--color-border-light);
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .avatar-wrapper {
@@ -434,6 +445,10 @@ onMounted(() => {
   text-align: left;
   border-top: 1px solid var(--color-border-light);
   padding-top: 20px;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .info-item {
@@ -452,6 +467,11 @@ onMounted(() => {
   &:not(:last-child) {
     border-bottom: 1px solid var(--color-border-light);
   }
+
+  &:last-child {
+    flex: 1;
+    align-items: flex-start;
+  }
 }
 
 .profile-main {
@@ -465,6 +485,9 @@ onMounted(() => {
   padding: 24px;
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
   border: 1px solid var(--color-border-light);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 
   :deep(.el-tabs__header) {
     margin-bottom: 24px;
@@ -492,6 +515,15 @@ onMounted(() => {
   :deep(.el-tabs__active-bar) {
     height: 3px;
     border-radius: 2px;
+  }
+
+  :deep(.el-tabs__content) {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  :deep(.el-tab-pane) {
+    height: 100%;
   }
 }
 
@@ -535,10 +567,20 @@ onMounted(() => {
   .profile-container {
     flex-direction: column;
     padding: 16px;
+    height: auto;
   }
 
   .profile-aside {
     width: 100%;
+    flex-direction: column;
+  }
+
+  .user-card {
+    flex: none;
+  }
+
+  .profile-tabs {
+    height: auto;
   }
 }
 </style>

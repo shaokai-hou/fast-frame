@@ -47,11 +47,12 @@
           </template>
         </el-table-column>
         <el-table-column label="创建时间" prop="createTime" width="180" />
-        <el-table-column label="操作" align="center" width="220" fixed="right">
+        <el-table-column label="操作" align="center" width="280" fixed="right">
           <template #default="scope">
             <el-button link type="primary" @click="handleUpdate(scope.row)" v-hasPermi="['system:user:edit']">修改</el-button>
             <el-button link type="warning" @click="handleResetPwd(scope.row)" v-hasPermi="['system:user:resetPwd']">重置密码</el-button>
             <el-button link type="danger" @click="handleDelete(scope.row)" v-hasPermi="['system:user:delete']">删除</el-button>
+            <el-button link type="info" @click="handleUnlock(scope.row)" v-if="scope.row.locked" v-hasPermi="['system:user:edit']">解锁</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -146,29 +147,51 @@
     </el-dialog>
 
     <!-- 导入对话框 -->
-    <el-dialog title="导入用户" v-model="importOpen" width="400px" append-to-body>
+    <el-dialog title="导入用户" v-model="importOpen" width="480px" append-to-body>
       <el-upload
         ref="uploadRef"
-        :action="importUrl"
-        :headers="uploadHeaders"
-        :on-success="handleImportSuccess"
-        :on-error="handleImportError"
+        :http-request="customUpload"
         :before-upload="beforeUpload"
         :auto-upload="false"
         accept=".xlsx"
         :limit="1"
+        :file-list="fileList"
+        :on-change="handleFileChange"
+        :on-remove="handleFileRemove"
+        drag
       >
-        <template #trigger>
-          <el-button type="primary">选择文件</el-button>
-        </template>
-        <el-button type="success" style="margin-left: 12px" @click="submitUpload">开始导入</el-button>
+        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+        <div class="el-upload__text">
+          将文件拖到此处，或 <em>点击上传</em>
+        </div>
         <template #tip>
-          <div class="el-upload__tip">
-            <el-button type="text" @click="handleDownloadTemplate">下载模板</el-button>
-            <span style="margin-left: 8px">仅允许 .xlsx 文件</span>
+          <div class="upload-tip">
+            <span class="link" @click="handleDownloadTemplate">下载模板</span>
+            <span>仅允许 .xlsx 文件</span>
           </div>
         </template>
       </el-upload>
+      <template #footer>
+        <el-button @click="importOpen = false">取消</el-button>
+        <el-button type="primary" @click="submitUpload" :loading="importLoading" :disabled="fileList.length === 0">开始导入</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 导入结果对话框 -->
+    <el-dialog title="导入结果" v-model="resultOpen" width="480px" append-to-body class="result-dialog">
+      <div class="result-content">
+        <div class="result-stats">
+          <span class="stat-item success">成功 <strong>{{ resultData.successCount }}</strong> 条</span>
+          <span class="stat-item error">失败 <strong>{{ resultData.errorCount }}</strong> 条</span>
+        </div>
+        <el-table v-if="resultData.errorCount > 0" :data="parsedErrors" max-height="260" style="width: 100%; margin-top: 12px" border size="small">
+          <el-table-column prop="row" label="行号" width="70" align="center" />
+          <el-table-column prop="message" label="错误原因" show-overflow-tooltip />
+        </el-table>
+      </div>
+      <template #footer>
+        <el-button type="primary" @click="resultOpen = false">确定</el-button>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -176,11 +199,10 @@
 <script setup>
 import { ref, reactive, getCurrentInstance, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Search, Refresh, Plus, Delete, Download, Upload } from '@element-plus/icons-vue'
-import { listUser, getUser, addUser, updateUser, deleteUser, resetPwd, changeStatus, exportUser, importUser, downloadTemplate } from '@/api/user'
-import { listAllRole } from '@/api/role'
-import { getDeptTree } from '@/api/dept'
-import { getToken } from '@/utils/auth'
+import { Search, Refresh, Plus, Delete, Download, Upload, UploadFilled } from '@element-plus/icons-vue'
+import { listUser, getUser, addUser, updateUser, deleteUser, resetPwd, changeStatus, exportUser, importUser, downloadTemplate, unlockUser } from '@/api/system/user'
+import { listAllRole } from '@/api/system/role'
+import { getDeptTree } from '@/api/system/dept'
 
 const { proxy } = getCurrentInstance()
 
@@ -197,13 +219,24 @@ const deptOptions = ref([])
 const ids = ref([])
 const importOpen = ref(false)
 const uploadRef = ref()
-
-// 导入相关
-const importUrl = computed(() => {
-  return import.meta.env.VITE_API_URL + '/system/user/import'
+const importLoading = ref(false)
+const fileList = ref([])
+const resultOpen = ref(false)
+const resultData = ref({
+  successCount: 0,
+  errorCount: 0,
+  errorMessages: []
 })
-const uploadHeaders = computed(() => {
-  return { 'sa-token': getToken() }
+
+// 解析错误信息
+const parsedErrors = computed(() => {
+  return resultData.value.errorMessages.map(msg => {
+    const match = msg.match(/第 (\d+) 行：(.+)/)
+    if (match) {
+      return { row: match[1], message: match[2] }
+    }
+    return { row: '-', message: msg }
+  })
 })
 
 // 查询参数
@@ -309,6 +342,18 @@ const handleResetPwd = async (row) => {
   ElMessage.success('重置密码成功')
 }
 
+// 解锁用户
+const handleUnlock = async (row) => {
+  await ElMessageBox.confirm(
+    `是否确认解锁用户「${row.username}」？`,
+    '提示',
+    { type: 'warning' }
+  )
+  await unlockUser(row.id)
+  ElMessage.success('解锁成功')
+  getList()
+}
+
 // 提交表单
 const submitForm = async () => {
   await proxy.$refs.userFormRef.validate()
@@ -358,7 +403,18 @@ const handleExport = async () => {
 
 // 打开导入对话框
 const handleImport = () => {
+  fileList.value = []
   importOpen.value = true
+}
+
+// 文件选择变化
+const handleFileChange = (file, files) => {
+  fileList.value = files
+}
+
+// 文件移除
+const handleFileRemove = (file, files) => {
+  fileList.value = files
 }
 
 // 文件上传前校验
@@ -376,29 +432,27 @@ const submitUpload = () => {
   uploadRef.value.submit()
 }
 
-// 导入成功
-const handleImportSuccess = (response) => {
-  importOpen.value = false
-  if (response.code === 200) {
-    const { successCount, errorCount, errorMessages } = response.data
-    if (errorCount > 0) {
-      ElMessageBox.alert(
-        `成功导入 ${successCount} 条，失败 ${errorCount} 条。\n失败原因：\n${errorMessages.join('\n')}`,
-        '导入结果',
-        { type: 'warning' }
-      )
+// 自定义上传方法
+const customUpload = async (options) => {
+  importLoading.value = true
+  try {
+    const formData = new FormData()
+    formData.append('file', options.file)
+    const res = await importUser(formData)
+    if (res.code === 200) {
+      const { successCount, errorCount, errorMessages } = res.data
+      importOpen.value = false
+      resultData.value = { successCount, errorCount, errorMessages }
+      resultOpen.value = true
+      getList()
     } else {
-      ElMessage.success(`成功导入 ${successCount} 条数据`)
+      ElMessage.error(res.msg || '导入失败')
     }
-    getList()
-  } else {
-    ElMessage.error(response.msg || '导入失败')
+  } catch (error) {
+    ElMessage.error('导入失败')
+  } finally {
+    importLoading.value = false
   }
-}
-
-// 导入失败
-const handleImportError = () => {
-  ElMessage.error('导入失败')
 }
 
 // 下载模板
@@ -466,6 +520,46 @@ onMounted(() => {
 .form-dialog {
   :deep(.el-dialog__body) {
     padding: 24px;
+  }
+}
+
+.result-dialog {
+  :deep(.el-dialog__body) {
+    padding: 16px 20px;
+  }
+}
+
+.result-content {
+  .result-stats {
+    display: flex;
+    gap: 24px;
+    font-size: 14px;
+
+    .stat-item {
+      &.success strong {
+        color: #67c23a;
+      }
+      &.error strong {
+        color: #e6a23c;
+      }
+    }
+  }
+}
+
+.upload-tip {
+  color: #909399;
+  font-size: 13px;
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+
+  .link {
+    color: #409eff;
+    cursor: pointer;
+
+    &:hover {
+      color: #66b1ff;
+    }
   }
 }
 </style>

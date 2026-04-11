@@ -1,9 +1,9 @@
 package com.fast.modules.system.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.fast.modules.system.entity.Menu;
-import com.fast.modules.system.vo.MenuTreeVO;
-import com.fast.modules.system.vo.MenuVO;
+import com.fast.modules.system.domain.entity.Menu;
+import com.fast.modules.system.domain.vo.MenuTreeVO;
+import com.fast.modules.system.domain.vo.MenuVO;
 
 import java.util.List;
 
@@ -43,6 +43,14 @@ public interface MenuService extends IService<Menu> {
      * @return 菜单ID列表
      */
     List<Long> listMenuIdsByRoleId(Long roleId);
+
+    /**
+     * 根据用户ID查询权限标识列表
+     *
+     * @param userId 用户ID
+     * @return 权限标识列表
+     */
+    List<String> listPermissionsByUserId(Long userId);
 
     /**
      * 新增菜单

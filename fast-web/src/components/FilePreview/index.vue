@@ -85,7 +85,7 @@ import VueOfficePdf from '@vue-office/pdf'
 import VueOfficeDocx from '@vue-office/docx'
 import VueOfficeExcel from '@vue-office/excel'
 import VueOfficePptx from '@vue-office/pptx'
-import downloadService from '@/utils/download'
+import { getBlob } from '@/utils/request'
 
 // Props
 const props = defineProps({
@@ -195,15 +195,10 @@ const loadFile = async () => {
   previewType.value = getPreviewType(props.contentType, props.fileName)
 
   try {
-    // 如果 src 是字符串 URL，需要通过 axios 获取 Blob（认证文件）
+    // 如果 src 是字符串 URL，需要通过认证获取 Blob
     if (typeof props.src === 'string' && props.src) {
-      // 使用 download.js 的 service 获取文件 blob
-      const response = await downloadService({
-        url: props.src,
-        method: 'get',
-        responseType: 'blob'
-      })
-      const url = URL.createObjectURL(response.data)
+      const blob = await getBlob(props.src)
+      const url = URL.createObjectURL(blob)
       blobUrl.value = url
       previewSrc.value = url
     } else if (props.src instanceof Blob) {
@@ -214,7 +209,6 @@ const loadFile = async () => {
     }
   } catch (err) {
     error.value = '文件加载失败，请检查网络连接'
-    console.error('File preview error:', err)
   } finally {
     loading.value = false
   }
@@ -229,7 +223,6 @@ const handleRendered = () => {
 const handlePreviewError = (err) => {
   error.value = '文件预览失败，请下载后查看'
   loading.value = false
-  console.error('Preview render error:', err)
 }
 
 // 下载文件

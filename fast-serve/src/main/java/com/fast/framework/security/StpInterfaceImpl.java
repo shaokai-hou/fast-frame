@@ -1,14 +1,12 @@
 package com.fast.framework.security;
 
 import cn.dev33.satoken.stp.StpInterface;
-import com.fast.modules.system.entity.Menu;
-import com.fast.modules.system.mapper.MenuMapper;
+import com.fast.modules.system.service.MenuService;
+import com.fast.modules.system.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Sa-Token 权限实现
@@ -19,7 +17,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StpInterfaceImpl implements StpInterface {
 
-    private final MenuMapper menuMapper;
+    private final MenuService menuService;
+    private final RoleService roleService;
 
     /**
      * 返回一个账号所拥有的权限码集合
@@ -31,11 +30,7 @@ public class StpInterfaceImpl implements StpInterface {
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
         Long userId = Long.parseLong(loginId.toString());
-        List<Menu> menus = menuMapper.selectMenusByUserId(userId);
-        return menus.stream()
-                .filter(menu -> menu.getPerms() != null && !menu.getPerms().isEmpty())
-                .map(Menu::getPerms)
-                .collect(Collectors.toList());
+        return menuService.listPermissionsByUserId(userId);
     }
 
     /**
@@ -47,7 +42,7 @@ public class StpInterfaceImpl implements StpInterface {
      */
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
-        // 这里返回角色key列表，如果需要可以查询用户角色
-        return new ArrayList<>();
+        Long userId = Long.parseLong(loginId.toString());
+        return roleService.listRoleKeysByUserId(userId);
     }
 }

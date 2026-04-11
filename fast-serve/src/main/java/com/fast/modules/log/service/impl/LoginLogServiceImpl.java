@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fast.common.result.PageResult;
-import com.fast.modules.log.entity.LoginLog;
+import com.fast.modules.log.domain.entity.LoginLog;
 import com.fast.modules.log.mapper.LoginLogMapper;
 import com.fast.modules.log.service.LoginLogService;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> implements LoginLogService {
 
     @Override
-    public PageResult<LoginLog> listPage(LoginLog query, Integer pageNum, Integer pageSize) {
+    public PageResult<LoginLog> pageLoginLogs(LoginLog query, Integer pageNum, Integer pageSize) {
         Page<LoginLog> page = new Page<>(pageNum, pageSize);
         LambdaQueryWrapper<LoginLog> wrapper = new LambdaQueryWrapper<>();
         wrapper.like(StrUtil.isNotBlank(query.getUsername()), LoginLog::getUsername, query.getUsername())

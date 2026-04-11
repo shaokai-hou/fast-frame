@@ -2,9 +2,9 @@ package com.fast.modules.system.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fast.common.result.PageResult;
-import com.fast.modules.system.dto.RoleDTO;
-import com.fast.modules.system.entity.Role;
-import com.fast.modules.system.vo.RoleVO;
+import com.fast.modules.system.domain.dto.RoleDTO;
+import com.fast.modules.system.domain.entity.Role;
+import com.fast.modules.system.domain.vo.RoleVO;
 
 import java.util.List;
 
@@ -21,14 +21,30 @@ public interface RoleService extends IService<Role> {
      * @param dto 查询参数
      * @return 角色分页结果
      */
-    PageResult<RoleVO> listRolePage(RoleDTO dto);
+    PageResult<RoleVO> pageRoles(RoleDTO dto);
 
     /**
      * 查询所有角色
      *
      * @return 角色列表
      */
-    List<RoleVO> listAllRoles();
+    List<RoleVO> listRoles();
+
+    /**
+     * 根据用户ID查询角色列表
+     *
+     * @param userId 用户ID
+     * @return 角色列表
+     */
+    List<RoleVO> listRolesByUserId(Long userId);
+
+    /**
+     * 根据用户ID查询角色标识列表
+     *
+     * @param userId 用户ID
+     * @return 角色标识列表
+     */
+    List<String> listRoleKeysByUserId(Long userId);
 
     /**
      * 新增角色
@@ -50,20 +66,4 @@ public interface RoleService extends IService<Role> {
      * @param ids 角色ID列表
      */
     void deleteRole(List<Long> ids);
-
-    /**
-     * 根据用户ID查询角色列表
-     *
-     * @param userId 用户ID
-     * @return 角色列表
-     */
-    List<RoleVO> listRolesByUserId(Long userId);
-
-    /**
-     * 根据用户ID查询角色实体列表
-     *
-     * @param userId 用户ID
-     * @return 角色实体列表
-     */
-    List<Role> listRoleEntitiesByUserId(Long userId);
 }

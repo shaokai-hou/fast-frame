@@ -4,11 +4,11 @@ import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fast.common.exception.BusinessException;
-import com.fast.modules.system.entity.Menu;
+import com.fast.modules.system.domain.entity.Menu;
 import com.fast.modules.system.mapper.MenuMapper;
 import com.fast.modules.system.service.MenuService;
-import com.fast.modules.system.vo.MenuTreeVO;
-import com.fast.modules.system.vo.MenuVO;
+import com.fast.modules.system.domain.vo.MenuTreeVO;
+import com.fast.modules.system.domain.vo.MenuVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +22,7 @@ import java.util.List;
  */
 @Service
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements MenuService {
+
 
     /**
      * 查询菜单树形列表
@@ -74,6 +75,18 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     }
 
     /**
+     * 根据用户 ID 查询权限标识列表
+     *
+     * @param userId 用户 ID
+     * @return 权限标识列表
+     */
+    @Override
+    public List<String> listPermissionsByUserId(Long userId) {
+        return baseMapper.selectPermissionsByUserId(userId);
+    }
+
+
+    /**
      * 新增菜单
      *
      * @param menu 菜单实体
@@ -89,6 +102,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         }
         save(menu);
     }
+
 
     /**
      * 更新菜单
@@ -117,6 +131,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         updateById(menu);
     }
 
+
     /**
      * 删除菜单
      *
@@ -135,6 +150,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         // 删除角色菜单关联
         baseMapper.deleteRoleMenuByMenuId(id);
     }
+
 
     /**
      * 构建菜单树

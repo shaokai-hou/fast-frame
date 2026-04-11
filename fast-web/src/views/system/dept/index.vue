@@ -135,7 +135,7 @@
 import { ref, reactive, getCurrentInstance, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh, Plus, Sort } from '@element-plus/icons-vue'
-import { listDept, getDept, addDept, updateDept, deleteDept, getDeptTree } from '@/api/dept'
+import { listDept, getDept, addDept, updateDept, deleteDept, getDeptTree } from '@/api/system/dept'
 
 const { proxy } = getCurrentInstance()
 

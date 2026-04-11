@@ -9,6 +9,12 @@
         <el-form-item label="参数键名" prop="configKey">
           <el-input v-model="queryParams.configKey" placeholder="请输入参数键名" clearable @keyup.enter="handleQuery" />
         </el-form-item>
+        <el-form-item label="参数类型" prop="configType">
+          <el-select v-model="queryParams.configType" placeholder="全部" clearable style="width: 120px">
+            <el-option label="系统内置" value="0" />
+            <el-option label="其他" value="1" />
+          </el-select>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" :icon="Search" @click="handleQuery">搜索</el-button>
           <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
@@ -31,12 +37,18 @@
       <el-table-column label="参数名称" prop="configName" />
       <el-table-column label="参数键名" prop="configKey" />
       <el-table-column label="参数键值" prop="configValue" />
+      <el-table-column label="类型" prop="configType" width="100">
+        <template #default="scope">
+          <el-tag v-if="scope.row.configType === '0'" type="danger">系统内置</el-tag>
+          <el-tag v-else type="info">其他</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="备注" prop="remark" />
       <el-table-column label="创建时间" prop="createTime" width="180" />
       <el-table-column label="操作" align="center" width="200">
         <template #default="scope">
           <el-button link type="primary" @click="handleUpdate(scope.row)" v-hasPermi="['system:config:edit']">修改</el-button>
-          <el-button link type="danger" @click="handleDelete(scope.row)" v-hasPermi="['system:config:delete']">删除</el-button>
+          <el-button link type="danger" @click="handleDelete(scope.row)" v-hasPermi="['system:config:delete']" :disabled="scope.row.configType === '0'">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -57,6 +69,10 @@
         <el-form-item label="参数键值" prop="configValue">
           <el-input v-model="form.configValue" placeholder="请输入参数键值" />
         </el-form-item>
+        <el-form-item label="参数类型" prop="configType" v-if="form.id">
+          <el-tag v-if="form.configType === '0'" type="danger">系统内置</el-tag>
+          <el-tag v-else type="info">其他</el-tag>
+        </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入备注" />
         </el-form-item>
@@ -73,7 +89,7 @@
 import { ref, reactive, getCurrentInstance, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh, Plus, Delete } from '@element-plus/icons-vue'
-import { listConfig, addConfig, updateConfig, deleteConfig } from '@/api/config'
+import { listConfig, addConfig, updateConfig, deleteConfig } from '@/api/system/config'
 
 const { proxy } = getCurrentInstance()
 
@@ -92,7 +108,8 @@ const queryParams = reactive({
   pageNum: 1,
   pageSize: 10,
   configName: undefined,
-  configKey: undefined
+  configKey: undefined,
+  configType: undefined
 })
 
 // 表单
@@ -125,6 +142,7 @@ const handleQuery = () => {
 const resetQuery = () => {
   queryParams.configName = undefined
   queryParams.configKey = undefined
+  queryParams.configType = undefined
   handleQuery()
 }
 
@@ -152,6 +170,20 @@ const handleUpdate = async (row) => {
 // 删除
 const handleDelete = async (row) => {
   const deleteIds = row.id || ids.value
+  // 单条删除时，检查是否为系统参数
+  if (row.id && row.configType === '0') {
+    ElMessage.warning('系统内置参数不允许删除')
+    return
+  }
+  // 批量删除时，先过滤系统参数
+  if (!row.id) {
+    const selectedRows = configList.value.filter(item => ids.value.includes(item.id))
+    const hasSystemConfig = selectedRows.some(item => item.configType === '0')
+    if (hasSystemConfig) {
+      ElMessage.warning('选中的参数包含系统内置参数，不允许删除')
+      return
+    }
+  }
   await ElMessageBox.confirm('是否确认删除选中的参数?', '警告', { type: 'warning' })
   await deleteConfig(deleteIds)
   ElMessage.success('删除成功')
@@ -179,6 +211,7 @@ const reset = () => {
     configName: undefined,
     configKey: undefined,
     configValue: undefined,
+    configType: '1',
     remark: undefined
   }
 }

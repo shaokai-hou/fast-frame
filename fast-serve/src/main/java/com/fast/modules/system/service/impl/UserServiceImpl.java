@@ -9,24 +9,26 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fast.common.constant.RedisKeyConstants;
 import com.fast.common.exception.BusinessException;
 import com.fast.common.result.PageResult;
 import com.fast.framework.annotation.DataScope;
-import com.fast.modules.file.config.MinioProperties;
+import com.fast.framework.properties.MinioProperties;
 import com.fast.modules.file.service.FileService;
-import com.fast.modules.file.vo.FileVO;
-import com.fast.modules.system.dto.UserDTO;
-import com.fast.modules.system.dto.UserImportDTO;
-import com.fast.modules.system.entity.User;
+import com.fast.modules.file.domain.vo.FileVO;
+import com.fast.modules.system.domain.dto.UserDTO;
+import com.fast.modules.system.domain.dto.UserImportDTO;
+import com.fast.modules.system.domain.entity.User;
 import com.fast.modules.system.mapper.UserMapper;
 import com.fast.modules.system.service.ConfigService;
 import com.fast.modules.system.service.DeptService;
 import com.fast.modules.system.service.RoleService;
 import com.fast.modules.system.service.UserService;
-import com.fast.modules.system.vo.RoleVO;
-import com.fast.modules.system.vo.UserExportVO;
-import com.fast.modules.system.vo.UserVO;
+import com.fast.modules.system.domain.vo.RoleVO;
+import com.fast.modules.system.domain.vo.UserExportVO;
+import com.fast.modules.system.domain.vo.UserVO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,6 +53,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private final ConfigService configService;
     private final FileService fileService;
     private final DeptService deptService;
+    private final RedisTemplate<String, Object> redisTemplate;
+
 
     /**
      * 分页查询用户列表
@@ -60,7 +64,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     @Override
     @DataScope
-    public PageResult<UserVO> listUserPage(UserDTO dto) {
+    public PageResult<UserVO> pageUsers(UserDTO dto) {
         Page<UserVO> page = new Page<>(dto.getPageNum(), dto.getPageSize());
         IPage<UserVO> result = baseMapper.selectUserPage(
                 page,
@@ -70,7 +74,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 dto.getStatus(),
                 dto.getDataScope()
         );
-        return PageResult.of(result.getRecords(), result.getTotal());
+        // 查询用户锁定状态
+        List<UserVO> records = result.getRecords();
+        records.forEach(vo -> {
+            Boolean locked = redisTemplate.hasKey(RedisKeyConstants.LOGIN_LOCK_PREFIX + vo.getUsername());
+            vo.setLocked(locked != null && locked);
+        });
+        return PageResult.of(records, result.getTotal());
     }
 
     /**
@@ -96,6 +106,65 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public List<RoleVO> listRolesByUserId(Long userId) {
         return roleService.listRolesByUserId(userId);
     }
+
+    /**
+     * 获取用户详情
+     *
+     * @param id 用户 ID
+     * @return 用户信息 VO
+     */
+    @Override
+    public UserVO getUserDetailById(Long id) {
+        User user = getById(id);
+        if (user == null) {
+            throw new BusinessException("用户不存在");
+        }
+        UserVO vo = BeanUtil.copyProperties(user, UserVO.class);
+        // 查询用户关联的角色 ID
+        List<RoleVO> roles = roleService.listRolesByUserId(id);
+        vo.setRoleIds(roles.stream().map(RoleVO::getId).map(String::valueOf).collect(Collectors.toList()));
+        return vo;
+    }
+
+    /**
+     * 获取当前登录用户信息
+     *
+     * @return 用户信息 VO
+     */
+    @Override
+    public UserVO getCurrentUserInfo() {
+        Long userId = StpUtil.getLoginIdAsLong();
+        return getUserDetailById(userId);
+    }
+
+    /**
+     * 查询用户列表（用于导出）
+     *
+     * @param dto 查询参数
+     * @return 用户导出数据列表
+     */
+    @Override
+    @DataScope
+    public List<UserExportVO> listUserForExport(UserDTO dto) {
+        // 查询用户列表（不分页）
+        List<UserVO> userVOList = baseMapper.selectUserList(
+                dto.getDeptId(),
+                dto.getUsername(),
+                dto.getPhone(),
+                dto.getStatus(),
+                dto.getDataScope()
+        );
+        // 转换为导出 VO，处理字典转换
+        return userVOList.stream().map(userVO -> {
+            UserExportVO exportVO = BeanUtil.copyProperties(userVO, UserExportVO.class);
+            // 性别转换：0/1/2 → 未知/男/女
+            exportVO.setGender(convertGenderToText(userVO.getGender()));
+            // 状态转换：0/1 → 正常/禁用
+            exportVO.setStatus(convertStatusToText(userVO.getStatus()));
+            return exportVO;
+        }).collect(Collectors.toList());
+    }
+
 
     /**
      * 新增用户
@@ -128,6 +197,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
     }
 
+
     /**
      * 更新用户
      *
@@ -155,22 +225,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (ArrayUtil.isNotEmpty(dto.getRoleIds())) {
             baseMapper.insertUserRole(user.getId(), Arrays.asList(dto.getRoleIds()));
         }
-    }
-
-    /**
-     * 删除用户
-     *
-     * @param ids 用户 ID 列表
-     */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteUser(List<Long> ids) {
-        if (ids.contains(1L)) {
-            throw new BusinessException("不能删除管理员用户");
-        }
-        removeByIds(ids);
-        // 删除用户角色关联
-        ids.forEach(userId -> baseMapper.deleteUserRoleByUserId(userId));
     }
 
     /**
@@ -252,36 +306,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     /**
-     * 获取用户详情
-     *
-     * @param id 用户 ID
-     * @return 用户信息 VO
-     */
-    @Override
-    public UserVO getUserDetailById(Long id) {
-        User user = getById(id);
-        if (user == null) {
-            throw new BusinessException("用户不存在");
-        }
-        UserVO vo = BeanUtil.copyProperties(user, UserVO.class);
-        // 查询用户关联的角色 ID
-        List<RoleVO> roles = roleService.listRolesByUserId(id);
-        vo.setRoleIds(roles.stream().map(RoleVO::getId).map(String::valueOf).collect(Collectors.toList()));
-        return vo;
-    }
-
-    /**
-     * 获取当前登录用户信息
-     *
-     * @return 用户信息 VO
-     */
-    @Override
-    public UserVO getCurrentUserInfo() {
-        Long userId = StpUtil.getLoginIdAsLong();
-        return getUserDetailById(userId);
-    }
-
-    /**
      * 更新当前用户个人资料
      *
      * @param dto 用户参数 DTO
@@ -301,6 +325,37 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setGender(dto.getGender());
         updateById(user);
     }
+
+    /**
+     * 更新当前用户密码
+     *
+     * @param oldPassword 原密码
+     * @param newPassword 新密码
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateCurrentUserPassword(String oldPassword, String newPassword) {
+        Long userId = StpUtil.getLoginIdAsLong();
+        updatePassword(userId, oldPassword, newPassword);
+    }
+
+
+    /**
+     * 删除用户
+     *
+     * @param ids 用户 ID 列表
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteUser(List<Long> ids) {
+        if (ids.contains(1L)) {
+            throw new BusinessException("不能删除管理员用户");
+        }
+        removeByIds(ids);
+        // 删除用户角色关联
+        ids.forEach(userId -> baseMapper.deleteUserRoleByUserId(userId));
+    }
+
 
     /**
      * 上传用户头像
@@ -330,43 +385,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         Map<String, String> result = new HashMap<>();
         result.put("fileName", fileVO.getFileName());
         return result;
-    }
-
-    /**
-     * 更新当前用户密码
-     *
-     * @param oldPassword 原密码
-     * @param newPassword 新密码
-     */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void updateCurrentUserPassword(String oldPassword, String newPassword) {
-        Long userId = StpUtil.getLoginIdAsLong();
-        updatePassword(userId, oldPassword, newPassword);
-    }
-
-    /**
-     * 查询用户列表（用于导出）
-     *
-     * @param dto 查询参数
-     * @return 用户导出数据列表
-     */
-    @Override
-    @DataScope
-    public List<UserExportVO> listUserForExport(UserDTO dto) {
-        // 查询用户列表（不分页）
-        List<UserVO> userVOList = baseMapper.selectUserList(
-                dto.getDeptId(),
-                dto.getUsername(),
-                dto.getPhone(),
-                dto.getStatus(),
-                dto.getDataScope()
-        );
-        // 转换为导出 VO
-        return userVOList.stream().map(userVO -> {
-            UserExportVO exportVO = BeanUtil.copyProperties(userVO, UserExportVO.class);
-            return exportVO;
-        }).collect(Collectors.toList());
     }
 
     /**
@@ -437,6 +455,36 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return result;
     }
 
+
+    /**
+     * 性别转换为文本
+     *
+     * @param gender 性别代码（0/1/2）
+     * @return 性别文本
+     */
+    private String convertGenderToText(String gender) {
+        if ("1".equals(gender)) {
+            return "男";
+        } else if ("2".equals(gender)) {
+            return "女";
+        } else {
+            return "未知";
+        }
+    }
+
+    /**
+     * 状态转换为文本
+     *
+     * @param status 状态代码（0/1）
+     * @return 状态文本
+     */
+    private String convertStatusToText(String status) {
+        if (status == null) {
+            return "正常";
+        }
+        return "0".equals(status) ? "正常" : "禁用";
+    }
+
     /**
      * 转换性别（文字 → 数字）
      *
@@ -473,5 +521,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             default:
                 return "0";
         }
+    }
+
+    /**
+     * 解锁用户（清除登录锁定）
+     *
+     * @param userId 用户ID
+     */
+    @Override
+    public void unlockUser(Long userId) {
+        User user = getById(userId);
+        if (user == null) {
+            throw new BusinessException("用户不存在");
+        }
+        redisTemplate.delete(RedisKeyConstants.LOGIN_LOCK_PREFIX + user.getUsername());
     }
 }

@@ -3,13 +3,13 @@ package com.fast.modules.file.controller;
 import com.fast.common.result.PageResult;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
-import com.fast.framework.annotation.RequiresPermission;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.fast.common.enums.BusinessType;
 import com.fast.framework.web.BaseController;
-import com.fast.modules.file.config.MinioProperties;
-import com.fast.modules.file.dto.FileQuery;
+import com.fast.framework.properties.MinioProperties;
+import com.fast.modules.file.domain.dto.FileQuery;
 import com.fast.modules.file.service.FileService;
-import com.fast.modules.file.vo.FileVO;
+import com.fast.modules.file.domain.vo.FileVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,10 +49,10 @@ public class FileController extends BaseController {
      * @param query 查询参数
      * @return 文件分页结果
      */
-    @RequiresPermission("system:file:list")
+    @SaCheckPermission("system:file:list")
     @GetMapping("/list")
     public Result<PageResult<FileVO>> listFile(FileQuery query) {
-        return success(fileService.listFilePage(query));
+        return success(fileService.pageFiles(query));
     }
 
     /**
@@ -61,7 +61,7 @@ public class FileController extends BaseController {
      * @param file 上传文件
      * @return 文件信息
      */
-    @RequiresPermission("system:file:upload")
+    @SaCheckPermission("system:file:upload")
     @Log(title = "文件管理", businessType = BusinessType.INSERT)
     @PostMapping("/upload")
     public Result<FileVO> uploadFile(@RequestParam("file") MultipartFile file) {
@@ -74,7 +74,7 @@ public class FileController extends BaseController {
      * @param files 上传文件数组
      * @return 文件信息列表
      */
-    @RequiresPermission("system:file:upload")
+    @SaCheckPermission("system:file:upload")
     @Log(title = "文件管理", businessType = BusinessType.INSERT)
     @PostMapping("/uploads")
     public Result<List<FileVO>> uploadFiles(@RequestParam("files") MultipartFile[] files) {
@@ -88,7 +88,7 @@ public class FileController extends BaseController {
      * @param request  HTTP请求
      * @param response HTTP响应
      */
-    @RequiresPermission("system:file:download")
+    @SaCheckPermission("system:file:download")
     @GetMapping("/download/**")
     public void downloadFile(HttpServletRequest request, HttpServletResponse response) {
         String objectName = extractPathAfter(request, "/download/");
@@ -101,7 +101,7 @@ public class FileController extends BaseController {
      * @param id 文件ID
      * @return 成功结果
      */
-    @RequiresPermission("system:file:delete")
+    @SaCheckPermission("system:file:delete")
     @Log(title = "文件管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{id}")
     public Result<Void> deleteFile(@PathVariable Long id) {

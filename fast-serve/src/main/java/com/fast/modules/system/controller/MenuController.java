@@ -2,13 +2,13 @@ package com.fast.modules.system.controller;
 
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
-import com.fast.framework.annotation.RequiresPermission;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.fast.common.enums.BusinessType;
 import com.fast.framework.web.BaseController;
-import com.fast.modules.system.entity.Menu;
+import com.fast.modules.system.domain.entity.Menu;
 import com.fast.modules.system.service.MenuService;
-import com.fast.modules.system.vo.MenuTreeVO;
-import com.fast.modules.system.vo.MenuVO;
+import com.fast.modules.system.domain.vo.MenuTreeVO;
+import com.fast.modules.system.domain.vo.MenuVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +32,7 @@ public class MenuController extends BaseController {
      *
      * @return 菜单树列表
      */
-    @RequiresPermission("system:menu:list")
+    @SaCheckPermission("system:menu:list")
     @GetMapping("/list")
     public Result<List<MenuVO>> list() {
         return success(menuService.listMenuTree());
@@ -44,7 +44,7 @@ public class MenuController extends BaseController {
      * @param id 菜单ID
      * @return 菜单详情
      */
-    @RequiresPermission("system:menu:query")
+    @SaCheckPermission("system:menu:query")
     @GetMapping("/{id}")
     public Result<Menu> getInfo(@PathVariable Long id) {
         return success(menuService.getById(id));
@@ -55,7 +55,7 @@ public class MenuController extends BaseController {
      *
      * @return 菜单树选择器数据
      */
-    @RequiresPermission("system:menu:list")
+    @SaCheckPermission("system:menu:list")
     @GetMapping("/tree")
     public Result<List<MenuTreeVO>> tree() {
         return success(menuService.listMenuTreeSelect());
@@ -67,7 +67,7 @@ public class MenuController extends BaseController {
      * @param menu 菜单信息
      * @return 成功结果
      */
-    @RequiresPermission("system:menu:add")
+    @SaCheckPermission("system:menu:add")
     @Log(title = "菜单管理", businessType = BusinessType.INSERT)
     @PostMapping
     public Result<Void> add(@Validated @RequestBody Menu menu) {
@@ -81,7 +81,7 @@ public class MenuController extends BaseController {
      * @param menu 菜单信息
      * @return 成功结果
      */
-    @RequiresPermission("system:menu:edit")
+    @SaCheckPermission("system:menu:edit")
     @Log(title = "菜单管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public Result<Void> edit(@Validated @RequestBody Menu menu) {
@@ -95,7 +95,7 @@ public class MenuController extends BaseController {
      * @param id 菜单ID
      * @return 成功结果
      */
-    @RequiresPermission("system:menu:delete")
+    @SaCheckPermission("system:menu:delete")
     @Log(title = "菜单管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{id}")
     public Result<Void> remove(@PathVariable Long id) {

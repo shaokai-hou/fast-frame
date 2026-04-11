@@ -3,10 +3,10 @@ package com.fast.modules.log.controller;
 import com.fast.common.result.PageResult;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
-import com.fast.framework.annotation.RequiresPermission;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.fast.common.enums.BusinessType;
 import com.fast.framework.web.BaseController;
-import com.fast.modules.log.entity.OperLog;
+import com.fast.modules.log.domain.entity.OperLog;
 import com.fast.modules.log.service.OperLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -33,12 +33,12 @@ public class OperLogController extends BaseController {
      * @param pageSize 每页数量
      * @return 操作日志分页结果
      */
-    @RequiresPermission("log:operlog:list")
+    @SaCheckPermission("log:operlog:list")
     @GetMapping("/list")
     public Result<PageResult<OperLog>> list(OperLog query,
                                              @RequestParam(defaultValue = "1") Integer pageNum,
                                              @RequestParam(defaultValue = "10") Integer pageSize) {
-        return success(operLogService.listPage(query, pageNum, pageSize));
+        return success(operLogService.pageOperLogs(query, pageNum, pageSize));
     }
 
     /**
@@ -47,7 +47,7 @@ public class OperLogController extends BaseController {
      * @param id 操作日志ID
      * @return 操作日志详情
      */
-    @RequiresPermission("log:operlog:query")
+    @SaCheckPermission("log:operlog:query")
     @GetMapping("/{id}")
     public Result<OperLog> getInfo(@PathVariable Long id) {
         return success(operLogService.getById(id));
@@ -59,7 +59,7 @@ public class OperLogController extends BaseController {
      * @param ids 操作日志ID数组
      * @return 成功结果
      */
-    @RequiresPermission("log:operlog:delete")
+    @SaCheckPermission("log:operlog:delete")
     @Log(title = "操作日志", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public Result<Void> remove(@PathVariable Long[] ids) {
@@ -72,7 +72,7 @@ public class OperLogController extends BaseController {
      *
      * @return 成功结果
      */
-    @RequiresPermission("log:operlog:delete")
+    @SaCheckPermission("log:operlog:delete")
     @Log(title = "操作日志", businessType = BusinessType.CLEAN)
     @DeleteMapping("/clear")
     public Result<Void> clear() {

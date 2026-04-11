@@ -3,15 +3,15 @@ package com.fast.modules.system.controller;
 import com.fast.common.result.PageResult;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
-import com.fast.framework.annotation.RequiresPermission;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.fast.common.enums.BusinessType;
 import com.fast.framework.web.BaseController;
-import com.fast.modules.system.dto.RoleDTO;
-import com.fast.modules.system.entity.Role;
+import com.fast.modules.system.domain.dto.RoleDTO;
+import com.fast.modules.system.domain.entity.Role;
 import com.fast.modules.system.service.MenuService;
 import com.fast.modules.system.service.RoleService;
-import com.fast.modules.system.vo.MenuTreeVO;
-import com.fast.modules.system.vo.RoleVO;
+import com.fast.modules.system.domain.vo.MenuTreeVO;
+import com.fast.modules.system.domain.vo.RoleVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -38,10 +38,10 @@ public class RoleController extends BaseController {
      * @param dto 查询参数
      * @return 角色分页结果
      */
-    @RequiresPermission("system:role:list")
+    @SaCheckPermission("system:role:list")
     @GetMapping("/list")
     public Result<PageResult<RoleVO>> list(RoleDTO dto) {
-        return success(roleService.listRolePage(dto));
+        return success(roleService.pageRoles(dto));
     }
 
     /**
@@ -49,10 +49,10 @@ public class RoleController extends BaseController {
      *
      * @return 角色列表
      */
-    @RequiresPermission("system:role:list")
+    @SaCheckPermission("system:role:list")
     @GetMapping("/all")
     public Result<List<RoleVO>> all() {
-        return success(roleService.listAllRoles());
+        return success(roleService.listRoles());
     }
 
     /**
@@ -61,7 +61,7 @@ public class RoleController extends BaseController {
      * @param id 角色ID
      * @return 角色详情
      */
-    @RequiresPermission("system:role:query")
+    @SaCheckPermission("system:role:query")
     @GetMapping("/{id}")
     public Result<Role> getInfo(@PathVariable Long id) {
         return success(roleService.getById(id));
@@ -73,7 +73,7 @@ public class RoleController extends BaseController {
      * @param dto 角色参数
      * @return 成功结果
      */
-    @RequiresPermission("system:role:add")
+    @SaCheckPermission("system:role:add")
     @Log(title = "角色管理", businessType = BusinessType.INSERT)
     @PostMapping
     public Result<Void> add(@Validated @RequestBody RoleDTO dto) {
@@ -87,7 +87,7 @@ public class RoleController extends BaseController {
      * @param dto 角色参数
      * @return 成功结果
      */
-    @RequiresPermission("system:role:edit")
+    @SaCheckPermission("system:role:edit")
     @Log(title = "角色管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public Result<Void> edit(@Validated @RequestBody RoleDTO dto) {
@@ -101,7 +101,7 @@ public class RoleController extends BaseController {
      * @param ids 角色ID数组
      * @return 成功结果
      */
-    @RequiresPermission("system:role:delete")
+    @SaCheckPermission("system:role:delete")
     @Log(title = "角色管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public Result<Void> remove(@PathVariable Long[] ids) {
@@ -114,7 +114,7 @@ public class RoleController extends BaseController {
      *
      * @return 菜单树选择器数据
      */
-    @RequiresPermission("system:role:query")
+    @SaCheckPermission("system:role:query")
     @GetMapping("/menuTree")
     public Result<List<MenuTreeVO>> menuTree() {
         return success(menuService.listMenuTreeSelect());
@@ -126,7 +126,7 @@ public class RoleController extends BaseController {
      * @param roleId 角色ID
      * @return 菜单ID列表
      */
-    @RequiresPermission("system:role:query")
+    @SaCheckPermission("system:role:query")
     @GetMapping("/menuIds/{roleId}")
     public Result<List<Long>> menuIds(@PathVariable Long roleId) {
         return success(menuService.listMenuIdsByRoleId(roleId));

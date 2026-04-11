@@ -40,7 +40,7 @@
 import { ref, reactive, getCurrentInstance, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh } from '@element-plus/icons-vue'
-import { listOnlineUsers, forceLogout } from '@/api/online'
+import { listOnlineUsers, forceLogout } from '@/api/system/online'
 
 const { proxy } = getCurrentInstance()
 

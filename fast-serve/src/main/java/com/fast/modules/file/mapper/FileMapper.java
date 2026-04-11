@@ -1,7 +1,7 @@
 package com.fast.modules.file.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.fast.modules.file.entity.File;
+import com.fast.modules.file.domain.entity.File;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

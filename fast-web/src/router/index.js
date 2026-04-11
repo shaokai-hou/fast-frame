@@ -75,7 +75,7 @@ function loadComponent(component) {
   if (modules[path]) {
     return modules[path]
   }
-  console.error(`组件不存在: ${path}`)
+  // 组件不存在，返回 404 页面
   return () => import('@/views/404.vue')
 }
 
@@ -123,9 +123,23 @@ export const constantRoutes = [
   }
 ]
 
-const router = createRouter({
+/**
+ * 创建路由实例
+ */
+const createRouterInstance = () => createRouter({
   history: createWebHistory(),
   routes: constantRoutes
 })
+
+const router = createRouterInstance()
+
+/**
+ * 重置路由（清除动态路由）
+ * 通过替换 matcher 来清除动态添加的路由
+ */
+export function resetRouter() {
+  const newRouter = createRouterInstance()
+  router.matcher = newRouter.matcher
+}
 
 export default router

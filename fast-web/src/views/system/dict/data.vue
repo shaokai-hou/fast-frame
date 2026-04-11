@@ -102,7 +102,7 @@ import { ref, reactive, onMounted, getCurrentInstance } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ArrowLeft, Search, Refresh, Plus, Delete } from '@element-plus/icons-vue'
-import { listDictData, addDictData, updateDictData, deleteDictData } from '@/api/dict'
+import { listDictData, addDictData, updateDictData, deleteDictData } from '@/api/system/dict/data'
 
 const router = useRouter()
 const route = useRoute()

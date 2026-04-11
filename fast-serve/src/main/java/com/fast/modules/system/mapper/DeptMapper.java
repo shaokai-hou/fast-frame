@@ -1,7 +1,7 @@
 package com.fast.modules.system.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.fast.modules.system.entity.Dept;
+import com.fast.modules.system.domain.entity.Dept;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -14,6 +14,7 @@ import java.util.List;
  */
 @Mapper
 public interface DeptMapper extends BaseMapper<Dept> {
+
 
     /**
      * 根据角色ID查询部门ID列表

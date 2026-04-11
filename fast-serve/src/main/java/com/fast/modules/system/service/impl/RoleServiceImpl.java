@@ -8,11 +8,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fast.common.exception.BusinessException;
 import com.fast.common.result.PageResult;
-import com.fast.modules.system.dto.RoleDTO;
-import com.fast.modules.system.entity.Role;
+import com.fast.modules.system.domain.dto.RoleDTO;
+import com.fast.modules.system.domain.entity.Role;
 import com.fast.modules.system.mapper.RoleMapper;
 import com.fast.modules.system.service.RoleService;
-import com.fast.modules.system.vo.RoleVO;
+import com.fast.modules.system.domain.vo.RoleVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,14 +37,14 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
      * @return 角色分页结果
      */
     @Override
-    public PageResult<RoleVO> listRolePage(RoleDTO dto) {
+    public PageResult<RoleVO> pageRoles(RoleDTO dto) {
         Page<Role> page = new Page<>(dto.getPageNum(), dto.getPageSize());
         LambdaQueryWrapper<Role> wrapper = new LambdaQueryWrapper<>();
         wrapper.like(StrUtil.isNotBlank(dto.getRoleName()), Role::getRoleName, dto.getRoleName())
-               .like(StrUtil.isNotBlank(dto.getRoleKey()), Role::getRoleKey, dto.getRoleKey())
-               .eq(StrUtil.isNotBlank(dto.getStatus()), Role::getStatus, dto.getStatus())
-               .orderByAsc(Role::getRoleSort)
-               .orderByDesc(Role::getCreateTime);
+                .like(StrUtil.isNotBlank(dto.getRoleKey()), Role::getRoleKey, dto.getRoleKey())
+                .eq(StrUtil.isNotBlank(dto.getStatus()), Role::getStatus, dto.getStatus())
+                .orderByAsc(Role::getRoleSort)
+                .orderByDesc(Role::getCreateTime);
         Page<Role> result = page(page, wrapper);
         List<RoleVO> list = result.getRecords().stream()
                 .map(role -> BeanUtil.copyProperties(role, RoleVO.class))
@@ -58,12 +58,40 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
      * @return 角色列表
      */
     @Override
-    public List<RoleVO> listAllRoles() {
+    public List<RoleVO> listRoles() {
         LambdaQueryWrapper<Role> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Role::getStatus, "0")
-               .orderByAsc(Role::getRoleSort);
+                .orderByAsc(Role::getRoleSort);
         return list(wrapper).stream()
                 .map(role -> BeanUtil.copyProperties(role, RoleVO.class))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 根据用户 ID 获取角色列表
+     *
+     * @param userId 用户 ID
+     * @return 角色列表
+     */
+    @Override
+    public List<RoleVO> listRolesByUserId(Long userId) {
+        List<Role> roles = baseMapper.selectRolesByUserId(userId);
+        return roles.stream()
+                .map(role -> BeanUtil.copyProperties(role, RoleVO.class))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 根据用户 ID 获取角色标识列表
+     *
+     * @param userId 用户 ID
+     * @return 角色标识列表
+     */
+    @Override
+    public List<String> listRoleKeysByUserId(Long userId) {
+        return baseMapper.selectRolesByUserId(userId).stream()
+                .map(Role::getRoleKey)
+                .filter(StrUtil::isNotBlank)
                 .collect(Collectors.toList());
     }
 
@@ -100,6 +128,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         }
     }
 
+
     /**
      * 更新角色
      *
@@ -115,14 +144,14 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         // 检查角色名称是否重复
         LambdaQueryWrapper<Role> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Role::getRoleName, dto.getRoleName())
-               .ne(Role::getId, dto.getId());
+                .ne(Role::getId, dto.getId());
         if (count(wrapper) > 0) {
             throw new BusinessException("角色名称已存在");
         }
         // 检查角色权限字符串是否重复
         wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Role::getRoleKey, dto.getRoleKey())
-               .ne(Role::getId, dto.getId());
+                .ne(Role::getId, dto.getId());
         if (count(wrapper) > 0) {
             throw new BusinessException("角色权限字符串已存在");
         }
@@ -154,11 +183,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         }
         // 检查角色是否已分配给用户
         for (Long roleId : ids) {
-            long count = baseMapper.selectCount(
-                new LambdaQueryWrapper<Role>()
-                    .apply("id IN (SELECT role_id FROM sys_user_role WHERE role_id = {0})", roleId)
-            );
-            if (count > 0) {
+            if (baseMapper.countUsersByRoleId(roleId) > 0) {
                 throw new BusinessException("角色已分配给用户，不能删除");
             }
         }
@@ -168,30 +193,5 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
             baseMapper.deleteRoleMenuByRoleId(roleId);
             baseMapper.deleteRoleDeptByRoleId(roleId);
         });
-    }
-
-    /**
-     * 根据用户 ID 获取角色列表
-     *
-     * @param userId 用户 ID
-     * @return 角色列表
-     */
-    @Override
-    public List<RoleVO> listRolesByUserId(Long userId) {
-        List<Role> roles = baseMapper.selectRolesByUserId(userId);
-        return roles.stream()
-                .map(role -> BeanUtil.copyProperties(role, RoleVO.class))
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * 根据用户 ID 获取角色实体列表
-     *
-     * @param userId 用户 ID
-     * @return 角色实体列表
-     */
-    @Override
-    public List<Role> listRoleEntitiesByUserId(Long userId) {
-        return baseMapper.selectRolesByUserId(userId);
     }
 }

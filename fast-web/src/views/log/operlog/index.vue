@@ -126,7 +126,7 @@ import { ref, reactive, getCurrentInstance, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh, Delete } from '@element-plus/icons-vue'
 import { listOperLog, getOperLog, deleteOperLog, clearOperLog } from '@/api/log'
-import { getDictData } from '@/api/dict'
+import { getDictData } from '@/api/system/dict'
 
 const { proxy } = getCurrentInstance()
 

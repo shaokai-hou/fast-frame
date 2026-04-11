@@ -1,10 +1,10 @@
 package com.fast.modules.system.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.fast.modules.system.dto.DeptDTO;
-import com.fast.modules.system.entity.Dept;
-import com.fast.modules.system.vo.DeptTreeVO;
-import com.fast.modules.system.vo.DeptVO;
+import com.fast.modules.system.domain.dto.DeptDTO;
+import com.fast.modules.system.domain.entity.Dept;
+import com.fast.modules.system.domain.vo.DeptTreeVO;
+import com.fast.modules.system.domain.vo.DeptVO;
 
 import java.util.List;
 
@@ -14,6 +14,7 @@ import java.util.List;
  * @author fast-frame
  */
 public interface DeptService extends IService<Dept> {
+
 
     /**
      * 查询部门树
@@ -29,27 +30,6 @@ public interface DeptService extends IService<Dept> {
      * @return 部门树选择器数据
      */
     List<DeptTreeVO> listDeptTreeSelect();
-
-    /**
-     * 新增部门
-     *
-     * @param dept 部门信息
-     */
-    void addDept(Dept dept);
-
-    /**
-     * 修改部门
-     *
-     * @param dept 部门信息
-     */
-    void updateDept(Dept dept);
-
-    /**
-     * 删除部门
-     *
-     * @param id 部门ID
-     */
-    void deleteDept(Long id);
 
     /**
      * 根据角色ID查询部门ID列表
@@ -74,4 +54,28 @@ public interface DeptService extends IService<Dept> {
      * @return 部门ID（不存在则返回 null）
      */
     Long getDeptIdByName(String deptName);
+
+
+    /**
+     * 新增部门
+     *
+     * @param dept 部门信息
+     */
+    void addDept(Dept dept);
+
+
+    /**
+     * 修改部门
+     *
+     * @param dept 部门信息
+     */
+    void updateDept(Dept dept);
+
+
+    /**
+     * 删除部门
+     *
+     * @param id 部门ID
+     */
+    void deleteDept(Long id);
 }

@@ -3,14 +3,14 @@ package com.fast.modules.system.controller;
 import com.fast.common.result.PageResult;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
-import com.fast.framework.annotation.RequiresPermission;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.fast.common.enums.BusinessType;
 import com.fast.framework.web.BaseController;
-import com.fast.modules.system.entity.DictData;
-import com.fast.modules.system.entity.DictType;
+import com.fast.modules.system.domain.entity.DictData;
+import com.fast.modules.system.domain.entity.DictType;
 import com.fast.modules.system.service.DictService;
-import com.fast.modules.system.vo.DictDataVO;
-import com.fast.modules.system.vo.DictVO;
+import com.fast.modules.system.domain.vo.DictDataVO;
+import com.fast.modules.system.domain.vo.DictVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -38,12 +38,12 @@ public class DictController extends BaseController {
      * @param pageSize 每页数量
      * @return 字典类型分页结果
      */
-    @RequiresPermission("system:dict:list")
+    @SaCheckPermission("system:dict:list")
     @GetMapping("/type/list")
     public Result<PageResult<DictVO>> listType(DictType query,
                                                 @RequestParam(defaultValue = "1") Integer pageNum,
                                                 @RequestParam(defaultValue = "10") Integer pageSize) {
-        return success(dictService.listDictTypePage(query, pageNum, pageSize));
+        return success(dictService.pageDictTypes(query, pageNum, pageSize));
     }
 
     /**
@@ -52,7 +52,7 @@ public class DictController extends BaseController {
      * @param dictType 字典类型
      * @return 字典数据列表
      */
-    @RequiresPermission("system:dict:list")
+    @SaCheckPermission("system:dict:list")
     @GetMapping("/data/{dictType}")
     public Result<List<DictDataVO>> listData(@PathVariable String dictType) {
         return success(dictService.listDictDataByType(dictType));
@@ -69,7 +69,7 @@ public class DictController extends BaseController {
      * @param pageSize   每页数量
      * @return 字典数据分页结果
      */
-    @RequiresPermission("system:dict:list")
+    @SaCheckPermission("system:dict:list")
     @GetMapping("/data/list")
     public Result<PageResult<DictDataVO>> listDataPage(
             @RequestParam String dictType,
@@ -78,7 +78,7 @@ public class DictController extends BaseController {
             @RequestParam(required = false) String status,
             @RequestParam(defaultValue = "1") Integer pageNum,
             @RequestParam(defaultValue = "10") Integer pageSize) {
-        return success(dictService.listDictDataPage(dictType, dictLabel, dictValue, status, pageNum, pageSize));
+        return success(dictService.pageDictData(dictType, dictLabel, dictValue, status, pageNum, pageSize));
     }
 
     /**
@@ -87,7 +87,7 @@ public class DictController extends BaseController {
      * @param dictType 字典类型信息
      * @return 成功结果
      */
-    @RequiresPermission("system:dict:add")
+    @SaCheckPermission("system:dict:add")
     @Log(title = "字典管理", businessType = BusinessType.INSERT)
     @PostMapping("/type")
     public Result<Void> addType(@Validated @RequestBody DictType dictType) {
@@ -101,7 +101,7 @@ public class DictController extends BaseController {
      * @param dictType 字典类型信息
      * @return 成功结果
      */
-    @RequiresPermission("system:dict:edit")
+    @SaCheckPermission("system:dict:edit")
     @Log(title = "字典管理", businessType = BusinessType.UPDATE)
     @PutMapping("/type")
     public Result<Void> editType(@Validated @RequestBody DictType dictType) {
@@ -115,7 +115,7 @@ public class DictController extends BaseController {
      * @param ids 字典类型ID数组
      * @return 成功结果
      */
-    @RequiresPermission("system:dict:delete")
+    @SaCheckPermission("system:dict:delete")
     @Log(title = "字典管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/type/{ids}")
     public Result<Void> removeType(@PathVariable Long[] ids) {
@@ -129,7 +129,7 @@ public class DictController extends BaseController {
      * @param dictData 字典数据信息
      * @return 成功结果
      */
-    @RequiresPermission("system:dict:add")
+    @SaCheckPermission("system:dict:add")
     @Log(title = "字典管理", businessType = BusinessType.INSERT)
     @PostMapping("/data")
     public Result<Void> addData(@Validated @RequestBody DictData dictData) {
@@ -143,7 +143,7 @@ public class DictController extends BaseController {
      * @param dictData 字典数据信息
      * @return 成功结果
      */
-    @RequiresPermission("system:dict:edit")
+    @SaCheckPermission("system:dict:edit")
     @Log(title = "字典管理", businessType = BusinessType.UPDATE)
     @PutMapping("/data")
     public Result<Void> editData(@Validated @RequestBody DictData dictData) {
@@ -157,7 +157,7 @@ public class DictController extends BaseController {
      * @param ids 字典数据ID数组
      * @return 成功结果
      */
-    @RequiresPermission("system:dict:delete")
+    @SaCheckPermission("system:dict:delete")
     @Log(title = "字典管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/data/{ids}")
     public Result<Void> removeData(@PathVariable Long[] ids) {

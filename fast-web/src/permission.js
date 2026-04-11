@@ -47,7 +47,6 @@ router.beforeEach(async (to, from, next) => {
                     next({...to, replace: true})
                 } catch (error) {
                     // 获取用户信息失败，清除token并跳转到登录页
-                    console.error('获取用户信息失败', error)
                     await userStore.logoutAction()
                     next(`/login?redirect=${to.path}`)
                     NProgress.done()

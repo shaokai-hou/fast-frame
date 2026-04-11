@@ -90,7 +90,7 @@ import { ref, reactive, getCurrentInstance, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh, Plus, Delete } from '@element-plus/icons-vue'
-import { listDictType, addDictType, updateDictType, deleteDictType } from '@/api/dict'
+import { listDictType, addDictType, updateDictType, deleteDictType } from '@/api/system/dict'
 
 const router = useRouter()
 const { proxy } = getCurrentInstance()

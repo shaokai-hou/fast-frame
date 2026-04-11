@@ -2,12 +2,8 @@ server:
   port: 8080
 
 spring:
-  application:
-    name: fast-serve
   profiles:
     active: dev
-  main:
-    banner-mode: console
   servlet:
     multipart:
       max-file-size: 50MB
@@ -16,7 +12,7 @@ spring:
 # MyBatis Plus 配置
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.fast.modules.*.entity
+  type-aliases-package: com.fast.modules.*.domain.entity
   configuration:
     map-underscore-to-camel-case: true
   global-config:
@@ -32,7 +28,7 @@ sa-token:
   token-name: sa-token
   token-prefix: Bearer
   timeout: 86400
-  active-timeout: -1
+  active-timeout: 1800
   is-concurrent: true
   is-share: true
   token-style: uuid

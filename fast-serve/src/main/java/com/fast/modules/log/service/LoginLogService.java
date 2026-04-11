@@ -2,7 +2,7 @@ package com.fast.modules.log.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fast.common.result.PageResult;
-import com.fast.modules.log.entity.LoginLog;
+import com.fast.modules.log.domain.entity.LoginLog;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public interface LoginLogService extends IService<LoginLog> {
      * @param pageSize 每页数量
      * @return 登录日志分页结果
      */
-    PageResult<LoginLog> listPage(LoginLog query, Integer pageNum, Integer pageSize);
+    PageResult<LoginLog> pageLoginLogs(LoginLog query, Integer pageNum, Integer pageSize);
 
     /**
      * 清空登录日志

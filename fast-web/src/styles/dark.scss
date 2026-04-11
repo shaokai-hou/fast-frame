@@ -244,8 +244,20 @@ html.dark {
 
   // 欢迎区域
   .welcome-section {
-    background: #1E293B;
-    border: 1px solid #334155;
+    background: linear-gradient(135deg, #1E3A5F 0%, #2563EB 100%);
+    color: #fff;
+
+    .stat-number {
+      color: #fff;
+    }
+
+    .stat-label {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .stat-divider {
+      background: rgba(255, 255, 255, 0.25);
+    }
   }
 
   // 快捷入口卡片
