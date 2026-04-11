@@ -148,6 +148,9 @@ import { download } from '@/utils/request'
 download('/file/download?id=1', 'filename.xlsx')
 ```
 
+### Excel 导入导出
+- **后端**: EasyExcel (3.3.4) - 高性能 Excel 处理，配合 `ExcelUtil` 工具类
+
 ## Java 注释规范
 
 - **类级别 Javadoc**: 必须有 `@author` 标注
