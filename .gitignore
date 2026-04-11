@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+.pnpm-debug.log
+
+# Build outputs
+dist/
+target/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+*.env
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Java
+*.class
+*.jar
+*.war
+
+# Maven
+.m2/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*~
+
+# Credentials (never commit)
+credentials.json
+secrets.json
+*.pem
+*.key

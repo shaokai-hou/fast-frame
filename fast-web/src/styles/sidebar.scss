@@ -1,0 +1,20 @@
+// ==========================================
+// 侧边栏样式 - 仅容器样式
+// 菜单组件样式在 Sidebar/index.vue 中定义
+// ==========================================
+.sidebar {
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // 折叠状态宽度
+  &.collapsed {
+    width: 64px;
+  }
+}
+
+// 深色模式侧边栏容器
+html.dark .sidebar {
+  background: var(--color-surface);
+  border-right-color: var(--color-border);
+}

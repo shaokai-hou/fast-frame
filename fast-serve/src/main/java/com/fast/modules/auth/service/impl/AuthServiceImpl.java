@@ -1,0 +1,238 @@
+package com.fast.modules.auth.service.impl;
+
+import cn.dev33.satoken.secure.BCrypt;
+import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.captcha.CaptchaUtil;
+import cn.hutool.captcha.LineCaptcha;
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
+import com.fast.common.constant.Constants;
+import com.fast.common.exception.BusinessException;
+import com.fast.modules.auth.dto.LoginDTO;
+import com.fast.modules.auth.service.AuthService;
+import com.fast.modules.auth.vo.CaptchaVO;
+import com.fast.modules.auth.vo.LoginVO;
+import com.fast.modules.auth.vo.RoutesVO;
+import com.fast.modules.auth.vo.UserInfoVO;
+import com.fast.modules.log.entity.LoginLog;
+import com.fast.modules.log.service.LoginLogService;
+import com.fast.modules.system.entity.Menu;
+import com.fast.modules.system.entity.User;
+import com.fast.modules.system.mapper.MenuMapper;
+import com.fast.modules.system.service.MenuService;
+import com.fast.modules.system.service.UserService;
+import com.fast.modules.system.vo.MenuVO;
+import com.fast.modules.system.vo.RoleVO;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+/**
+ * 认证Service实现
+ *
+ * @author fast-frame
+ */
+@Service
+@RequiredArgsConstructor
+public class AuthServiceImpl implements AuthService {
+
+    private final UserService userService;
+    private final MenuService menuService;
+    private final MenuMapper menuMapper;
+    private final LoginLogService loginLogService;
+    private final RedisTemplate<String, Object> redisTemplate;
+
+    /**
+     * 生成验证码
+     *
+     * @return 验证码信息 VO
+     */
+    @Override
+    public CaptchaVO generateCaptcha() {
+        // 生成验证码
+        LineCaptcha captcha = CaptchaUtil.createLineCaptcha(120, 40, 4, 20);
+        String uuid = IdUtil.fastSimpleUUID();
+        String code = captcha.getCode();
+
+        // 存入Redis，5分钟过期
+        String key = Constants.CAPTCHA_CODE_KEY + uuid;
+        redisTemplate.opsForValue().set(key, code, 5, TimeUnit.MINUTES);
+
+        // 返回验证码信息
+        CaptchaVO vo = new CaptchaVO();
+        vo.setUuid(uuid);
+        vo.setImg(captcha.getImageBase64Data());
+        vo.setExpireTime(LocalDateTime.now().plusMinutes(5));
+        return vo;
+    }
+
+    /**
+     * 用户登录
+     *
+     * @param dto 登录参数 DTO
+     * @param ip 用户 IP 地址
+     * @return 登录信息 VO
+     */
+    @Override
+    public LoginVO login(LoginDTO dto, String ip) {
+        // 校验验证码
+        String captchaKey = Constants.CAPTCHA_CODE_KEY + dto.getUuid();
+        Object cacheCode = redisTemplate.opsForValue().get(captchaKey);
+        if (cacheCode == null) {
+            recordLoginLog(dto.getUsername(), ip, "1", "验证码已过期");
+            throw new BusinessException("验证码已过期");
+        }
+        if (!cacheCode.toString().equalsIgnoreCase(dto.getCaptcha())) {
+            recordLoginLog(dto.getUsername(), ip, "1", "验证码错误");
+            throw new BusinessException("验证码错误");
+        }
+        redisTemplate.delete(captchaKey);
+
+        // 校验用户
+        User user = userService.getByUsername(dto.getUsername());
+        if (user == null) {
+            recordLoginLog(dto.getUsername(), ip, "1", "用户不存在");
+            throw new BusinessException("用户不存在");
+        }
+        if (!BCrypt.checkpw(dto.getPassword(), user.getPassword())) {
+            recordLoginLog(dto.getUsername(), ip, "1", "密码错误");
+            throw new BusinessException("密码错误");
+        }
+        if ("1".equals(user.getStatus())) {
+            recordLoginLog(dto.getUsername(), ip, "1", "账号已被禁用");
+            throw new BusinessException("账号已被禁用");
+        }
+
+        // 登录
+        StpUtil.login(user.getId());
+
+        // 将 IP 地址存入 token session,用于在线用户显示
+        StpUtil.getTokenSession()
+                .set("ip", ip)
+                .set("username", user.getUsername());
+
+        // 记录登录日志
+        recordLoginLog(dto.getUsername(), ip, "0", "登录成功");
+
+        // 返回登录信息
+        LoginVO vo = new LoginVO();
+        vo.setAccessToken(StpUtil.getTokenValue());
+        vo.setUsername(user.getUsername());
+        vo.setNickname(user.getNickname());
+        // avatar 存储格式: 2026/04/11/abc.jpg（不带桶名前缀）
+        // 访问 URL: /api/file/avatar/2026/04/11/abc.jpg
+        if (StrUtil.isNotBlank(user.getAvatar())) {
+            vo.setAvatar("/api/file/avatar/" + user.getAvatar());
+        }
+        return vo;
+    }
+
+    /**
+     * 获取当前用户信息
+     *
+     * @return 用户信息 VO
+     */
+    @Override
+    public UserInfoVO getUserInfo() {
+        Long userId = StpUtil.getLoginIdAsLong();
+        User user = userService.getById(userId);
+
+        UserInfoVO vo = BeanUtil.copyProperties(user, UserInfoVO.class);
+
+        // avatar 存储格式: 2026/04/11/abc.jpg
+        // 访问 URL: /api/file/avatar/2026/04/11/abc.jpg
+        if (StrUtil.isNotBlank(user.getAvatar())) {
+            vo.setAvatar("/api/file/avatar/" + user.getAvatar());
+        }
+
+        // 获取角色列表
+        List<RoleVO> roles = userService.listRolesByUserId(userId);
+        vo.setRoles(roles);
+
+        // 获取权限列表
+        List<Menu> menus = menuMapper.selectMenusByUserId(userId);
+        List<String> permissions = menus.stream()
+                .map(Menu::getPerms)
+                .filter(StrUtil::isNotBlank)
+                .collect(Collectors.toList());
+        vo.setPermissions(permissions);
+
+        return vo;
+    }
+
+    /**
+     * 获取当前用户路由菜单
+     *
+     * @return 路由信息 VO
+     */
+    @Override
+    public RoutesVO getRoutes() {
+        Long userId = StpUtil.getLoginIdAsLong();
+        List<MenuVO> menus = menuService.listMenusByUserId(userId);
+
+        RoutesVO vo = new RoutesVO();
+        vo.setRoutes(buildRoutes(menus));
+        return vo;
+    }
+
+    /**
+     * 用户登出
+     */
+    @Override
+    public void logout() {
+        StpUtil.logout();
+    }
+
+    /**
+     * 记录登录日志
+     *
+     * @param username 用户名
+     * @param ip IP 地址
+     * @param status 登录状态（0: 成功, 1: 失败）
+     * @param msg 登录消息
+     */
+    private void recordLoginLog(String username, String ip, String status, String msg) {
+        LoginLog log = new LoginLog();
+        log.setUsername(username);
+        log.setIpAddress(ip);
+        log.setStatus(status);
+        log.setMsg(msg);
+        log.setLoginTime(LocalDateTime.now());
+        loginLogService.save(log);
+    }
+
+    /**
+     * 构建路由
+     *
+     * @param menus 菜单列表
+     * @return 路由列表
+     */
+    private List<RoutesVO.RouteItem> buildRoutes(List<MenuVO> menus) {
+        return menus.stream()
+                .filter(menu -> !"B".equals(menu.getMenuType()))
+                .map(menu -> {
+                    RoutesVO.RouteItem item = new RoutesVO.RouteItem();
+                    item.setPath(menu.getPath());
+                    item.setName(menu.getMenuName());
+                    item.setComponent(menu.getComponent());
+
+                    RoutesVO.RouteMeta meta = new RoutesVO.RouteMeta();
+                    meta.setTitle(menu.getMenuName());
+                    meta.setIcon(menu.getIcon());
+                    meta.setHidden("1".equals(menu.getVisible()));
+                    item.setMeta(meta);
+
+                    if (menu.getChildren() != null && !menu.getChildren().isEmpty()) {
+                        item.setChildren(buildRoutes(menu.getChildren()));
+                    }
+                    return item;
+                })
+                .collect(Collectors.toList());
+    }
+}

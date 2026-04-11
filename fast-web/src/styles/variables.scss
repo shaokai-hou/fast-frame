@@ -1,0 +1,210 @@
+// ==========================================
+// 设计系统变量 - 专业蓝白配色方案
+// ==========================================
+
+// ==========================================
+// CSS 自定义属性（支持运行时切换）
+// ==========================================
+:root {
+  // 主色调
+  --color-primary: #2563EB;
+  --color-primary-hover: #1D4ED8;
+  --color-primary-active: #1E40AF;
+  --color-primary-light: #DBEAFE;
+  --color-primary-lighter: #EFF6FF;
+
+  // 次要色
+  --color-secondary: #3B82F6;
+  --color-secondary-hover: #2563EB;
+  --color-secondary-light: #BFDBFE;
+
+  // 强调色（成功/CTA）
+  --color-accent: #059669;
+  --color-accent-hover: #047857;
+  --color-accent-light: #D1FAE5;
+
+  // 语义色
+  --color-success: #059669;
+  --color-success-light: #D1FAE5;
+  --color-success-lighter: #ECFDF5;
+
+  --color-warning: #D97706;
+  --color-warning-light: #FEF3C7;
+  --color-warning-lighter: #FFFBEB;
+
+  --color-danger: #DC2626;
+  --color-danger-light: #FEE2E2;
+  --color-danger-lighter: #FEF2F2;
+
+  --color-info: #6B7280;
+  --color-info-light: #E5E7EB;
+  --color-info-lighter: #F3F4F6;
+
+  // 背景色
+  --color-background: #F8FAFC;
+  --color-surface: #FFFFFF;
+  --color-surface-elevated: #FFFFFF;
+
+  // 文字色
+  --color-foreground: #0F172A;
+  --color-foreground-muted: #64748B;
+  --color-foreground-subtle: #94A3B8;
+  --color-foreground-inverse: #FFFFFF;
+
+  // 边框色
+  --color-border: #E2E8F0;
+  --color-border-light: #F1F5F9;
+  --color-border-dark: #CBD5E1;
+
+  // 中性灰系列
+  --gray-50: #F8FAFC;
+  --gray-100: #F1F5F9;
+  --gray-200: #E2E8F0;
+  --gray-300: #CBD5E1;
+  --gray-400: #94A3B8;
+  --gray-500: #64748B;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1E293B;
+  --gray-900: #0F172A;
+}
+
+// ==========================================
+// SCSS 变量（兼容现有代码）
+// ==========================================
+
+// 主题色系统
+$primary-color: #2563EB;
+$primary-light: #3B82F6;
+$primary-lighter: #DBEAFE;
+$primary-dark: #1D4ED8;
+
+// 辅助色
+$secondary-color: #3B82F6;
+
+// 语义色（增强版）
+$success-color: #059669;
+$success-light: #10B981;
+$success-lighter: #D1FAE5;
+$warning-color: #D97706;
+$warning-light: #F59E0B;
+$warning-lighter: #FEF3C7;
+$danger-color: #DC2626;
+$danger-light: #EF4444;
+$danger-lighter: #FEE2E2;
+$info-color: #6B7280;
+$info-light: #9CA3AF;
+$info-lighter: #F3F4F6;
+
+// 中性灰系列
+$gray-50: #F8FAFC;
+$gray-100: #F1F5F9;
+$gray-200: #E2E8F0;
+$gray-300: #CBD5E1;
+$gray-400: #94A3B8;
+$gray-500: #64748B;
+$gray-600: #475569;
+$gray-700: #334155;
+$gray-800: #1E293B;
+$gray-900: #0F172A;
+
+// 文字颜色
+$text-primary: #0F172A;
+$text-regular: #334155;
+$text-secondary: #64748B;
+$text-placeholder: #94A3B8;
+
+// 边框颜色
+$border-color: #E2E8F0;
+$border-color-light: #F1F5F9;
+$border-color-lighter: #F8FAFC;
+
+// 背景颜色
+$bg-color: #F8FAFC;
+$bg-white: #FFFFFF;
+
+// ==========================================
+// 间距系统
+// ==========================================
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-2xl: 48px;
+
+// ==========================================
+// 阴影系统
+// ==========================================
+$shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
+$shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.06);
+$shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+$shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.05);
+$shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+
+// 主题色阴影
+$shadow-primary: 0 4px 14px 0 rgba(37, 99, 235, 0.25);
+$shadow-primary-lg: 0 8px 24px 0 rgba(37, 99, 235, 0.3);
+
+// ==========================================
+// 圆角系统
+// ==========================================
+$radius-xs: 2px;
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 12px;
+$radius-xl: 16px;
+$radius-2xl: 20px;
+$radius-full: 9999px;
+
+// ==========================================
+// 过渡动画
+// ==========================================
+$transition-fast: 150ms;
+$transition-normal: 250ms;
+$transition-slow: 400ms;
+$ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+$ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+$ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+// ==========================================
+// 布局尺寸
+// ==========================================
+
+// 侧边栏（浅色方案）
+$sidebar-width: 240px;
+$sidebar-collapsed-width: 64px;
+$sidebar-bg: #FFFFFF;
+$sidebar-border: #E2E8F0;
+$sidebar-text: #64748B;
+$sidebar-text-hover: #0F172A;
+$sidebar-active-bg: #EFF6FF;
+$sidebar-active-text: #2563EB;
+$sidebar-hover-bg: #F1F5F9;
+
+// 导航栏
+$navbar-height: 60px;
+$navbar-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+$navbar-bg: #FFFFFF;
+$navbar-border: #E2E8F0;
+
+// ==========================================
+// Z-Index 层级系统
+// ==========================================
+$z-dropdown: 1000;
+$z-sticky: 1020;
+$z-fixed: 1030;
+$z-modal-backdrop: 1040;
+$z-modal: 1050;
+$z-popover: 1060;
+$z-tooltip: 1070;
+
+// ==========================================
+// 断点系统
+// ==========================================
+$breakpoint-xs: 480px;
+$breakpoint-sm: 640px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1280px;
+$breakpoint-2xl: 1536px;
