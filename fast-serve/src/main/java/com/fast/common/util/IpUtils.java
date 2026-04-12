@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 public final class IpUtils {
 
     private static final String UNKNOWN = "unknown";
+    private static final String IPV6_LOCALHOST = "0:0:0:0:0:0:0:1";
+    private static final String IPV4_LOCALHOST = "127.0.0.1";
 
     private IpUtils() {
         // 私有构造，禁止实例化
@@ -48,6 +50,11 @@ public final class IpUtils {
             return ip;
         }
 
-        return request.getRemoteAddr();
+        ip = request.getRemoteAddr();
+        // 将 IPv6 localhost 转换为 IPv4 格式，显示更友好
+        if (IPV6_LOCALHOST.equals(ip)) {
+            return IPV4_LOCALHOST;
+        }
+        return ip;
     }
 }
