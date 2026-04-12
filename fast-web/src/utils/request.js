@@ -40,9 +40,13 @@ service.interceptors.response.use(
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
+          // 清除 token 并刷新页面，避免多次弹窗
           removeToken()
-          router.push('/login')
+          location.reload()
+        }).catch(() => {
+          // 用户取消，不做处理
         })
+        return Promise.reject(new Error(res.msg || '请求失败'))
       }
       return Promise.reject(new Error(res.msg || '请求失败'))
     }

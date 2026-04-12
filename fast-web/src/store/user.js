@@ -70,6 +70,16 @@ export const useUserStore = defineStore('user', () => {
     router.push('/login')
   }
 
+  // 仅重置 token（不调用 logout API，用于 token 失效时快速清除）
+  function resetToken() {
+    token.value = ''
+    userInfo.value = ''
+    const permissionStore = usePermissionStore()
+    permissionStore.reset()
+    resetRouter()
+    removeToken()
+  }
+
   return {
     userInfo,
     token,
@@ -78,6 +88,7 @@ export const useUserStore = defineStore('user', () => {
     getRoutesAction,
     updateUserInfo,
     refreshUserInfo,
-    logoutAction
+    logoutAction,
+    resetToken
   }
 })
