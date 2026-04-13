@@ -21,7 +21,7 @@ public interface CacheService {
      * @param pageSize 每页数量
      * @return 缓存键名分页结果
      */
-    PageResult<CacheKeyVO> listCacheKeys(String prefix, Integer pageNum, Integer pageSize);
+    PageResult<CacheKeyVO> pageCacheKeys(String prefix, Integer pageNum, Integer pageSize);
 
     /**
      * 获取缓存详情

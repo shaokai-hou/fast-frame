@@ -31,7 +31,7 @@ public class CacheServiceImpl implements CacheService {
     private final RedisTemplate<String, Object> redisTemplate;
 
     @Override
-    public PageResult<CacheKeyVO> listCacheKeys(String prefix, Integer pageNum, Integer pageSize) {
+    public PageResult<CacheKeyVO> pageCacheKeys(String prefix, Integer pageNum, Integer pageSize) {
         List<CacheKeyVO> allKeys = new ArrayList<>();
 
         // 定义要扫描的缓存前缀
@@ -40,6 +40,7 @@ public class CacheServiceImpl implements CacheService {
             RedisKeyConstants.LOGIN_FAIL_PREFIX,
             RedisKeyConstants.LOGIN_LOCK_PREFIX,
             RedisKeyConstants.SA_TOKEN_PREFIX,
+            RedisKeyConstants.SA_TOKEN_SESSION_PREFIX,
             RedisKeyConstants.DICT_PREFIX,
             RedisKeyConstants.CONFIG_PREFIX
         };

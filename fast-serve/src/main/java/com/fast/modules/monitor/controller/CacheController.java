@@ -39,7 +39,7 @@ public class CacheController extends BaseController {
     public Result<PageResult<CacheKeyVO>> list(@RequestParam(required = false) String prefix,
                                                 @RequestParam(defaultValue = "1") Integer pageNum,
                                                 @RequestParam(defaultValue = "10") Integer pageSize) {
-        return success(cacheService.listCacheKeys(prefix, pageNum, pageSize));
+        return success(cacheService.pageCacheKeys(prefix, pageNum, pageSize));
     }
 
     /**

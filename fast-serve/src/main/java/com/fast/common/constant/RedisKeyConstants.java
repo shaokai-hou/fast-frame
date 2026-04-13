@@ -24,9 +24,15 @@ public class RedisKeyConstants {
 
     /**
      * Sa-Token登录Token缓存Key前缀
-     * Sa-Token 默认前缀格式为 satoken: (无中划线)
+     * Sa-Token v1.37.0 默认前缀格式为 sa-token: (带中划线)
      */
-    public static final String SA_TOKEN_PREFIX = "satoken:login:token:";
+    public static final String SA_TOKEN_PREFIX = "sa-token:login:token:";
+
+    /**
+     * Sa-Token用户Session缓存Key前缀
+     * 存储用户会话数据，key格式: sa-token:login:session:{loginId}
+     */
+    public static final String SA_TOKEN_SESSION_PREFIX = "sa-token:login:session:";
 
     /**
      * 字典数据缓存Key前缀
