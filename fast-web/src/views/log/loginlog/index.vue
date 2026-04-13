@@ -23,8 +23,8 @@
     <div class="content-card">
       <!-- 工具栏 -->
       <div class="tool-bar">
-        <el-button type="danger" plain :icon="Delete" @click="handleDelete" :disabled="multiple" v-hasPermi="['system:loginlog:delete']">删除</el-button>
-        <el-button type="danger" plain :icon="Delete" @click="handleClear" v-hasPermi="['system:loginlog:delete']">清空</el-button>
+        <el-button type="danger" plain :icon="Delete" @click="handleDelete" :disabled="multiple" v-hasPermi="['log:loginlog:delete']">删除</el-button>
+        <el-button type="danger" plain :icon="Delete" @click="handleClear" v-hasPermi="['log:loginlog:delete']">清空</el-button>
       </div>
 
       <!-- 数据表格 -->

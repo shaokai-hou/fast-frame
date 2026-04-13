@@ -33,8 +33,8 @@
     <div class="content-card">
       <!-- 工具栏 -->
       <div class="tool-bar">
-        <el-button type="danger" plain :icon="Delete" @click="handleDelete" :disabled="multiple" v-hasPermi="['system:operlog:delete']">删除</el-button>
-        <el-button type="danger" plain :icon="Delete" @click="handleClear" v-hasPermi="['system:operlog:delete']">清空</el-button>
+        <el-button type="danger" plain :icon="Delete" @click="handleDelete" :disabled="multiple" v-hasPermi="['log:operlog:delete']">删除</el-button>
+        <el-button type="danger" plain :icon="Delete" @click="handleClear" v-hasPermi="['log:operlog:delete']">清空</el-button>
       </div>
 
       <!-- 数据表格 -->
@@ -69,7 +69,7 @@
       <el-table-column label="操作时间" prop="operTime" width="180" />
       <el-table-column label="操作" align="center" width="100">
         <template #default="scope">
-          <el-button link type="primary" @click="handleView(scope.row)" v-hasPermi="['system:operlog:query']">详情</el-button>
+          <el-button link type="primary" @click="handleView(scope.row)" v-hasPermi="['log:operlog:query']">详情</el-button>
         </template>
       </el-table-column>
     </el-table>
