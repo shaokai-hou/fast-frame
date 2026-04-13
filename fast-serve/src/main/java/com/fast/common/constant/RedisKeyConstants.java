@@ -24,8 +24,9 @@ public class RedisKeyConstants {
 
     /**
      * Sa-Token登录Token缓存Key前缀
+     * Sa-Token 默认前缀格式为 satoken: (无中划线)
      */
-    public static final String SA_TOKEN_PREFIX = "sa-token:login:token:";
+    public static final String SA_TOKEN_PREFIX = "satoken:login:token:";
 
     /**
      * 字典数据缓存Key前缀
