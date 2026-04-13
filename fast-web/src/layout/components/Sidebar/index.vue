@@ -247,37 +247,4 @@ const routes = computed(() => {
     }
   }
 }
-
-// 深色模式
-html.dark .el-menu {
-  :deep(.el-menu-item),
-  :deep(.el-sub-menu__title) {
-    &:hover {
-      background-color: var(--gray-200) !important;
-    }
-  }
-
-  :deep(.el-menu-item.is-active) {
-    background: linear-gradient(90deg, var(--color-primary-light) 0%, transparent 100%) !important;
-
-    &::before {
-      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.5);
-    }
-  }
-
-  // 折叠状态深色模式
-  &.el-menu--collapse {
-    :deep(.el-menu-item),
-    :deep(.el-sub-menu__title) {
-      &:hover {
-        background: var(--gray-200) !important;
-      }
-    }
-
-    :deep(.el-menu-item.is-active),
-    :deep(.el-sub-menu.is-active > .el-sub-menu__title) {
-      background: var(--color-primary-light) !important;
-    }
-  }
-}
 </style>

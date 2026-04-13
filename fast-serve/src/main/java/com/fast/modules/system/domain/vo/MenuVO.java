@@ -61,6 +61,11 @@ public class MenuVO implements Serializable {
     private String icon;
 
     /**
+     * 外链地址(iframe页面使用)
+     */
+    private String link;
+
+    /**
      * 显示顺序
      */
     private Integer menuSort;

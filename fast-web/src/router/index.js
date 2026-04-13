@@ -40,12 +40,19 @@ function transformRoute(route, parentPath) {
 
   const item = {
     path: relativePath,
-    name: route.name,
+    // 使用路由名称作为 keep-alive 的缓存标识
+    name: route.name || route.menuName || route.component?.replace(/\//g, '-') || undefined,
     meta: {
       title: route.meta?.title || route.menuName,
       icon: route.meta?.icon || route.icon,
       // visible: '1' 表示隐藏，映射到 hidden: true
-      hidden: route.meta?.hidden || route.visible === '1'
+      hidden: route.meta?.hidden || route.visible === '1',
+      // noCache: true 表示不缓存页面
+      noCache: route.meta?.noCache === true || route.meta?.noCache === 'true',
+      // affix: true 表示固定在 TagsView
+      affix: route.meta?.affix === true || route.meta?.affix === 'true',
+      // link: iframe 页面外链地址
+      link: route.meta?.link || route.link
     }
   }
 
@@ -83,6 +90,18 @@ function loadComponent(component) {
  * 静态路由（不需要权限验证）
  */
 export const constantRoutes = [
+  {
+    path: '/redirect',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/redirect/:path(.*)',
+        component: () => import('@/views/redirect.vue'),
+        meta: { title: 'Redirect' }
+      }
+    ]
+  },
   {
     path: '/login',
     name: 'Login',

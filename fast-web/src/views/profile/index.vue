@@ -255,8 +255,8 @@ const handleAvatarChange = async (event) => {
     // uploadAvatar 直接接收 file 对象
     const res = await uploadAvatar(file)
     // 返回格式: { fileName: '2026/04/11/abc.jpg' }
-    // URL格式: /api/file/avatar/2026/04/11/abc.jpg
-    const avatarUrl = `/api/file/avatar/${res.data.fileName}`
+    // URL格式: /api/system/file/avatar/2026/04/11/abc.jpg
+    const avatarUrl = `/api/system/file/avatar/${res.data.fileName}`
     userStore.updateUserInfo({ avatar: avatarUrl })
     ElMessage.success('头像更新成功')
   } catch (e) {

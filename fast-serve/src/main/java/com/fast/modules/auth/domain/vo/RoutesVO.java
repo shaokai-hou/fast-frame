@@ -70,5 +70,10 @@ public class RoutesVO implements Serializable {
          * 是否隐藏
          */
         private Boolean hidden;
+
+        /**
+         * 外链地址(iframe页面使用)
+         */
+        private String link;
     }
 }

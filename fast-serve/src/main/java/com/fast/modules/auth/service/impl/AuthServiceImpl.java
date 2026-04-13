@@ -220,9 +220,9 @@ public class AuthServiceImpl implements AuthService {
         UserInfoVO vo = BeanUtil.copyProperties(user, UserInfoVO.class);
 
         // avatar 存储格式: 2026/04/11/abc.jpg
-        // 访问 URL: /api/file/avatar/2026/04/11/abc.jpg
+        // 访问 URL: /api/system/file/avatar/2026/04/11/abc.jpg
         if (StrUtil.isNotBlank(user.getAvatar())) {
-            vo.setAvatar("/api/file/avatar/" + user.getAvatar());
+            vo.setAvatar("/api/system/file/avatar/" + user.getAvatar());
         }
 
         // 获取角色列表
@@ -300,6 +300,7 @@ public class AuthServiceImpl implements AuthService {
                     meta.setTitle(menu.getMenuName());
                     meta.setIcon(menu.getIcon());
                     meta.setHidden("1".equals(menu.getVisible()));
+                    meta.setLink(menu.getLink());
                     item.setMeta(meta);
 
                     if (menu.getChildren() != null && !menu.getChildren().isEmpty()) {

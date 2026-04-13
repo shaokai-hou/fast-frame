@@ -4,7 +4,6 @@
 @use './variables.scss' as *;
 @use './mixins.scss' as *;
 @use './sidebar.scss';
-@use './dark.scss';
 @use './element.scss';
 @use './transition.scss';
 
@@ -111,11 +110,6 @@ ul, ol {
   margin-bottom: 16px;
   display: flex;
   gap: 8px;
-}
-
-// 数据表格
-.data-table {
-  width: 100%;
 }
 
 // ==========================================

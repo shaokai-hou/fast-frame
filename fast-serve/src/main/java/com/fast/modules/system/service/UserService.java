@@ -128,14 +128,12 @@ public interface UserService extends IService<User> {
      */
     void updateCurrentUserPassword(String oldPassword, String newPassword);
 
-
     /**
      * 删除用户
      *
      * @param ids 用户ID列表
      */
     void deleteUser(List<Long> ids);
-
 
     /**
      * 上传头像

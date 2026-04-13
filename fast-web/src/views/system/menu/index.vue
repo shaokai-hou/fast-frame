@@ -46,6 +46,7 @@
       <el-table-column label="排序" prop="menuSort" width="80" />
       <el-table-column label="权限标识" prop="perms" />
       <el-table-column label="组件路径" prop="component" />
+      <el-table-column label="外链地址" prop="link" />
       <el-table-column label="类型" align="center" width="80">
         <template #default="scope">
           <el-tag :type="getMenuTypeTag(scope.row.menuType)">
@@ -123,6 +124,13 @@
           <el-col :span="12">
             <el-form-item label="组件路径" prop="component">
               <el-input v-model="form.component" placeholder="请输入组件路径" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row v-if="form.menuType === 'M'">
+          <el-col :span="24">
+            <el-form-item label="外链地址" prop="link">
+              <el-input v-model="form.link" placeholder="如果是iframe页面，填写外链地址，如：/api/druid/index.html" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -360,6 +368,7 @@ const reset = () => {
     component: undefined,
     perms: undefined,
     icon: undefined,
+    link: undefined,
     menuSort: 0,
     visible: '0',
     status: '0'

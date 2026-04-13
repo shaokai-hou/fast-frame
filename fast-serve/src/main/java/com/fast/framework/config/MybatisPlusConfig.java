@@ -15,11 +15,7 @@ import org.springframework.context.annotation.Configuration;
  * @author fast-frame
  */
 @Configuration
-@MapperScan({
-    "com.fast.modules.log.mapper",
-    "com.fast.modules.system.mapper",
-    "com.fast.modules.file.mapper"
-})
+@MapperScan("com.fast.modules.*.mapper")
 public class MybatisPlusConfig {
 
     /**

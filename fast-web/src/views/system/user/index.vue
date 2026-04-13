@@ -33,7 +33,7 @@
       </div>
 
       <!-- 数据表格 -->
-      <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="data-table">
+      <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column type="index" label="序号" width="60" align="center" :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
         <el-table-column label="用户名" prop="username" min-width="100" />
@@ -470,10 +470,10 @@ const handleDownloadTemplate = async () => {
   }
 }
 
-// 使用 onMounted 确保只在组件挂载后调用一次
 onMounted(() => {
   getList()
 })
+
 </script>
 
 <style scoped lang="scss">
@@ -513,9 +513,6 @@ onMounted(() => {
   gap: 8px;
 }
 
-.data-table {
-  width: 100%;
-}
 
 .form-dialog {
   :deep(.el-dialog__body) {

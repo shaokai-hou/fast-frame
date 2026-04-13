@@ -12,9 +12,3 @@
     width: 64px;
   }
 }
-
-// 深色模式侧边栏容器
-html.dark .sidebar {
-  background: var(--color-surface);
-  border-right-color: var(--color-border);
-}

@@ -1,20 +1,19 @@
 package com.fast.modules.system.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.fast.common.enums.BusinessType;
 import com.fast.common.result.PageResult;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
-import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.fast.common.enums.BusinessType;
 import com.fast.framework.web.BaseController;
 import com.fast.modules.system.domain.entity.Config;
-import com.fast.modules.system.service.ConfigService;
 import com.fast.modules.system.domain.vo.ConfigVO;
+import com.fast.modules.system.service.ConfigService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * 参数配置Controller

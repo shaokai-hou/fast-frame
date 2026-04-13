@@ -14,30 +14,41 @@
     </div>
 
     <div class="right-menu">
-      <!-- 暗黑模式切换 -->
-      <ThemeSwitch />
-
       <!-- 全屏切换 -->
       <Screenfull />
+
+      <!-- 设置按钮 -->
+      <div class="settings-btn" @click="openSettings">
+        <el-icon :size="18"><Setting /></el-icon>
+      </div>
 
       <!-- 用户下拉菜单 -->
       <UserDropdown />
     </div>
+
+    <!-- 设置抽屉 -->
+    <Settings ref="settingsRef" />
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { useAppStore } from '@/store/app'
-import { Fold, Expand } from '@element-plus/icons-vue'
+import { Fold, Expand, Setting } from '@element-plus/icons-vue'
 import Breadcrumb from './Breadcrumb.vue'
-import ThemeSwitch from './ThemeSwitch.vue'
 import Screenfull from './Screenfull.vue'
 import UserDropdown from './UserDropdown.vue'
+import Settings from '../Settings/index.vue'
 
 const appStore = useAppStore()
+const settingsRef = ref(null)
 
 function toggleSidebar() {
   appStore.toggleSidebar()
+}
+
+function openSettings() {
+  settingsRef.value?.openSettings()
 }
 </script>
 
@@ -80,5 +91,22 @@ function toggleSidebar() {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.settings-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  color: var(--color-foreground-muted);
+  transition: all 0.2s ease;
+  border-radius: 10px;
+
+  &:hover {
+    color: var(--color-primary);
+    background: var(--color-primary-lighter);
+  }
 }
 </style>

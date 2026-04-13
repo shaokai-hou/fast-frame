@@ -31,27 +31,27 @@
       </div>
 
       <!-- 数据表格 -->
-    <el-table v-loading="loading" :data="configList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column type="index" label="序号" width="60" align="center" :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
-      <el-table-column label="参数名称" prop="configName" />
-      <el-table-column label="参数键名" prop="configKey" />
-      <el-table-column label="参数键值" prop="configValue" />
-      <el-table-column label="类型" prop="configType" width="100">
-        <template #default="scope">
-          <el-tag v-if="scope.row.configType === '0'" type="danger">系统内置</el-tag>
-          <el-tag v-else type="info">其他</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="备注" prop="remark" />
-      <el-table-column label="创建时间" prop="createTime" width="180" />
-      <el-table-column label="操作" align="center" width="200">
-        <template #default="scope">
-          <el-button link type="primary" @click="handleUpdate(scope.row)" v-hasPermi="['system:config:edit']">修改</el-button>
-          <el-button link type="danger" @click="handleDelete(scope.row)" v-hasPermi="['system:config:delete']" :disabled="scope.row.configType === '0'">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+      <el-table v-loading="loading" :data="configList" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" align="center" />
+        <el-table-column type="index" label="序号" width="60" align="center" :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
+        <el-table-column label="参数名称" prop="configName" min-width="100" />
+        <el-table-column label="参数键名" prop="configKey" min-width="100" />
+        <el-table-column label="参数键值" prop="configValue" min-width="120" />
+        <el-table-column label="类型" prop="configType" width="100">
+          <template #default="scope">
+            <el-tag v-if="scope.row.configType === '0'" type="danger">系统内置</el-tag>
+            <el-tag v-else type="info">其他</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="备注" prop="remark" min-width="100" />
+        <el-table-column label="创建时间" prop="createTime" width="180" />
+        <el-table-column label="操作" align="center" width="200" fixed="right">
+          <template #default="scope">
+            <el-button link type="primary" @click="handleUpdate(scope.row)" v-hasPermi="['system:config:edit']">修改</el-button>
+            <el-button link type="danger" @click="handleDelete(scope.row)" v-hasPermi="['system:config:delete']" :disabled="scope.row.configType === '0'">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
 
     <!-- 分页 -->
     <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
@@ -68,10 +68,6 @@
         </el-form-item>
         <el-form-item label="参数键值" prop="configValue">
           <el-input v-model="form.configValue" placeholder="请输入参数键值" />
-        </el-form-item>
-        <el-form-item label="参数类型" prop="configType" v-if="form.id">
-          <el-tag v-if="form.configType === '0'" type="danger">系统内置</el-tag>
-          <el-tag v-else type="info">其他</el-tag>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入备注" />

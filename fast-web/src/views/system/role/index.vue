@@ -31,7 +31,7 @@
       </div>
 
       <!-- 数据表格 -->
-      <el-table v-loading="loading" :data="roleList" @selection-change="handleSelectionChange" class="data-table">
+      <el-table v-loading="loading" :data="roleList" @selection-change="handleSelectionChange" >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column type="index" label="序号" width="60" align="center" :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
         <el-table-column label="角色名称" prop="roleName" min-width="120" />
@@ -332,7 +332,4 @@ onMounted(() => {
   gap: 8px;
 }
 
-.data-table {
-  width: 100%;
-}
 </style>

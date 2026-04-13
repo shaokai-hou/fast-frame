@@ -19,7 +19,7 @@ import java.util.List;
  * @author fast-frame
  */
 @RestController
-@RequestMapping("/system/online")
+@RequestMapping("/monitor/online")
 @RequiredArgsConstructor
 public class OnlineController extends BaseController {
 
@@ -33,7 +33,7 @@ public class OnlineController extends BaseController {
      * @param pageSize 每页数量
      * @return 在线用户分页结果
      */
-    @SaCheckPermission("system:online:list")
+    @SaCheckPermission("monitor:online:list")
     @GetMapping("/list")
     public Result<PageResult<OnlineUserVO>> list(
             @RequestParam(required = false) String username,
@@ -49,7 +49,7 @@ public class OnlineController extends BaseController {
      * @param tokenId Token ID
      * @return 成功结果
      */
-    @SaCheckPermission("system:online:forceLogout")
+    @SaCheckPermission("monitor:online:forceLogout")
     @Log(title = "在线用户", businessType = BusinessType.FORCE)
     @DeleteMapping("/{tokenId}")
     public Result<Void> forceLogout(@PathVariable String tokenId) {

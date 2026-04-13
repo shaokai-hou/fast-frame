@@ -5,7 +5,7 @@
       class="sidebar"
       :class="{ collapsed: appStore.sidebarCollapsed, 'is-collapsing': isCollapsing }"
     >
-      <Logo />
+      <Logo v-if="settingsStore.showLogo" />
       <Sidebar />
     </div>
 
@@ -14,13 +14,20 @@
       <!-- 顶部导航 -->
       <Navbar />
 
+      <!-- TagsView 标签页导航 -->
+      <TagsView v-if="settingsStore.showTagsView" />
+
       <!-- 内容区 -->
       <div class="app-main">
-        <router-view v-slot="{ Component }">
-          <transition name="slide-fade" mode="out-in">
-            <component :is="Component" />
+        <router-view v-slot="{ Component, route }">
+          <transition v-if="!route.meta?.link" name="slide-fade" mode="out-in">
+            <keep-alive :include="appStore.cachedPages">
+              <component :is="Component" :key="route.fullPath" />
+            </keep-alive>
           </transition>
         </router-view>
+        <!-- iframe 页面 -->
+        <IframeToggle />
       </div>
     </div>
   </div>
@@ -28,12 +35,18 @@
 
 <script setup>
 import { onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { useAppStore } from '@/store/app'
+import { useSettingsStore } from '@/store/settings'
 import Logo from './components/Sidebar/Logo.vue'
 import Sidebar from './components/Sidebar/index.vue'
 import Navbar from './components/Navbar/index.vue'
+import TagsView from './components/TagsView/index.vue'
+import IframeToggle from './components/IframeToggle/index.vue'
 
 const appStore = useAppStore()
+const settingsStore = useSettingsStore()
+const route = useRoute()
 const isCollapsing = ref(false)
 
 // 监听收缩状态变化，在动画期间添加标记 class
@@ -48,8 +61,19 @@ watch(
   }
 )
 
+// 监听路由变化，添加 iframe 视图
+watch(
+  route,
+  (newRoute) => {
+    if (newRoute.meta?.link) {
+      appStore.addIframeView(newRoute)
+    }
+  }
+)
+
 onMounted(() => {
-  appStore.initDarkMode()
+  // 初始化设置
+  settingsStore.initSettings()
 })
 </script>
 
