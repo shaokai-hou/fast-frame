@@ -6,9 +6,10 @@
         <el-form-item label="缓存前缀" prop="prefix">
           <el-select v-model="queryParams.prefix" placeholder="全部" clearable style="width: 200px">
             <el-option label="验证码" value="captcha_codes" />
-            <el-option label="登录失败" value="login:fail" />
+            <el-option label="登录失败次数" value="login:fail" />
             <el-option label="登录锁定" value="login:lock" />
-            <el-option label="Sa-Token" value="sa-token:login:token" />
+            <el-option label="Sa-Token Token" value="sa-token:login:token" />
+            <el-option label="Sa-Token Session" value="sa-token:login:session" />
             <el-option label="字典数据" value="sys:dict" />
             <el-option label="系统配置" value="sys:config" />
           </el-select>
