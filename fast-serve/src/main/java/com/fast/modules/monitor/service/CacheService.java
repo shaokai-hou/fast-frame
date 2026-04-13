@@ -3,6 +3,7 @@ package com.fast.modules.monitor.service;
 import com.fast.common.result.PageResult;
 import com.fast.modules.monitor.domain.vo.CacheInfoVO;
 import com.fast.modules.monitor.domain.vo.CacheKeyVO;
+import com.fast.modules.monitor.domain.vo.CachePrefixVO;
 
 import java.util.List;
 
@@ -12,6 +13,13 @@ import java.util.List;
  * @author fast-frame
  */
 public interface CacheService {
+
+    /**
+     * 获取所有缓存前缀列表
+     *
+     * @return 缓存前缀列表
+     */
+    List<CachePrefixVO> getCachePrefixes();
 
     /**
      * 分页查询缓存键名列表

@@ -3,6 +3,16 @@ import request from '@/utils/request'
 // 缓存管理 API
 
 /**
+ * 获取缓存前缀列表
+ */
+export function getCachePrefixes() {
+  return request({
+    url: '/monitor/cache/prefixes',
+    method: 'get'
+  })
+}
+
+/**
  * 分页查询缓存键名列表
  */
 export function listCacheKeys(params) {

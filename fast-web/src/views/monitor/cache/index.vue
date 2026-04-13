@@ -5,13 +5,12 @@
       <el-form :model="queryParams" ref="queryFormRef" :inline="true">
         <el-form-item label="缓存前缀" prop="prefix">
           <el-select v-model="queryParams.prefix" placeholder="全部" clearable style="width: 200px">
-            <el-option label="验证码" value="captcha_codes" />
-            <el-option label="登录失败次数" value="login:fail" />
-            <el-option label="登录锁定" value="login:lock" />
-            <el-option label="Sa-Token Token" value="sa-token:login:token" />
-            <el-option label="Sa-Token Session" value="sa-token:login:session" />
-            <el-option label="字典数据" value="sys:dict" />
-            <el-option label="系统配置" value="sys:config" />
+            <el-option
+              v-for="item in prefixOptions"
+              :key="item.value"
+              :label="item.name"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -81,7 +80,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh, Delete } from '@element-plus/icons-vue'
-import { listCacheKeys, getCacheInfo, deleteCache, clearCache } from '@/api/monitor/cache'
+import { listCacheKeys, getCacheInfo, deleteCache, clearCache, getCachePrefixes } from '@/api/monitor/cache'
 
 // 数据
 const loading = ref(false)
@@ -89,6 +88,7 @@ const total = ref(0)
 const cacheList = ref([])
 const viewOpen = ref(false)
 const cacheInfo = ref({})
+const prefixOptions = ref([])
 
 // 查询参数
 const queryParams = reactive({
@@ -96,6 +96,16 @@ const queryParams = reactive({
   pageSize: 10,
   prefix: undefined
 })
+
+// 加载前缀列表
+const loadPrefixes = async () => {
+  try {
+    const res = await getCachePrefixes()
+    prefixOptions.value = res.data || []
+  } catch (e) {
+    // 加载失败不影响主流程
+  }
+}
 
 // 获取列表
 const getList = async () => {
@@ -164,6 +174,7 @@ const formatTtl = (ttl) => {
 }
 
 onMounted(() => {
+  loadPrefixes()
   getList()
 })
 </script>

@@ -8,6 +8,7 @@ import com.fast.common.enums.BusinessType;
 import com.fast.framework.web.BaseController;
 import com.fast.modules.monitor.domain.vo.CacheInfoVO;
 import com.fast.modules.monitor.domain.vo.CacheKeyVO;
+import com.fast.modules.monitor.domain.vo.CachePrefixVO;
 import com.fast.modules.monitor.service.CacheService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,17 @@ import java.util.List;
 public class CacheController extends BaseController {
 
     private final CacheService cacheService;
+
+    /**
+     * 获取缓存前缀列表
+     *
+     * @return 缓存前缀列表
+     */
+    @SaCheckPermission("monitor:cache:list")
+    @GetMapping("/prefixes")
+    public Result<List<CachePrefixVO>> getPrefixes() {
+        return success(cacheService.getCachePrefixes());
+    }
 
     /**
      * 分页查询缓存键名列表
