@@ -5,6 +5,7 @@ import com.fast.common.result.PageResult;
 import com.fast.modules.monitor.domain.vo.CacheInfoVO;
 import com.fast.modules.monitor.domain.vo.CacheKeyVO;
 import com.fast.modules.monitor.service.CacheService;
+import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.Cursor;
@@ -12,6 +13,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -30,23 +32,41 @@ public class CacheServiceImpl implements CacheService {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
+    /**
+     * 缓存前缀列表（从常量类反射获取）
+     */
+    private List<String> cachePrefixes;
+
+    /**
+     * 启动时通过反射获取 RedisKeyConstants 中所有 PREFIX 常量
+     */
+    @PostConstruct
+    public void initPrefixes() {
+        cachePrefixes = new ArrayList<>();
+        Field[] fields = RedisKeyConstants.class.getDeclaredFields();
+        for (Field field : fields) {
+            // 只获取以 _PREFIX 结尾的 public static final String 常量
+            if (field.getName().endsWith("_PREFIX")
+                && field.getType() == String.class
+                && java.lang.reflect.Modifier.isStatic(field.getModifiers())
+                && java.lang.reflect.Modifier.isFinal(field.getModifiers())) {
+                try {
+                    String prefix = (String) field.get(null);
+                    cachePrefixes.add(prefix);
+                } catch (IllegalAccessException e) {
+                    log.warn("[CacheService] 无法访问常量字段: {}", field.getName());
+                }
+            }
+        }
+        log.info("[CacheService] 已加载 {} 个缓存前缀: {}", cachePrefixes.size(), cachePrefixes);
+    }
+
     @Override
     public PageResult<CacheKeyVO> pageCacheKeys(String prefix, Integer pageNum, Integer pageSize) {
         List<CacheKeyVO> allKeys = new ArrayList<>();
 
-        // 定义要扫描的缓存前缀
-        String[] prefixes = {
-            RedisKeyConstants.CAPTCHA_CODE_PREFIX,
-            RedisKeyConstants.LOGIN_FAIL_PREFIX,
-            RedisKeyConstants.LOGIN_LOCK_PREFIX,
-            RedisKeyConstants.SA_TOKEN_PREFIX,
-            RedisKeyConstants.SA_TOKEN_SESSION_PREFIX,
-            RedisKeyConstants.DICT_PREFIX,
-            RedisKeyConstants.CONFIG_PREFIX
-        };
-
-        // 如果指定了前缀过滤，只扫描匹配的前缀
-        for (String p : prefixes) {
+        // 遍历从常量类反射获取的缓存前缀
+        for (String p : cachePrefixes) {
             // 如果指定了 prefix 参数，只扫描匹配的前缀
             if (prefix != null && !prefix.isEmpty()) {
                 String prefixBase = p.substring(0, p.length() - 1);
@@ -121,16 +141,12 @@ public class CacheServiceImpl implements CacheService {
 
     @Override
     public void clearAllCache() {
-        // 清空业务缓存，保留 sa-token 相关
-        String[] businessPrefixes = {
-            RedisKeyConstants.CAPTCHA_CODE_PREFIX,
-            RedisKeyConstants.LOGIN_FAIL_PREFIX,
-            RedisKeyConstants.LOGIN_LOCK_PREFIX,
-            RedisKeyConstants.DICT_PREFIX,
-            RedisKeyConstants.CONFIG_PREFIX
-        };
-
-        for (String prefix : businessPrefixes) {
+        // 清空业务缓存，排除 sa-token 相关（保留登录状态）
+        for (String prefix : cachePrefixes) {
+            // 排除 Sa-Token 相关前缀，避免清空登录会话
+            if (prefix.contains("sa-token")) {
+                continue;
+            }
             Set<String> keys = scanKeys(prefix);
             if (!keys.isEmpty()) {
                 redisTemplate.delete(keys);
