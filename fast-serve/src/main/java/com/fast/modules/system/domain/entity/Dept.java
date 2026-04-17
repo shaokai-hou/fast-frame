@@ -16,12 +16,6 @@ import lombok.EqualsAndHashCode;
 public class Dept extends BaseEntity {
 
     /**
-     * 部门ID
-     */
-    @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
-
-    /**
      * 父部门ID
      */
     private Long parentId;

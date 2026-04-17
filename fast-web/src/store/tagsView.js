@@ -41,6 +41,18 @@ export const useTagsViewStore = defineStore('tagsView', () => {
         visitedRoutes.value[index].fullPath = route.fullPath || route.path
       }
     }
+    // 确保首页始终在第一位
+    sortRoutes()
+  }
+
+  // 确保首页始终在第一位
+  function sortRoutes() {
+    const homeIndex = visitedRoutes.value.findIndex(r => r.path === HOME_PATH)
+    if (homeIndex > 0) {
+      // 首页不在第一位，将其移到第一位
+      const homeRoute = visitedRoutes.value.splice(homeIndex, 1)[0]
+      visitedRoutes.value.unshift(homeRoute)
+    }
   }
 
   // 移除已访问路由（首页不可移除）
@@ -62,6 +74,8 @@ export const useTagsViewStore = defineStore('tagsView', () => {
   // 关闭其他路由（保留当前和首页）
   function closeOtherRoutes(route) {
     visitedRoutes.value = visitedRoutes.value.filter(r => r.path === route.path || r.path === HOME_PATH)
+    // 确保首页在第一位
+    sortRoutes()
     // 缓存只保留当前和首页
     cachedRoutes.value = cachedRoutes.value.filter(name => name === route.name || name === 'Home')
   }
@@ -72,6 +86,8 @@ export const useTagsViewStore = defineStore('tagsView', () => {
     if (index > -1) {
       const leftRoutes = visitedRoutes.value.slice(0, index)
       visitedRoutes.value = visitedRoutes.value.filter(r => r.path === HOME_PATH || !leftRoutes.some(lr => lr.path === r.path))
+      // 确保首页在第一位
+      sortRoutes()
       // 移除左侧缓存（首页除外）
       leftRoutes.forEach(lr => {
         if (lr.name && lr.path !== HOME_PATH) {
@@ -87,6 +103,8 @@ export const useTagsViewStore = defineStore('tagsView', () => {
     if (index > -1) {
       const rightRoutes = visitedRoutes.value.slice(index + 1)
       visitedRoutes.value = visitedRoutes.value.filter(r => r.path === HOME_PATH || !rightRoutes.some(rr => rr.path === r.path))
+      // 确保首页在第一位
+      sortRoutes()
       // 移除右侧缓存（首页除外）
       rightRoutes.forEach(rr => {
         if (rr.name && rr.path !== HOME_PATH) {
@@ -99,6 +117,8 @@ export const useTagsViewStore = defineStore('tagsView', () => {
   // 关闭所有路由（只保留首页）
   function closeAllRoutes() {
     visitedRoutes.value = visitedRoutes.value.filter(r => r.path === HOME_PATH)
+    // 确保首页在第一位
+    sortRoutes()
     cachedRoutes.value = cachedRoutes.value.filter(name => name === 'Home')
   }
 

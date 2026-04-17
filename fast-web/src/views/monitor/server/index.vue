@@ -93,7 +93,7 @@
     <!-- 磁盘信息 -->
     <div class="content-card" style="margin-top: 16px">
       <div class="card-title">磁盘信息</div>
-      <el-table v-loading="loading" :data="server.sysFiles">
+      <el-table v-loading="loading" :data="server.sysFiles" row-key="dirName">
         <el-table-column type="index" label="序号" width="60" align="center" />
         <el-table-column label="磁盘名称" prop="dirName" show-overflow-tooltip />
         <el-table-column label="磁盘类型" prop="sysTypeName" width="120" />

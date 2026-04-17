@@ -87,7 +87,7 @@ const routes = computed(() => {
       width: 4px;
       background: var(--color-primary);
       border-radius: 0 4px 4px 0;
-      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
     }
 
     .el-icon {

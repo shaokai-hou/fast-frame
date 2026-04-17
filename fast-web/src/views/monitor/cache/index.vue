@@ -29,7 +29,7 @@
       </div>
 
       <!-- 数据表格 -->
-      <el-table v-loading="loading" :data="cacheList">
+      <el-table v-loading="loading" :data="cacheList" row-key="key">
         <el-table-column type="index" label="序号" width="60" align="center" :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
         <el-table-column label="缓存键名" prop="key" show-overflow-tooltip />
         <el-table-column label="缓存前缀" prop="prefix" width="150">

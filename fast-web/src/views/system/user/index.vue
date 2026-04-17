@@ -27,38 +27,62 @@
       <!-- 工具栏 -->
       <div class="tool-bar">
         <el-button type="primary" plain :icon="Plus" @click="handleAdd" v-hasPermi="['system:user:add']">新增</el-button>
-        <el-button type="danger" plain :icon="Delete" @click="handleDelete" :disabled="multiple" v-hasPermi="['system:user:delete']">删除</el-button>
-        <el-button type="success" plain :icon="Download" @click="handleExport" v-hasPermi="['system:user:export']">导出</el-button>
-        <el-button type="warning" plain :icon="Upload" @click="handleImport" v-hasPermi="['system:user:import']">导入</el-button>
+        <el-button type="danger" plain :icon="Delete" @click="handleDelete" :disabled="multiple"
+          v-hasPermi="['system:user:delete']">删除</el-button>
+        <el-button type="success" plain :icon="Download" @click="handleExport"
+          v-hasPermi="['system:user:export']">导出</el-button>
+        <el-button type="warning" plain :icon="Upload" @click="handleImport"
+          v-hasPermi="['system:user:import']">导入</el-button>
       </div>
 
       <!-- 数据表格 -->
-      <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" >
-        <el-table-column type="selection" width="55" align="center" />
-        <el-table-column type="index" label="序号" width="60" align="center" :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
-        <el-table-column label="用户名" prop="username" min-width="100" />
-        <el-table-column label="昵称" prop="nickname" min-width="100" />
-        <el-table-column label="部门" prop="deptName" min-width="100" />
+      <el-table v-loading="loading" :data="userList" row-key="id" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" align="center" :selectable="row => row.id !== '1'" />
+        <el-table-column type="index" label="序号" width="60" align="center"
+          :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
+        <el-table-column label="用户名" prop="username" min-width="100">
+          <template #default="scope">
+            <span>{{ scope.row.username }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="昵称" prop="nickname" min-width="100" show-overflow-tooltip />
+        <el-table-column label="部门" prop="deptName" min-width="100" show-overflow-tooltip />
+        <el-table-column label="角色" min-width="120">
+          <template #default="scope">
+            <template v-if="scope.row.roles && scope.row.roles.length > 0">
+              <el-tag v-for="role in scope.row.roles" :key="role.id" size="small" style="margin-right: 4px">
+                {{ role.roleName }}
+              </el-tag>
+            </template>
+            <span v-else style="color: #909399">未分配</span>
+          </template>
+        </el-table-column>
         <el-table-column label="手机号" prop="phone" min-width="120" />
-        <el-table-column label="邮箱" prop="email" min-width="160" />
         <el-table-column label="状态" align="center" width="80">
           <template #default="scope">
-            <el-switch v-model="scope.row.status" active-value="0" inactive-value="1" @change="handleStatusChange(scope.row)" />
+            <el-switch v-if="scope.row.id !== '1'" v-model="scope.row.status" active-value="0" inactive-value="1"
+              @change="handleStatusChange(scope.row)" />
+            <el-tag v-else type="success" size="small">正常</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="创建时间" prop="createTime" width="180" />
         <el-table-column label="操作" align="center" width="280" fixed="right">
           <template #default="scope">
-            <el-button link type="primary" @click="handleUpdate(scope.row)" v-hasPermi="['system:user:edit']">修改</el-button>
-            <el-button link type="warning" @click="handleResetPwd(scope.row)" v-hasPermi="['system:user:resetPwd']">重置密码</el-button>
-            <el-button link type="danger" @click="handleDelete(scope.row)" v-hasPermi="['system:user:delete']">删除</el-button>
-            <el-button link type="info" @click="handleUnlock(scope.row)" v-if="scope.row.locked" v-hasPermi="['system:user:edit']">解锁</el-button>
+            <el-button link type="primary" @click="handleUpdate(scope.row)" :disabled="scope.row.id === '1'"
+              v-hasPermi="['system:user:edit']">修改</el-button>
+            <el-button link type="warning" @click="handleResetPwd(scope.row)" :disabled="scope.row.id === '1'"
+              v-hasPermi="['system:user:resetPwd']">重置密码</el-button>
+            <el-button link type="danger" @click="handleDelete(scope.row)" :disabled="scope.row.id === '1'"
+              v-hasPermi="['system:user:delete']">删除</el-button>
+            <el-button link type="info" @click="handleUnlock(scope.row)" v-if="scope.row.locked"
+              v-hasPermi="['system:user:edit']">解锁</el-button>
           </template>
         </el-table-column>
       </el-table>
 
       <!-- 分页 -->
-      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
+      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize" @pagination="getList" />
     </div>
 
     <!-- 新增/修改对话框 -->
@@ -100,15 +124,9 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="部门" prop="deptId">
-              <tree-select
-                v-model="form.deptId"
-                :data="deptOptions"
-                :field-props="{ value: 'id', label: 'label', children: 'children' }"
-                value-key="id"
-                placeholder="请选择部门"
-                check-strictly
-                style="width: 100%"
-              />
+              <tree-select v-model="form.deptId" :data="deptOptions"
+                :field-props="{ value: 'id', label: 'label', children: 'children' }" value-key="id" placeholder="请选择部门"
+                check-strictly style="width: 100%" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -148,18 +166,9 @@
 
     <!-- 导入对话框 -->
     <el-dialog title="导入用户" v-model="importOpen" width="480px" append-to-body>
-      <el-upload
-        ref="uploadRef"
-        :http-request="customUpload"
-        :before-upload="beforeUpload"
-        :auto-upload="false"
-        accept=".xlsx"
-        :limit="1"
-        :file-list="fileList"
-        :on-change="handleFileChange"
-        :on-remove="handleFileRemove"
-        drag
-      >
+      <el-upload ref="uploadRef" :http-request="customUpload" :before-upload="beforeUpload" :auto-upload="false"
+        accept=".xlsx" :limit="1" :file-list="fileList" :on-change="handleFileChange" :on-remove="handleFileRemove"
+        drag>
         <el-icon class="el-icon--upload"><upload-filled /></el-icon>
         <div class="el-upload__text">
           将文件拖到此处，或 <em>点击上传</em>
@@ -173,7 +182,8 @@
       </el-upload>
       <template #footer>
         <el-button @click="importOpen = false">取消</el-button>
-        <el-button type="primary" @click="submitUpload" :loading="importLoading" :disabled="fileList.length === 0">开始导入</el-button>
+        <el-button type="primary" @click="submitUpload" :loading="importLoading"
+          :disabled="fileList.length === 0">开始导入</el-button>
       </template>
     </el-dialog>
 
@@ -184,7 +194,8 @@
           <span class="stat-item success">成功 <strong>{{ resultData.successCount }}</strong> 条</span>
           <span class="stat-item error">失败 <strong>{{ resultData.errorCount }}</strong> 条</span>
         </div>
-        <el-table v-if="resultData.errorCount > 0" :data="parsedErrors" max-height="260" style="width: 100%; margin-top: 12px" border size="small">
+        <el-table v-if="resultData.errorCount > 0" :data="parsedErrors" row-key="row" max-height="260"
+          style="width: 100%; margin-top: 12px" border size="small">
           <el-table-column prop="row" label="行号" width="70" align="center" />
           <el-table-column prop="message" label="错误原因" show-overflow-tooltip />
         </el-table>
@@ -481,24 +492,6 @@ onMounted(() => {
   min-height: 100%;
 }
 
-.search-bar {
-  background: var(--color-surface);
-  padding: 20px 24px;
-  border-radius: 12px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-  border: 1px solid var(--color-border-light);
-
-  :deep(.el-form-item) {
-    margin-bottom: 0;
-  }
-
-  :deep(.el-input),
-  :deep(.el-select) {
-    width: 200px;
-  }
-}
-
 .content-card {
   background: var(--color-surface);
   border-radius: 12px;
@@ -536,6 +529,7 @@ onMounted(() => {
       &.success strong {
         color: #67c23a;
       }
+
       &.error strong {
         color: #e6a23c;
       }

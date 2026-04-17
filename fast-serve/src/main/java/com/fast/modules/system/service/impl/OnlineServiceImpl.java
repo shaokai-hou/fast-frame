@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -115,7 +116,7 @@ public class OnlineServiceImpl implements OnlineService {
      * @return 匹配的 key 集合
      */
     private Set<String> scanKeys(String pattern) {
-        Set<String> keys = new java.util.HashSet<>();
+        Set<String> keys = new HashSet<>();
         try {
             org.springframework.data.redis.core.Cursor<String> cursor = redisTemplate.scan(
                     org.springframework.data.redis.core.ScanOptions.scanOptions()

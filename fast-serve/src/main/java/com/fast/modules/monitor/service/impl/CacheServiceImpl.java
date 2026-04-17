@@ -64,7 +64,6 @@ public class CacheServiceImpl implements CacheService {
                 }
             }
         }
-        log.info("[CacheService] 已加载 {} 个缓存前缀", cachePrefixes.size());
     }
 
     @Override

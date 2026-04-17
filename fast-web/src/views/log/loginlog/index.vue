@@ -28,7 +28,7 @@
       </div>
 
       <!-- 数据表格 -->
-    <el-table v-loading="loading" :data="logList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="logList" row-key="id" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column type="index" label="序号" width="60" align="center" :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
       <el-table-column label="访问ID" prop="id" width="200" />
@@ -131,24 +131,6 @@ onMounted(() => {
 <style scoped lang="scss">
 .page-container {
   min-height: 100%;
-}
-
-.search-bar {
-  background: var(--color-surface);
-  padding: 20px 24px;
-  border-radius: 12px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-  border: 1px solid var(--color-border-light);
-
-  :deep(.el-form-item) {
-    margin-bottom: 0;
-  }
-
-  :deep(.el-input),
-  :deep(.el-select) {
-    width: 200px;
-  }
 }
 
 .content-card {

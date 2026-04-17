@@ -29,7 +29,7 @@
       </div>
 
       <!-- 数据表格 -->
-      <el-table v-loading="loading" :data="fileList">
+      <el-table v-loading="loading" :data="fileList" row-key="id">
         <el-table-column type="index" label="序号" width="60" align="center" />
         <el-table-column label="文件名" prop="originalFilename" min-width="200">
           <template #default="scope">
@@ -239,24 +239,6 @@ onMounted(() => {
 <style scoped lang="scss">
 .page-container {
   min-height: 100%;
-}
-
-.search-bar {
-  background: var(--color-surface);
-  padding: 20px 24px;
-  border-radius: 12px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-  border: 1px solid var(--color-border-light);
-
-  :deep(.el-form-item) {
-    margin-bottom: 0;
-  }
-
-  :deep(.el-input),
-  :deep(.el-select) {
-    width: 200px;
-  }
 }
 
 .content-card {

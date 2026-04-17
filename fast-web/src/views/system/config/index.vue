@@ -10,7 +10,7 @@
           <el-input v-model="queryParams.configKey" placeholder="请输入参数键名" clearable @keyup.enter="handleQuery" />
         </el-form-item>
         <el-form-item label="参数类型" prop="configType">
-          <el-select v-model="queryParams.configType" placeholder="全部" clearable style="width: 120px">
+          <el-select v-model="queryParams.configType" placeholder="全部" clearable>
             <el-option label="系统内置" value="0" />
             <el-option label="其他" value="1" />
           </el-select>
@@ -31,19 +31,19 @@
       </div>
 
       <!-- 数据表格 -->
-      <el-table v-loading="loading" :data="configList" @selection-change="handleSelectionChange">
+      <el-table v-loading="loading" :data="configList" row-key="id" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column type="index" label="序号" width="60" align="center" :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
-        <el-table-column label="参数名称" prop="configName" min-width="100" />
-        <el-table-column label="参数键名" prop="configKey" min-width="100" />
-        <el-table-column label="参数键值" prop="configValue" min-width="120" />
+        <el-table-column label="参数名称" prop="configName" min-width="100" show-overflow-tooltip />
+        <el-table-column label="参数键名" prop="configKey" min-width="100" show-overflow-tooltip />
+        <el-table-column label="参数键值" prop="configValue" min-width="120" show-overflow-tooltip />
         <el-table-column label="类型" prop="configType" width="100">
           <template #default="scope">
             <el-tag v-if="scope.row.configType === '0'" type="danger">系统内置</el-tag>
             <el-tag v-else type="info">其他</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="备注" prop="remark" min-width="100" />
+        <el-table-column label="备注" prop="remark" min-width="100" show-overflow-tooltip />
         <el-table-column label="创建时间" prop="createTime" width="180" />
         <el-table-column label="操作" align="center" width="200" fixed="right">
           <template #default="scope">
@@ -221,24 +221,6 @@ onMounted(() => {
 <style scoped lang="scss">
 .page-container {
   min-height: 100%;
-}
-
-.search-bar {
-  background: var(--color-surface);
-  padding: 20px 24px;
-  border-radius: 12px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-  border: 1px solid var(--color-border-light);
-
-  :deep(.el-form-item) {
-    margin-bottom: 0;
-  }
-
-  :deep(.el-input),
-  :deep(.el-select) {
-    width: 200px;
-  }
 }
 
 .content-card {

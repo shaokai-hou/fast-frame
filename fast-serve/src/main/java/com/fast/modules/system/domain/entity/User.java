@@ -16,12 +16,6 @@ import lombok.EqualsAndHashCode;
 public class User extends BaseEntity {
 
     /**
-     * 用户ID
-     */
-    @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
-
-    /**
      * 部门ID
      */
     private Long deptId;

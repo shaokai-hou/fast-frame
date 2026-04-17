@@ -31,11 +31,11 @@
       </div>
 
       <!-- 数据表格 -->
-      <el-table v-loading="loading" :data="roleList" @selection-change="handleSelectionChange" >
-        <el-table-column type="selection" width="55" align="center" />
+      <el-table v-loading="loading" :data="roleList" row-key="id" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" align="center" :selectable="row => row.id !== '1'" />
         <el-table-column type="index" label="序号" width="60" align="center" :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
         <el-table-column label="角色名称" prop="roleName" min-width="120" />
-        <el-table-column label="权限字符" prop="roleKey" min-width="120" />
+        <el-table-column label="权限字符" prop="roleKey" min-width="120" show-overflow-tooltip />
         <el-table-column label="数据权限" align="center" width="120">
           <template #default="scope">
             <el-tag effect="plain">
@@ -54,8 +54,8 @@
         <el-table-column label="创建时间" prop="createTime" width="180" />
         <el-table-column label="操作" align="center" width="150" fixed="right">
           <template #default="scope">
-            <el-button link type="primary" @click="handleUpdate(scope.row)" v-hasPermi="['system:role:edit']">修改</el-button>
-            <el-button link type="danger" @click="handleDelete(scope.row)" v-hasPermi="['system:role:delete']">删除</el-button>
+            <el-button link type="primary" @click="handleUpdate(scope.row)" :disabled="scope.row.id === '1'" v-hasPermi="['system:role:edit']">修改</el-button>
+            <el-button link type="danger" @click="handleDelete(scope.row)" :disabled="scope.row.id === '1'" v-hasPermi="['system:role:delete']">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -298,24 +298,6 @@ onMounted(() => {
 <style scoped lang="scss">
 .page-container {
   min-height: 100%;
-}
-
-.search-bar {
-  background: var(--color-surface);
-  padding: 20px 24px;
-  border-radius: 12px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-  border: 1px solid var(--color-border-light);
-
-  :deep(.el-form-item) {
-    margin-bottom: 0;
-  }
-
-  :deep(.el-input),
-  :deep(.el-select) {
-    width: 200px;
-  }
 }
 
 .content-card {

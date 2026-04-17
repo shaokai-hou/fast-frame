@@ -5,14 +5,17 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fast.common.exception.BusinessException;
 import com.fast.modules.system.domain.entity.Menu;
+import com.fast.modules.system.domain.entity.User;
 import com.fast.modules.system.mapper.MenuMapper;
 import com.fast.modules.system.service.MenuService;
+import com.fast.modules.system.service.UserService;
 import com.fast.modules.system.domain.vo.MenuTreeVO;
 import com.fast.modules.system.domain.vo.MenuVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -22,6 +25,25 @@ import java.util.List;
  */
 @Service
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements MenuService {
+
+    private final UserService userService;
+
+    private static final String ADMIN_USERNAME = "admin";
+
+    public MenuServiceImpl(UserService userService) {
+        this.userService = userService;
+    }
+
+    /**
+     * 判断用户是否为超级管理员
+     *
+     * @param userId 用户ID
+     * @return 是否为超级管理员
+     */
+    private boolean isAdmin(Long userId) {
+        User user = userService.getById(userId);
+        return user != null && ADMIN_USERNAME.equals(user.getUsername());
+    }
 
 
     /**
@@ -46,6 +68,10 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
      */
     @Override
     public List<MenuVO> listMenusByUserId(Long userId) {
+        // admin 用户直接返回所有菜单
+        if (isAdmin(userId)) {
+            return listMenuTree();
+        }
         List<Menu> menus = baseMapper.selectMenusByUserId(userId);
         return buildMenuTree(menus, 0L);
     }
@@ -82,6 +108,10 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
      */
     @Override
     public List<String> listPermissionsByUserId(Long userId) {
+        // admin 用户直接返回超级权限
+        if (isAdmin(userId)) {
+            return Collections.singletonList("*:*:*");
+        }
         return baseMapper.selectPermissionsByUserId(userId);
     }
 

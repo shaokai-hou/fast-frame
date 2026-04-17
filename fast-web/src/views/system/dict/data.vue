@@ -37,11 +37,11 @@
       </div>
 
       <!-- 数据表格 -->
-      <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
+      <el-table v-loading="loading" :data="dataList" row-key="id" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column type="index" label="序号" width="60" align="center" :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
-        <el-table-column label="字典标签" prop="dictLabel" />
-        <el-table-column label="字典键值" prop="dictValue" />
+        <el-table-column label="字典标签" prop="dictLabel" show-overflow-tooltip />
+        <el-table-column label="字典键值" prop="dictValue" show-overflow-tooltip />
         <el-table-column label="排序" prop="dictSort" width="80" align="center" />
         <el-table-column label="状态" align="center" width="80">
           <template #default="scope">

@@ -3,8 +3,6 @@ package com.fast.modules.job.domain.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -22,16 +20,14 @@ public class JobLog implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 日志ID
+     * 日志ID（雪花ID）
      */
     @TableId(type = IdType.ASSIGN_ID)
-    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**
      * 任务ID
      */
-    @JsonSerialize(using = ToStringSerializer.class)
     private Long jobId;
 
     /**

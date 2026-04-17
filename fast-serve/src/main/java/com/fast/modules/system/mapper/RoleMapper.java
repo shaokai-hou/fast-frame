@@ -37,7 +37,7 @@ public interface RoleMapper extends BaseMapper<Role> {
      * 批量插入角色部门关联
      *
      * @param roleId  角色ID
-     * @param deptIds 门ID列表
+     * @param deptIds 部门ID列表
      */
     void insertRoleDept(@Param("roleId") Long roleId, @Param("deptIds") List<Long> deptIds);
 

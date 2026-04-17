@@ -66,14 +66,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @DataScope
     public PageResult<UserVO> pageUsers(UserDTO dto) {
         Page<UserVO> page = new Page<>(dto.getPageNum(), dto.getPageSize());
-        IPage<UserVO> result = baseMapper.selectUserPage(
-                page,
-                dto.getDeptId(),
-                dto.getUsername(),
-                dto.getPhone(),
-                dto.getStatus(),
-                dto.getDataScope()
-        );
+        IPage<UserVO> result = baseMapper.selectUserPage(page, dto);
         // 查询用户锁定状态
         List<UserVO> records = result.getRecords();
         records.forEach(vo -> {
@@ -122,7 +115,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         UserVO vo = BeanUtil.copyProperties(user, UserVO.class);
         // 查询用户关联的角色 ID
         List<RoleVO> roles = roleService.listRolesByUserId(id);
-        vo.setRoleIds(roles.stream().map(RoleVO::getId).map(String::valueOf).collect(Collectors.toList()));
+        vo.setRoleIds(roles.stream().map(RoleVO::getId).collect(Collectors.toList()));
         return vo;
     }
 
@@ -147,13 +140,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @DataScope
     public List<UserExportVO> listUserForExport(UserDTO dto) {
         // 查询用户列表（不分页）
-        List<UserVO> userVOList = baseMapper.selectUserList(
-                dto.getDeptId(),
-                dto.getUsername(),
-                dto.getPhone(),
-                dto.getStatus(),
-                dto.getDataScope()
-        );
+        List<UserVO> userVOList = baseMapper.selectUserList(dto);
         // 转换为导出 VO，处理字典转换
         return userVOList.stream().map(userVO -> {
             UserExportVO exportVO = BeanUtil.copyProperties(userVO, UserExportVO.class);
@@ -206,7 +193,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateUser(UserDTO dto) {
-        User user = getById(dto.getId());
+        Long userId = dto.getId();
+        // 管理员保护（admin 用户 ID 为特定值）
+        if (isAdmin(userId)) {
+            throw new BusinessException("不能修改管理员用户");
+        }
+        User user = getById(userId);
         if (user == null) {
             throw new BusinessException("用户不存在");
         }
@@ -238,7 +230,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (user == null) {
             throw new BusinessException("用户不存在");
         }
-        if (userId == 1L) {
+        if (isAdmin(userId)) {
             throw new BusinessException("不能重置管理员密码");
         }
         // 从参数配置获取初始化密码
@@ -262,7 +254,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (user == null) {
             throw new BusinessException("用户不存在");
         }
-        if (userId == 1L) {
+        if (isAdmin(userId)) {
             throw new BusinessException("不能禁用管理员用户");
         }
         user.setStatus(status);
@@ -348,7 +340,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteUser(List<Long> ids) {
-        if (ids.contains(1L)) {
+        if (ids.stream().anyMatch(this::isAdmin)) {
             throw new BusinessException("不能删除管理员用户");
         }
         removeByIds(ids);
@@ -515,12 +507,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (StrUtil.isBlank(status)) {
             return "0";
         }
-        switch (status.trim()) {
-            case "禁用":
-                return "1";
-            default:
-                return "0";
+        if ("禁用".equals(status.trim())) {
+            return "1";
         }
+        return "0";
     }
 
     /**
@@ -535,5 +525,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BusinessException("用户不存在");
         }
         redisTemplate.delete(RedisKeyConstants.LOGIN_LOCK_PREFIX + user.getUsername());
+    }
+
+    /**
+     * 判断是否为管理员用户
+     *
+     * @param userId 用户 ID
+     * @return 是否为管理员
+     */
+    private boolean isAdmin(Long userId) {
+        // admin 用户固定 ID 为 1
+        return userId != null && userId == 1L;
     }
 }

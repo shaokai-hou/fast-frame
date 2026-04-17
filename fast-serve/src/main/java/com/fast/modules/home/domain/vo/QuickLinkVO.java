@@ -1,7 +1,5 @@
 package com.fast.modules.home.domain.vo;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -19,7 +17,6 @@ public class QuickLinkVO implements Serializable {
     /**
      * 菜单ID
      */
-    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**

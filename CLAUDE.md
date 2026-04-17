@@ -14,10 +14,10 @@ Fast Frame 是一个全栈后台管理系统，前端使用 Vue 3，后端使用
 ### 前端 (fast-web)
 ```bash
 cd fast-web
-pnpm install          # 安装依赖
-pnpm dev              # 启动开发服务器 (端口 3000，/api 代理到 :8080)
-pnpm build            # 生产构建到 dist/
-pnpm preview          # 预览生产构建
+npm install           # 安装依赖
+npm run dev           # 启动开发服务器 (端口 3000，/api 代理到 :8080)
+npm run build         # 生产构建到 dist/
+npm run preview       # 预览生产构建
 ```
 
 ### 后端 (fast-serve)
@@ -131,6 +131,7 @@ code 为 401 时跳转到登录页。
 - Vite 别名 `@` 映射到 `src/` 目录
 - 树形数据结构：`{ id, label, children }` 或通过 `fieldProps` 映射
 - **Redis 缓存 Key**: 所有 Redis 缓存 key 常量统一在 `RedisKeyConstants.java` 管理，不与通用常量混用
+- **表格按钮**: 操作列中的按钮不需要图标，仅使用文字
 
 ## 文件处理能力
 
@@ -150,6 +151,16 @@ download('/file/download?id=1', 'filename.xlsx')
 
 ### Excel 导入导出
 - **后端**: EasyExcel (3.3.4) - 高性能 Excel 处理，配合 `ExcelUtil` 工具类
+
+## Java 导入规范
+
+- **禁止内联导入**: 不允许使用 `java.util.List<String>` 形式，必须使用 `import java.util.List;` 在文件顶部声明
+- **导入顺序**: 按照标准顺序：java.* → javax.* → 第三方库 → 项目内部类
+
+## MyBatis 规范
+
+- **N+1 问题**: 使用 `<resultMap>` + `<collection select="子查询ID" column="关联列">` 进行嵌套查询，避免循环中单独查询
+- **多参数方法**: 不使用 `@Param` 注解，XML 中用 `#{参数名.属性名}` 访问（如 `#{dto.deptId}`）
 
 ## Java 注释规范
 

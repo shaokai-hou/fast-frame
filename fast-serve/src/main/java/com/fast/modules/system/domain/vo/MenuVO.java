@@ -1,7 +1,5 @@
 package com.fast.modules.system.domain.vo;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -21,13 +19,11 @@ public class MenuVO implements Serializable {
     /**
      * 菜单ID
      */
-    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**
      * 父菜单ID
      */
-    @JsonSerialize(using = ToStringSerializer.class)
     private Long parentId;
 
     /**

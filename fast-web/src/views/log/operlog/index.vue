@@ -8,12 +8,8 @@
         </el-form-item>
         <el-form-item label="业务类型" prop="businessType">
           <el-select v-model="queryParams.businessType" placeholder="业务类型" clearable>
-            <el-option
-              v-for="item in businessTypeDict"
-              :key="item.dictValue"
-              :label="item.dictLabel"
-              :value="parseInt(item.dictValue)"
-            />
+            <el-option v-for="item in businessTypeDict" :key="item.dictValue" :label="item.dictLabel"
+              :value="parseInt(item.dictValue)" />
           </el-select>
         </el-form-item>
         <el-form-item label="状态" prop="status">
@@ -33,49 +29,54 @@
     <div class="content-card">
       <!-- 工具栏 -->
       <div class="tool-bar">
-        <el-button type="danger" plain :icon="Delete" @click="handleDelete" :disabled="multiple" v-hasPermi="['log:operlog:delete']">删除</el-button>
-        <el-button type="danger" plain :icon="Delete" @click="handleClear" v-hasPermi="['log:operlog:delete']">清空</el-button>
+        <el-button type="danger" plain :icon="Delete" @click="handleDelete" :disabled="multiple"
+          v-hasPermi="['log:operlog:delete']">删除</el-button>
+        <el-button type="danger" plain :icon="Delete" @click="handleClear"
+          v-hasPermi="['log:operlog:delete']">清空</el-button>
       </div>
 
       <!-- 数据表格 -->
-    <el-table v-loading="loading" :data="logList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column type="index" label="序号" width="60" align="center" :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
-      <el-table-column label="日志ID" prop="id" width="200" />
-      <el-table-column label="操作模块" prop="title" />
-      <el-table-column label="业务类型" align="center">
-        <template #default="scope">
-          <el-tag :type="getBusinessTypeTag(scope.row.businessType)">
-            {{ getBusinessTypeLabel(scope.row.businessType) }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="请求方式" prop="requestMethod" align="center" width="80">
-        <template #default="scope">
-          <el-tag :type="getMethodTag(scope.row.requestMethod)" size="small">
-            {{ scope.row.requestMethod || '-' }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作人" prop="operName" />
-      <el-table-column label="IP地址" prop="operIp" />
-      <el-table-column label="状态" align="center">
-        <template #default="scope">
-          <el-tag :type="scope.row.status === '0' ? 'success' : 'danger'">
-            {{ scope.row.status === '0' ? '成功' : '失败' }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作时间" prop="operTime" width="180" />
-      <el-table-column label="操作" align="center" width="100">
-        <template #default="scope">
-          <el-button link type="primary" @click="handleView(scope.row)" v-hasPermi="['log:operlog:query']">详情</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+      <el-table v-loading="loading" :data="logList" row-key="id" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" align="center" />
+        <el-table-column type="index" label="序号" width="60" align="center"
+          :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
+        <el-table-column label="日志ID" prop="id" width="200" />
+        <el-table-column label="操作模块" prop="title" show-overflow-tooltip />
+        <el-table-column label="业务类型" align="center">
+          <template #default="scope">
+            <el-tag :type="getBusinessTypeTag(scope.row.businessType)">
+              {{ getBusinessTypeLabel(scope.row.businessType) }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="请求方式" prop="requestMethod" align="center" width="150">
+          <template #default="scope">
+            <el-tag :type="getMethodTag(scope.row.requestMethod)" size="small">
+              {{ scope.row.requestMethod || '-' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作人" prop="operName" />
+        <el-table-column label="IP地址" prop="operIp" />
+        <el-table-column label="状态" align="center">
+          <template #default="scope">
+            <el-tag :type="scope.row.status === '0' ? 'success' : 'danger'">
+              {{ scope.row.status === '0' ? '成功' : '失败' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作时间" prop="operTime" width="180" />
+        <el-table-column label="操作" align="center" width="100">
+          <template #default="scope">
+            <el-button link type="primary" @click="handleView(scope.row)"
+              v-hasPermi="['log:operlog:query']">详情</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
 
-    <!-- 分页 -->
-    <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
+      <!-- 分页 -->
+      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize" @pagination="getList" />
     </div>
 
     <!-- 详情对话框 -->
@@ -263,24 +264,6 @@ onMounted(() => {
 <style scoped lang="scss">
 .page-container {
   min-height: 100%;
-}
-
-.search-bar {
-  background: var(--color-surface);
-  padding: 20px 24px;
-  border-radius: 12px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-  border: 1px solid var(--color-border-light);
-
-  :deep(.el-form-item) {
-    margin-bottom: 0;
-  }
-
-  :deep(.el-input),
-  :deep(.el-select) {
-    width: 200px;
-  }
 }
 
 .content-card {

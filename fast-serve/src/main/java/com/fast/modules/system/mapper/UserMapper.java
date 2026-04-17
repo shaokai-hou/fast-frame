@@ -2,6 +2,7 @@ package com.fast.modules.system.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fast.modules.system.domain.dto.UserDTO;
 import com.fast.modules.system.domain.entity.User;
 import com.fast.modules.system.domain.vo.UserVO;
 import org.apache.ibatis.annotations.Mapper;
@@ -19,38 +20,21 @@ public interface UserMapper extends BaseMapper<User> {
 
 
     /**
-     * 分页查询用户列表（带部门名称）
+     * 分页查询用户列表（带部门名称和角色）
      *
-     * @param page      分页对象
-     * @param deptId    部门ID
-     * @param username  用户名
-     * @param phone     手机号
-     * @param status    状态
-     * @param dataScope 数据权限SQL
+     * @param page 分页对象
+     * @param dto  查询参数DTO
      * @return 用户分页结果
      */
-    IPage<UserVO> selectUserPage(IPage<UserVO> page,
-                                 @Param("deptId") Long deptId,
-                                 @Param("username") String username,
-                                 @Param("phone") String phone,
-                                 @Param("status") String status,
-                                 @Param("dataScope") String dataScope);
+    IPage<UserVO> selectUserPage(IPage<UserVO> page, UserDTO dto);
 
     /**
      * 查询用户列表（不分页，用于导出）
      *
-     * @param deptId    部门ID
-     * @param username  用户名
-     * @param phone     手机号
-     * @param status    状态
-     * @param dataScope 数据权限SQL
+     * @param dto 查询参数DTO
      * @return 用户列表
      */
-    List<UserVO> selectUserList(@Param("deptId") Long deptId,
-                                @Param("username") String username,
-                                @Param("phone") String phone,
-                                @Param("status") String status,
-                                @Param("dataScope") String dataScope);
+    List<UserVO> selectUserList(UserDTO dto);
 
 
     /**
@@ -68,4 +52,20 @@ public interface UserMapper extends BaseMapper<User> {
      * @param userId 用户ID
      */
     void deleteUserRoleByUserId(@Param("userId") Long userId);
+
+    /**
+     * 根据角色ID查询用户ID列表
+     *
+     * @param roleId 角色ID
+     * @return 用户ID列表
+     */
+    List<Long> selectUserIdsByRoleId(@Param("roleId") Long roleId);
+
+    /**
+     * 根据部门ID查询用户ID列表
+     *
+     * @param deptId 部门ID
+     * @return 用户ID列表
+     */
+    List<Long> selectUserIdsByDeptId(@Param("deptId") Long deptId);
 }

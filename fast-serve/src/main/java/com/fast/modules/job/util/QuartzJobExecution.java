@@ -26,13 +26,13 @@ public class QuartzJobExecution extends QuartzJobBean {
         JobLogService jobLogService = SpringContextHolder.getBean(JobLogService.class);
 
         // 获取任务信息
-        Long jobId = context.getJobDetail().getJobDataMap().getLong("jobId");
+        String jobIdStr = context.getJobDetail().getJobDataMap().getString("jobId");
         String jobGroup = context.getJobDetail().getJobDataMap().getString("jobGroup");
         String invokeTarget = context.getJobDetail().getJobDataMap().getString("invokeTarget");
 
         // 创建日志对象
         JobLog jobLog = new JobLog();
-        jobLog.setJobId(jobId);
+        jobLog.setJobId(Long.parseLong(jobIdStr));
         jobLog.setJobName(context.getJobDetail().getKey().getName());
         jobLog.setJobGroup(jobGroup);
         jobLog.setInvokeTarget(invokeTarget);
@@ -44,7 +44,7 @@ public class QuartzJobExecution extends QuartzJobBean {
             jobLog.setStatus("0");
             jobLog.setJobMessage("任务执行成功");
         } catch (Exception e) {
-            log.error("任务执行失败，任务ID: {}", jobId, e);
+            log.error("任务执行失败，任务ID: {}", jobIdStr, e);
             jobLog.setStatus("1");
             jobLog.setJobMessage("任务执行失败");
             jobLog.setExceptionInfo(e.getMessage());

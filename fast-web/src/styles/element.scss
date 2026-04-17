@@ -5,6 +5,16 @@
   border-radius: 12px;
   overflow: hidden;
 
+  // 边框颜色
+  --el-table-border-color: var(--color-border);
+
+  // 使用 fixed 布局提高稳定性
+  table {
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  // 表头样式
   th.el-table__cell {
     background-color: var(--gray-50) !important;
     font-weight: 600;
@@ -20,14 +30,9 @@
     background-color: var(--color-primary-lightest) !important;
   }
 
-  // 边框颜色
-  --el-table-border-color: var(--color-border);
-
   // 操作列按钮间距
-  .el-table__cell {
-    .el-button + .el-button {
-      margin-left: 8px;
-    }
+  .el-button + .el-button {
+    margin-left: 8px;
   }
 }
 
@@ -874,6 +879,36 @@
           color: var(--color-primary) !important;
         }
       }
+    }
+  }
+}
+
+// 搜索栏样式 - 全局统一定义
+.search-bar {
+  background: var(--color-surface);
+  padding: 20px 24px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  border: 1px solid var(--color-border-light);
+
+  .el-form--inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    .el-form-item {
+      margin-bottom: 0;
+      margin-right: 16px;
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+
+    .el-input,
+    .el-select {
+      width: 200px;
     }
   }
 }

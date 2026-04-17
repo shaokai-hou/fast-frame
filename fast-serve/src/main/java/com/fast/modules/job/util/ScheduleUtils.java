@@ -18,7 +18,7 @@ public class ScheduleUtils {
      * @return JobKey
      */
     public static JobKey getJobKey(Long jobId, String jobGroup) {
-        return JobKey.jobKey(jobId.toString(), jobGroup);
+        return JobKey.jobKey(String.valueOf(jobId), jobGroup);
     }
 
     /**
@@ -29,7 +29,7 @@ public class ScheduleUtils {
      * @return TriggerKey
      */
     public static TriggerKey getTriggerKey(Long jobId, String jobGroup) {
-        return TriggerKey.triggerKey(jobId.toString(), jobGroup);
+        return TriggerKey.triggerKey(String.valueOf(jobId), jobGroup);
     }
 
     /**
@@ -43,7 +43,7 @@ public class ScheduleUtils {
         // 构建Job信息
         JobDetail jobDetail = JobBuilder.newJob(QuartzJobExecution.class)
                 .withIdentity(getJobKey(job.getId(), job.getJobGroup()))
-                .usingJobData("jobId", job.getId())
+                .usingJobData("jobId", String.valueOf(job.getId()))
                 .usingJobData("jobGroup", job.getJobGroup())
                 .usingJobData("invokeTarget", job.getInvokeTarget())
                 .build();

@@ -7,13 +7,13 @@
           <el-input v-model="queryParams.jobName" placeholder="请输入任务名称" clearable @keyup.enter="handleQuery" />
         </el-form-item>
         <el-form-item label="任务分组" prop="jobGroup">
-          <el-select v-model="queryParams.jobGroup" placeholder="全部" clearable style="width: 150px">
+          <el-select v-model="queryParams.jobGroup" placeholder="全部" clearable>
             <el-option label="系统" value="SYSTEM" />
             <el-option label="业务" value="BUSINESS" />
           </el-select>
         </el-form-item>
         <el-form-item label="执行状态" prop="status">
-          <el-select v-model="queryParams.status" placeholder="全部" clearable style="width: 120px">
+          <el-select v-model="queryParams.status" placeholder="全部" clearable>
             <el-option label="成功" value="0" />
             <el-option label="失败" value="1" />
           </el-select>
@@ -34,7 +34,7 @@
       </div>
 
       <!-- 数据表格 -->
-      <el-table v-loading="loading" :data="logList" @selection-change="handleSelectionChange">
+      <el-table v-loading="loading" :data="logList" row-key="id" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column type="index" label="序号" width="60" align="center" :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
         <el-table-column label="任务名称" prop="jobName" />
@@ -188,24 +188,6 @@ onMounted(() => {
 <style scoped lang="scss">
 .page-container {
   min-height: 100%;
-}
-
-.search-bar {
-  background: var(--color-surface);
-  padding: 20px 24px;
-  border-radius: 12px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-  border: 1px solid var(--color-border-light);
-
-  :deep(.el-form-item) {
-    margin-bottom: 0;
-  }
-
-  :deep(.el-input),
-  :deep(.el-select) {
-    width: 200px;
-  }
 }
 
 .content-card {

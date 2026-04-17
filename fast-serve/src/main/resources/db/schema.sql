@@ -45,6 +45,18 @@ DROP TABLE IF EXISTS sys_user CASCADE;
 DROP TABLE IF EXISTS sys_notice CASCADE;
 DROP TABLE IF EXISTS sys_job CASCADE;
 DROP TABLE IF EXISTS sys_job_log CASCADE;
+DROP TABLE IF EXISTS sys_notice CASCADE;
+
+-- =============================================
+-- 删除 Warm-Flow 工作流引擎表
+-- =============================================
+DROP TABLE IF EXISTS flow_user CASCADE;
+DROP TABLE IF EXISTS flow_his_task CASCADE;
+DROP TABLE IF EXISTS flow_task CASCADE;
+DROP TABLE IF EXISTS flow_instance CASCADE;
+DROP TABLE IF EXISTS flow_skip CASCADE;
+DROP TABLE IF EXISTS flow_node CASCADE;
+DROP TABLE IF EXISTS flow_definition CASCADE;
 
 -- =============================================
 -- 1. 部门表
@@ -524,7 +536,7 @@ INSERT INTO sys_user_role (user_id, role_id) VALUES (5, 5);
 
 -- 系统管理目录
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, icon, menu_sort, status, del_flag, create_by)
-VALUES (1, 0, '系统管理', 'D', '/system', 'Setting', 1, '0', '0', 1);
+VALUES (1, 0, '系统管理', 'D', '/system', 'Setting', 2, '0', '0', 1);
 
 -- 用户管理
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon, menu_sort, status, del_flag, create_by)
@@ -612,7 +624,7 @@ VALUES (29, 28, '强制退出', 'B', 'monitor:online:forceLogout', 1, '0', '0', 
 
 -- 日志管理目录
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, icon, menu_sort, status, del_flag, create_by)
-VALUES (30, 0, '日志管理', 'D', '/log', 'Document', 2, '0', '0', 1);
+VALUES (30, 0, '日志管理', 'D', '/log', 'Document', 3, '0', '0', 1);
 
 -- 登录日志
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon, menu_sort, status, del_flag, create_by)
@@ -687,12 +699,16 @@ VALUES (58, 34, '日志列表', 'B', 'log:operlog:list', 0, '0', '0', 1);
 -- 角色菜单关联(管理员拥有所有菜单权限)
 INSERT INTO sys_role_menu (role_id, menu_id) SELECT 1, id FROM sys_menu;
 
--- 分公司经理角色菜单权限(用户管理、角色管理、部门管理)
+-- 分公司经理角色菜单权限(用户管理、角色管理、部门管理、流程管理-待办/已办)
 -- 新增 list 权限按钮: 48(用户), 49(角色), 51(部门)
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES
 (2, 1), (2, 2), (2, 48), (2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (2, 46), (2, 47),
 (2, 8), (2, 49), (2, 9), (2, 10), (2, 11), (2, 12),
-(2, 41), (2, 51), (2, 42), (2, 43), (2, 44), (2, 45);
+(2, 41), (2, 51), (2, 42), (2, 43), (2, 44), (2, 45),
+-- 流程管理菜单
+(2, 300), (2, 310), (2, 311), (2, 314),
+(2, 320), (2, 321), (2, 322), (2, 323), (2, 324), (2, 325), (2, 326),
+(2, 330), (2, 331);
 
 -- 部门经理角色菜单权限(用户管理、部门管理)
 -- 新增 list 权限按钮: 48(用户), 51(部门)
@@ -1023,6 +1039,68 @@ INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon
 VALUES (201, 200, '接口文档', 'M', '/tool/api', 'tool/api/index', 'Document', 1, '0', '0', 1);
 
 -- =============================================
+-- 流程管理目录
+-- =============================================
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, icon, menu_sort, status, del_flag, create_by)
+VALUES (300, 0, '流程管理', 'D', '/flow', 'Connection', 1, '0', '0', 1);
+
+-- 流程定义
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon, menu_sort, status, del_flag, create_by)
+VALUES (301, 300, '流程定义', 'M', '/flow/def', 'flow/def/index', 'Document', 1, '0', '0', 1);
+
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (302, 301, '流程查询', 'B', 'flow:def:query', 1, '0', '0', 1);
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (303, 301, '流程发布', 'B', 'flow:def:publish', 2, '0', '0', 1);
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (304, 301, '流程取消发布', 'B', 'flow:def:unpublish', 3, '0', '0', 1);
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (305, 301, '流程删除', 'B', 'flow:def:remove', 4, '0', '0', 1);
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (306, 301, '流程列表', 'B', 'flow:def:list', 0, '0', '0', 1);
+
+-- 流程实例
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon, menu_sort, status, del_flag, create_by)
+VALUES (310, 300, '流程实例', 'M', '/flow/instance', 'flow/instance/index', 'DocumentCopy', 2, '0', '0', 1);
+
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (311, 310, '实例查询', 'B', 'flow:instance:query', 1, '0', '0', 1);
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (312, 310, '发起流程', 'B', 'flow:instance:start', 2, '0', '0', 1);
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (313, 310, '终止流程', 'B', 'flow:instance:terminate', 3, '0', '0', 1);
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (314, 310, '实例列表', 'B', 'flow:instance:list', 0, '0', '0', 1);
+
+-- 待办任务
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon, menu_sort, status, del_flag, create_by)
+VALUES (320, 300, '待办任务', 'M', '/flow/task/todo', 'flow/task/todo', 'Bell', 3, '0', '0', 1);
+
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (321, 320, '任务审批', 'B', 'flow:task:approve', 1, '0', '0', 1);
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (322, 320, '任务驳回', 'B', 'flow:task:reject', 2, '0', '0', 1);
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (323, 320, '任务退回', 'B', 'flow:task:back', 3, '0', '0', 1);
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (324, 320, '任务委派', 'B', 'flow:task:delegate', 4, '0', '0', 1);
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (325, 320, '待办列表', 'B', 'flow:task:todo', 0, '0', '0', 1);
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (326, 320, '任务查询', 'B', 'flow:task:query', 5, '0', '0', 1);
+
+-- 已办任务
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon, menu_sort, status, del_flag, create_by)
+VALUES (330, 300, '已办任务', 'M', '/flow/task/done', 'flow/task/done', 'Finished', 4, '0', '0', 1);
+
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (331, 330, '已办列表', 'B', 'flow:task:done', 0, '0', '0', 1);
+
+-- 流程设计器
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon, menu_sort, status, del_flag, create_by)
+VALUES (340, 300, '流程设计', 'M', '/flow/designer', 'flow/designer/index', 'Edit', 5, '0', '0', 1);
+
+-- =============================================
 -- 新增菜单权限
 -- =============================================
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 107);
@@ -1041,6 +1119,30 @@ INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 65);
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 200);
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 201);
 
+-- 流程管理菜单权限
+INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 300);
+INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 301);
+INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 302);
+INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 303);
+INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 304);
+INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 305);
+INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 306);
+INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 310);
+INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 311);
+INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 312);
+INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 313);
+INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 314);
+INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 320);
+INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 321);
+INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 322);
+INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 323);
+INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 324);
+INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 325);
+INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 326);
+INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 330);
+INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 331);
+INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 340);
+
 -- =============================================
 -- 通知类型字典
 -- =============================================
@@ -1051,12 +1153,378 @@ INSERT INTO sys_dict_data (id, dict_type, dict_label, dict_value, dict_sort, sta
 VALUES (200, 'sys_notice_type', '通知', '1', 1, '0', 1);
 INSERT INTO sys_dict_data (id, dict_type, dict_label, dict_value, dict_sort, status, create_by)
 VALUES (201, 'sys_notice_type', '公告', '2', 2, '0', 1);
--- =============================================
--- 增量更新：新增 link 字段（已有数据库执行此 SQL）
--- =============================================
-ALTER TABLE sys_menu ADD COLUMN IF NOT EXISTS link VARCHAR(255);
-COMMENT ON COLUMN sys_menu.link IS '外链地址(iframe页面使用)';
 
--- 更新数据库监控菜单的 link 字段
-UPDATE sys_menu SET link = '/api/druid/index.html' WHERE id = 109;
+-- =============================================
+-- Warm-Flow 工作流引擎表结构 (PostgreSQL)
+-- =============================================
+
+-- 1. 流程定义表
+CREATE TABLE flow_definition (
+    id BIGINT PRIMARY KEY,
+    flow_code VARCHAR(40) NOT NULL,
+    flow_name VARCHAR(100) NOT NULL,
+    model_value VARCHAR(40) DEFAULT 'CLASSICS',
+    category VARCHAR(100),
+    version VARCHAR(20) NOT NULL,
+    is_publish SMALLINT DEFAULT 0,
+    form_custom CHAR(1) DEFAULT 'N',
+    form_path VARCHAR(100),
+    activity_status SMALLINT DEFAULT 1,
+    listener_type VARCHAR(100),
+    listener_path VARCHAR(400),
+    ext VARCHAR(500),
+    create_by VARCHAR(80),
+    create_time TIMESTAMP(0) DEFAULT CURRENT_TIMESTAMP,
+    update_by VARCHAR(80),
+    update_time TIMESTAMP(0) DEFAULT CURRENT_TIMESTAMP,
+    del_flag CHAR(1) DEFAULT '0',
+    tenant_id VARCHAR(40)
+);
+
+COMMENT ON TABLE flow_definition IS '流程定义表';
+COMMENT ON COLUMN flow_definition.id IS '主键id';
+COMMENT ON COLUMN flow_definition.flow_code IS '流程编码';
+COMMENT ON COLUMN flow_definition.flow_name IS '流程名称';
+COMMENT ON COLUMN flow_definition.model_value IS '设计器模型(CLASSICS经典 MIMIC仿钉钉)';
+COMMENT ON COLUMN flow_definition.category IS '流程类别';
+COMMENT ON COLUMN flow_definition.version IS '流程版本';
+COMMENT ON COLUMN flow_definition.is_publish IS '是否发布(0未发布 1已发布 9失效)';
+COMMENT ON COLUMN flow_definition.form_custom IS '审批表单是否自定义(Y是 N否)';
+COMMENT ON COLUMN flow_definition.form_path IS '审批表单路径';
+COMMENT ON COLUMN flow_definition.activity_status IS '流程激活状态(0挂起 1激活)';
+COMMENT ON COLUMN flow_definition.listener_type IS '监听器类型';
+COMMENT ON COLUMN flow_definition.listener_path IS '监听器路径';
+COMMENT ON COLUMN flow_definition.ext IS '业务详情(存业务表对象json字符串)';
+COMMENT ON COLUMN flow_definition.create_by IS '创建者';
+COMMENT ON COLUMN flow_definition.create_time IS '创建时间';
+COMMENT ON COLUMN flow_definition.update_by IS '更新者';
+COMMENT ON COLUMN flow_definition.update_time IS '更新时间';
+COMMENT ON COLUMN flow_definition.del_flag IS '删除标志(0正常 2删除)';
+COMMENT ON COLUMN flow_definition.tenant_id IS '租户id';
+
+CREATE UNIQUE INDEX idx_flow_def_code_version ON flow_definition(flow_code, version) WHERE del_flag = '0';
+
+-- 2. 流程节点表
+CREATE TABLE flow_node (
+    id BIGINT PRIMARY KEY,
+    node_type SMALLINT NOT NULL,
+    definition_id BIGINT NOT NULL,
+    node_code VARCHAR(100) NOT NULL,
+    node_name VARCHAR(100),
+    permission_flag VARCHAR(200),
+    node_ratio VARCHAR(200),
+    coordinate VARCHAR(100),
+    any_node_skip VARCHAR(100),
+    listener_type VARCHAR(100),
+    listener_path VARCHAR(400),
+    handler_type VARCHAR(100),
+    handler_path VARCHAR(400),
+    form_custom CHAR(1) DEFAULT 'N',
+    form_path VARCHAR(100),
+    version VARCHAR(20) NOT NULL,
+    create_by VARCHAR(80),
+    create_time TIMESTAMP(0) DEFAULT CURRENT_TIMESTAMP,
+    update_by VARCHAR(80),
+    update_time TIMESTAMP(0) DEFAULT CURRENT_TIMESTAMP,
+    ext TEXT,
+    del_flag CHAR(1) DEFAULT '0',
+    tenant_id VARCHAR(40)
+);
+
+COMMENT ON TABLE flow_node IS '流程节点表';
+COMMENT ON COLUMN flow_node.id IS '主键id';
+COMMENT ON COLUMN flow_node.node_type IS '节点类型(0开始 1中间 2结束 3互斥网关 4并行网关)';
+COMMENT ON COLUMN flow_node.definition_id IS '流程定义id';
+COMMENT ON COLUMN flow_node.node_code IS '流程节点编码';
+COMMENT ON COLUMN flow_node.node_name IS '流程节点名称';
+COMMENT ON COLUMN flow_node.permission_flag IS '权限标识(权限类型:权限标识,多个用@@隔开)';
+COMMENT ON COLUMN flow_node.node_ratio IS '流程签署比例值';
+COMMENT ON COLUMN flow_node.coordinate IS '坐标';
+COMMENT ON COLUMN flow_node.any_node_skip IS '任意结点跳转';
+COMMENT ON COLUMN flow_node.listener_type IS '监听器类型';
+COMMENT ON COLUMN flow_node.listener_path IS '监听器路径';
+COMMENT ON COLUMN flow_node.handler_type IS '处理器类型';
+COMMENT ON COLUMN flow_node.handler_path IS '处理器路径';
+COMMENT ON COLUMN flow_node.form_custom IS '审批表单是否自定义(Y是 N否)';
+COMMENT ON COLUMN flow_node.form_path IS '审批表单路径';
+COMMENT ON COLUMN flow_node.version IS '版本';
+COMMENT ON COLUMN flow_node.create_by IS '创建者';
+COMMENT ON COLUMN flow_node.create_time IS '创建时间';
+COMMENT ON COLUMN flow_node.update_by IS '更新者';
+COMMENT ON COLUMN flow_node.update_time IS '更新时间';
+COMMENT ON COLUMN flow_node.ext IS '节点扩展属性';
+COMMENT ON COLUMN flow_node.del_flag IS '删除标志(0正常 2删除)';
+COMMENT ON COLUMN flow_node.tenant_id IS '租户id';
+
+CREATE INDEX idx_flow_node_def ON flow_node(definition_id);
+CREATE INDEX idx_flow_node_code ON flow_node(node_code);
+
+-- 3. 流程跳转关联表
+CREATE TABLE flow_skip (
+    id BIGINT PRIMARY KEY,
+    definition_id BIGINT NOT NULL,
+    now_node_code VARCHAR(100) NOT NULL,
+    now_node_type SMALLINT,
+    next_node_code VARCHAR(100) NOT NULL,
+    next_node_type SMALLINT,
+    skip_name VARCHAR(100),
+    skip_type VARCHAR(40),
+    skip_condition VARCHAR(200),
+    coordinate VARCHAR(100),
+    create_by VARCHAR(80),
+    create_time TIMESTAMP(0) DEFAULT CURRENT_TIMESTAMP,
+    update_by VARCHAR(80),
+    update_time TIMESTAMP(0) DEFAULT CURRENT_TIMESTAMP,
+    del_flag CHAR(1) DEFAULT '0',
+    tenant_id VARCHAR(40)
+);
+
+COMMENT ON TABLE flow_skip IS '流程跳转关联表';
+COMMENT ON COLUMN flow_skip.id IS '主键id';
+COMMENT ON COLUMN flow_skip.definition_id IS '流程定义id';
+COMMENT ON COLUMN flow_skip.now_node_code IS '当前流程节点编码';
+COMMENT ON COLUMN flow_skip.now_node_type IS '当前节点类型(0开始 1中间 2结束 3互斥网关 4并行网关)';
+COMMENT ON COLUMN flow_skip.next_node_code IS '下一个流程节点编码';
+COMMENT ON COLUMN flow_skip.next_node_type IS '下一节点类型(0开始 1中间 2结束 3互斥网关 4并行网关)';
+COMMENT ON COLUMN flow_skip.skip_name IS '跳转名称';
+COMMENT ON COLUMN flow_skip.skip_type IS '跳转类型(PASS审批通过 REJECT退回)';
+COMMENT ON COLUMN flow_skip.skip_condition IS '跳转条件';
+COMMENT ON COLUMN flow_skip.coordinate IS '坐标';
+COMMENT ON COLUMN flow_skip.create_by IS '创建者';
+COMMENT ON COLUMN flow_skip.create_time IS '创建时间';
+COMMENT ON COLUMN flow_skip.update_by IS '更新者';
+COMMENT ON COLUMN flow_skip.update_time IS '更新时间';
+COMMENT ON COLUMN flow_skip.del_flag IS '删除标志(0正常 2删除)';
+COMMENT ON COLUMN flow_skip.tenant_id IS '租户id';
+
+CREATE INDEX idx_flow_skip_def ON flow_skip(definition_id);
+CREATE INDEX idx_flow_skip_now ON flow_skip(now_node_code);
+CREATE INDEX idx_flow_skip_next ON flow_skip(next_node_code);
+
+-- 4. 流程实例表
+CREATE TABLE flow_instance (
+    id BIGINT PRIMARY KEY,
+    definition_id BIGINT NOT NULL,
+    business_id VARCHAR(40) NOT NULL,
+    node_type SMALLINT NOT NULL,
+    node_code VARCHAR(40) NOT NULL,
+    node_name VARCHAR(100),
+    variable TEXT,
+    flow_status VARCHAR(20) NOT NULL,
+    activity_status SMALLINT DEFAULT 1,
+    def_json TEXT,
+    create_by VARCHAR(64),
+    create_time TIMESTAMP(0) DEFAULT CURRENT_TIMESTAMP,
+    update_by VARCHAR(80),
+    update_time TIMESTAMP(0) DEFAULT CURRENT_TIMESTAMP,
+    ext VARCHAR(500),
+    del_flag CHAR(1) DEFAULT '0',
+    tenant_id VARCHAR(40)
+);
+
+COMMENT ON TABLE flow_instance IS '流程实例表';
+COMMENT ON COLUMN flow_instance.id IS '主键id';
+COMMENT ON COLUMN flow_instance.definition_id IS '流程定义id';
+COMMENT ON COLUMN flow_instance.business_id IS '业务id';
+COMMENT ON COLUMN flow_instance.node_type IS '节点类型(0开始 1中间 2结束 3互斥网关 4并行网关)';
+COMMENT ON COLUMN flow_instance.node_code IS '流程节点编码';
+COMMENT ON COLUMN flow_instance.node_name IS '流程节点名称';
+COMMENT ON COLUMN flow_instance.variable IS '任务变量';
+COMMENT ON COLUMN flow_instance.flow_status IS '流程状态(0待提交 1审批中 2审批通过 4终止 5作废 6撤销 8已完成 9已退回 10失效 11拿回)';
+COMMENT ON COLUMN flow_instance.activity_status IS '流程激活状态(0挂起 1激活)';
+COMMENT ON COLUMN flow_instance.def_json IS '流程定义json';
+COMMENT ON COLUMN flow_instance.create_by IS '创建者';
+COMMENT ON COLUMN flow_instance.create_time IS '创建时间';
+COMMENT ON COLUMN flow_instance.update_by IS '更新者';
+COMMENT ON COLUMN flow_instance.update_time IS '更新时间';
+COMMENT ON COLUMN flow_instance.ext IS '扩展字段';
+COMMENT ON COLUMN flow_instance.del_flag IS '删除标志(0正常 2删除)';
+COMMENT ON COLUMN flow_instance.tenant_id IS '租户id';
+
+CREATE INDEX idx_flow_ins_def ON flow_instance(definition_id);
+CREATE INDEX idx_flow_ins_business ON flow_instance(business_id);
+CREATE INDEX idx_flow_ins_status ON flow_instance(flow_status);
+
+-- 5. 待办任务表
+CREATE TABLE flow_task (
+    id BIGINT PRIMARY KEY,
+    definition_id BIGINT NOT NULL,
+    instance_id BIGINT NOT NULL,
+    node_code VARCHAR(100) NOT NULL,
+    node_name VARCHAR(100),
+    node_type SMALLINT NOT NULL,
+    flow_status VARCHAR(20) NOT NULL,
+    form_custom CHAR(1) DEFAULT 'N',
+    form_path VARCHAR(100),
+    create_by VARCHAR(80),
+    create_time TIMESTAMP(0) DEFAULT CURRENT_TIMESTAMP,
+    update_by VARCHAR(80),
+    update_time TIMESTAMP(0) DEFAULT CURRENT_TIMESTAMP,
+    del_flag CHAR(1) DEFAULT '0',
+    tenant_id VARCHAR(40)
+);
+
+COMMENT ON TABLE flow_task IS '待办任务表';
+COMMENT ON COLUMN flow_task.id IS '主键id';
+COMMENT ON COLUMN flow_task.definition_id IS '流程定义id';
+COMMENT ON COLUMN flow_task.instance_id IS '流程实例id';
+COMMENT ON COLUMN flow_task.node_code IS '节点编码';
+COMMENT ON COLUMN flow_task.node_name IS '节点名称';
+COMMENT ON COLUMN flow_task.node_type IS '节点类型(0开始 1中间 2结束 3互斥网关 4并行网关)';
+COMMENT ON COLUMN flow_task.flow_status IS '流程状态(0待提交 1审批中 2审批通过 4终止 5作废 6撤销 8已完成 9已退回 10失效 11拿回)';
+COMMENT ON COLUMN flow_task.form_custom IS '审批表单是否自定义(Y是 N否)';
+COMMENT ON COLUMN flow_task.form_path IS '审批表单路径';
+COMMENT ON COLUMN flow_task.create_by IS '创建者';
+COMMENT ON COLUMN flow_task.create_time IS '创建时间';
+COMMENT ON COLUMN flow_task.update_by IS '更新者';
+COMMENT ON COLUMN flow_task.update_time IS '更新时间';
+COMMENT ON COLUMN flow_task.del_flag IS '删除标志(0正常 2删除)';
+COMMENT ON COLUMN flow_task.tenant_id IS '租户id';
+
+CREATE INDEX idx_flow_task_ins ON flow_task(instance_id);
+CREATE INDEX idx_flow_task_node ON flow_task(node_code);
+CREATE INDEX idx_flow_task_status ON flow_task(flow_status);
+
+-- 6. 历史任务记录表
+CREATE TABLE flow_his_task (
+    id BIGINT PRIMARY KEY,
+    definition_id BIGINT NOT NULL,
+    instance_id BIGINT NOT NULL,
+    task_id BIGINT NOT NULL,
+    node_code VARCHAR(100),
+    node_name VARCHAR(100),
+    node_type SMALLINT,
+    target_node_code VARCHAR(200),
+    target_node_name VARCHAR(200),
+    approver VARCHAR(40),
+    cooperate_type SMALLINT DEFAULT 0,
+    collaborator VARCHAR(500),
+    skip_type VARCHAR(10) NOT NULL,
+    flow_status VARCHAR(20) NOT NULL,
+    form_custom CHAR(1) DEFAULT 'N',
+    form_path VARCHAR(100),
+    message VARCHAR(500),
+    variable TEXT,
+    ext TEXT,
+    create_by VARCHAR(80),
+    create_time TIMESTAMP(0) DEFAULT CURRENT_TIMESTAMP,
+    update_by VARCHAR(80),
+    update_time TIMESTAMP(0) DEFAULT CURRENT_TIMESTAMP,
+    del_flag CHAR(1) DEFAULT '0',
+    tenant_id VARCHAR(40)
+);
+
+COMMENT ON TABLE flow_his_task IS '历史任务记录表';
+COMMENT ON COLUMN flow_his_task.id IS '主键id';
+COMMENT ON COLUMN flow_his_task.definition_id IS '流程定义id';
+COMMENT ON COLUMN flow_his_task.instance_id IS '流程实例id';
+COMMENT ON COLUMN flow_his_task.task_id IS '待办任务id';
+COMMENT ON COLUMN flow_his_task.node_code IS '开始节点编码';
+COMMENT ON COLUMN flow_his_task.node_name IS '开始节点名称';
+COMMENT ON COLUMN flow_his_task.node_type IS '开始节点类型(0开始 1中间 2结束 3互斥网关 4并行网关)';
+COMMENT ON COLUMN flow_his_task.target_node_code IS '目标节点编码';
+COMMENT ON COLUMN flow_his_task.target_node_name IS '结束节点名称';
+COMMENT ON COLUMN flow_his_task.approver IS '审批者';
+COMMENT ON COLUMN flow_his_task.cooperate_type IS '协作方式(1审批 2转办 3委派 4会签 5票签 6加签 7减签)';
+COMMENT ON COLUMN flow_his_task.collaborator IS '协作人';
+COMMENT ON COLUMN flow_his_task.skip_type IS '流转类型(PASS通过 REJECT退回 NONE无动作)';
+COMMENT ON COLUMN flow_his_task.flow_status IS '流程状态(0待提交 1审批中 2审批通过 4终止 5作废 6撤销 8已完成 9已退回 10失效 11拿回)';
+COMMENT ON COLUMN flow_his_task.form_custom IS '审批表单是否自定义(Y是 N否)';
+COMMENT ON COLUMN flow_his_task.form_path IS '审批表单路径';
+COMMENT ON COLUMN flow_his_task.message IS '审批意见';
+COMMENT ON COLUMN flow_his_task.variable IS '任务变量';
+COMMENT ON COLUMN flow_his_task.ext IS '业务详情(存业务表对象json字符串)';
+COMMENT ON COLUMN flow_his_task.create_by IS '创建者';
+COMMENT ON COLUMN flow_his_task.create_time IS '任务开始时间';
+COMMENT ON COLUMN flow_his_task.update_by IS '更新者';
+COMMENT ON COLUMN flow_his_task.update_time IS '审批完成时间';
+COMMENT ON COLUMN flow_his_task.del_flag IS '删除标志(0正常 2删除)';
+COMMENT ON COLUMN flow_his_task.tenant_id IS '租户id';
+
+CREATE INDEX idx_flow_his_ins ON flow_his_task(instance_id);
+CREATE INDEX idx_flow_his_task ON flow_his_task(task_id);
+
+-- 7. 流程用户表
+CREATE TABLE flow_user (
+    id BIGINT PRIMARY KEY,
+    type CHAR(1) NOT NULL,
+    processed_by VARCHAR(80),
+    associated BIGINT NOT NULL,
+    create_by VARCHAR(80),
+    create_time TIMESTAMP(0) DEFAULT CURRENT_TIMESTAMP,
+    update_by VARCHAR(80),
+    update_time TIMESTAMP(0) DEFAULT CURRENT_TIMESTAMP,
+    del_flag CHAR(1) DEFAULT '0',
+    tenant_id VARCHAR(40)
+);
+
+COMMENT ON TABLE flow_user IS '流程用户表';
+COMMENT ON COLUMN flow_user.id IS '主键id';
+COMMENT ON COLUMN flow_user.type IS '人员类型(1待办任务审批人权限 2待办任务转办人权限 3待办任务委托人权限)';
+COMMENT ON COLUMN flow_user.processed_by IS '权限人';
+COMMENT ON COLUMN flow_user.associated IS '任务表id';
+COMMENT ON COLUMN flow_user.create_by IS '创建人';
+COMMENT ON COLUMN flow_user.create_time IS '创建时间';
+COMMENT ON COLUMN flow_user.update_by IS '更新人';
+COMMENT ON COLUMN flow_user.update_time IS '更新时间';
+COMMENT ON COLUMN flow_user.del_flag IS '删除标志(0正常 2删除)';
+COMMENT ON COLUMN flow_user.tenant_id IS '租户id';
+
+CREATE INDEX idx_flow_user_associated ON flow_user(associated);
+CREATE INDEX idx_flow_user_processed ON flow_user(processed_by);
+
+-- =============================================
+-- 初始化请假审批流程
+-- 布局说明：
+-- - 主轴线 y=200 (前进线)
+-- - 上方绕行 y=50 (直接通过)
+-- - 驳回线1 y=320 (分公司经理驳回)
+-- - 驳回线2 y=380 (部门经理驳回)
+-- =============================================
+
+-- 流程定义
+INSERT INTO flow_definition (id, flow_code, flow_name, model_value, category, version, is_publish, activity_status, form_custom, del_flag)
+VALUES (2000000000000000001, 'leave_flow', '请假审批流程', 'CLASSICS', '人事管理', '1', 1, 1, 'N', '0');
+
+-- 流程节点 (节点中心坐标|文字坐标)
+-- 开始节点(圆形40px)：x=120, 文字在下方
+INSERT INTO flow_node (id, node_type, definition_id, node_code, node_name, coordinate, node_ratio, form_custom, version, del_flag)
+VALUES (2000000000000000002, 0, 2000000000000000001, 'a', '开始', '120,200|120,260', '0', 'N', '1', '0');
+
+-- 分公司经理审批(矩形100x80px)：x=320
+INSERT INTO flow_node (id, node_type, definition_id, node_code, node_name, permission_flag, coordinate, node_ratio, form_custom, version, del_flag)
+VALUES (2000000000000000003, 1, 2000000000000000001, 'b', '分公司经理审批', 'role:branch_manager', '320,200|320,200', '0', 'N', '1', '0');
+
+-- 部门经理审批(矩形100x80px)：x=520
+INSERT INTO flow_node (id, node_type, definition_id, node_code, node_name, permission_flag, coordinate, node_ratio, form_custom, version, del_flag)
+VALUES (2000000000000000004, 1, 2000000000000000001, 'c', '部门经理审批', 'role:dept_manager', '520,200|520,200', '0', 'N', '1', '0');
+
+-- 结束节点(圆形40px)：x=720
+INSERT INTO flow_node (id, node_type, definition_id, node_code, node_name, coordinate, node_ratio, form_custom, version, del_flag)
+VALUES (2000000000000000005, 2, 2000000000000000001, 'd', '结束', '720,200|720,260', '0', 'N', '1', '0');
+
+-- 流程跳转线 (路径点|文字坐标)
+-- 1. 开始 -> 分公司经理审批 (提交申请) - 主轴线
+INSERT INTO flow_skip (id, definition_id, now_node_code, now_node_type, next_node_code, next_node_type, skip_name, skip_type, coordinate, del_flag)
+VALUES (2000000000000000006, 2000000000000000001, 'a', 0, 'b', 1, '提交申请', 'PASS', '140,200;270,200|205,200', '0');
+
+-- 2. 分公司经理审批 -> 部门经理审批 (同意-需部门审批) - 主轴线
+INSERT INTO flow_skip (id, definition_id, now_node_code, now_node_type, next_node_code, next_node_type, skip_name, skip_type, skip_condition, coordinate, del_flag)
+VALUES (2000000000000000007, 2000000000000000001, 'b', 1, 'c', 1, '同意(需部门审批)', 'PASS', 'gt@@day|3', '370,200;470,200|420,200', '0');
+
+-- 3. 分公司经理审批 -> 结束 (同意-直接通过) - 上方绕行 y=50
+INSERT INTO flow_skip (id, definition_id, now_node_code, now_node_type, next_node_code, next_node_type, skip_name, skip_type, skip_condition, coordinate, del_flag)
+VALUES (2000000000000000008, 2000000000000000001, 'b', 1, 'd', 2, '同意(直接通过)', 'PASS', 'le@@day|3', '370,200;370,50;700,50;700,180|535,50', '0');
+
+-- 4. 分公司经理审批 -> 开始 (驳回) - 下方绕行 y=320
+INSERT INTO flow_skip (id, definition_id, now_node_code, now_node_type, next_node_code, next_node_type, skip_name, skip_type, coordinate, del_flag)
+VALUES (2000000000000000009, 2000000000000000001, 'b', 1, 'a', 0, '驳回', 'REJECT', '270,200;270,320;120,320;120,220|195,320', '0');
+
+-- 5. 部门经理审批 -> 结束 (同意) - 主轴线
+INSERT INTO flow_skip (id, definition_id, now_node_code, now_node_type, next_node_code, next_node_type, skip_name, skip_type, coordinate, del_flag)
+VALUES (2000000000000000010, 2000000000000000001, 'c', 1, 'd', 2, '同意', 'PASS', '570,200;700,200|635,200', '0');
+
+-- 6. 部门经理审批 -> 分公司经理审批 (驳回) - 最下方绕行 y=380
+INSERT INTO flow_skip (id, definition_id, now_node_code, now_node_type, next_node_code, next_node_type, skip_name, skip_type, coordinate, del_flag)
+VALUES (2000000000000000011, 2000000000000000001, 'c', 1, 'b', 1, '驳回', 'REJECT', '470,200;470,380;270,380;270,200|370,380', '0');
 

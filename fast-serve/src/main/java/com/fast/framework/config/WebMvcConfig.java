@@ -34,7 +34,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/swagger-resources/**",
                         "/v2/api-docs/**",
                         "/v3/api-docs/**",
-                        "/system/file/avatar/**"
+                        "/system/file/avatar/**",
+                        "/warm-flow-ui/**",
+                        "/warm-flow/**"
                 );
     }
 

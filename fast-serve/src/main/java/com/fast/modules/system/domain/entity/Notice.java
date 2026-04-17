@@ -1,5 +1,7 @@
 package com.fast.modules.system.domain.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -16,8 +18,9 @@ import java.time.LocalDateTime;
 public class Notice {
 
     /**
-     * 公告ID
+     * 公告ID（雪花ID）
      */
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     /**

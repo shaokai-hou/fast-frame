@@ -21,7 +21,7 @@ public class BaseEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 主键ID
+     * 主键ID（雪花ID）
      */
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;

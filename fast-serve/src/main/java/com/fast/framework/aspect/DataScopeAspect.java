@@ -89,31 +89,31 @@ public class DataScopeAspect {
                     return;
                 case "2": // 自定义数据权限
                     List<Long> deptIds = deptService.getDeptIdsByRoleId(role.getId());
-                    if (!deptIds.isEmpty() && validateIds(deptIds)) {
+                    if (!deptIds.isEmpty()) {
                         sqlString.append(String.format(
-                                " OR %s.dept_id IN (%s) ",
+                                " OR %s.dept_id IN ('%s') ",
                                 userAlias,
-                                deptIds.stream().map(String::valueOf).collect(Collectors.joining(","))
+                                deptIds.stream().map(String::valueOf).collect(Collectors.joining("','"))
                         ));
                     }
                     break;
                 case "3": // 本部门数据权限
                     if (user.getDeptId() != null) {
-                        sqlString.append(String.format(" OR %s.dept_id = %d ", userAlias, user.getDeptId()));
+                        sqlString.append(String.format(" OR %s.dept_id = '%s' ", userAlias, user.getDeptId()));
                     }
                     break;
                 case "4": // 本部门及以下数据权限
                     List<Long> deptAndChildrenIds = deptService.getDeptAndChildrenIds(user.getDeptId());
-                    if (!deptAndChildrenIds.isEmpty() && validateIds(deptAndChildrenIds)) {
+                    if (!deptAndChildrenIds.isEmpty()) {
                         sqlString.append(String.format(
-                                " OR %s.dept_id IN (%s) ",
+                                " OR %s.dept_id IN ('%s') ",
                                 userAlias,
-                                deptAndChildrenIds.stream().map(String::valueOf).collect(Collectors.joining(","))
+                                deptAndChildrenIds.stream().map(String::valueOf).collect(Collectors.joining("','"))
                         ));
                     }
                     break;
                 case "5": // 仅本人数据权限
-                    sqlString.append(String.format(" OR %s.id = %d ", userAlias, userId));
+                    sqlString.append(String.format(" OR %s.id = '%s' ", userAlias, userId));
                     break;
                 default:
                     break;
@@ -143,16 +143,6 @@ public class DataScopeAspect {
     }
 
     /**
-     * 验证 ID 列表是否都是有效的正整数
-     *
-     * @param ids ID 列表
-     * @return 是否有效
-     */
-    private boolean validateIds(List<Long> ids) {
-        return ids.stream().allMatch(id -> id != null && id > 0);
-    }
-
-    /**
      * 验证生成的 SQL 格式是否合法
      * 只允许包含 dept_id、id 字段和 IN、= 操作符
      *
@@ -162,12 +152,12 @@ public class DataScopeAspect {
     private boolean validateDataScopeSql(String sql) {
         // 长度限制：防止超长 SQL 拼接攻击
         if (sql == null || sql.length() > MAX_SQL_LENGTH) {
-            log.warn("[DataScope] SQL 长度超限或为空: length={}, userId: {}", sql == null ? 0 : sql.length(), StpUtil.getLoginIdAsLong());
+            log.warn("[DataScope] SQL 长度超限或为空: length={}, userId: {}", sql == null ? 0 : sql.length(), StpUtil.getLoginIdAsString());
             return false;
         }
-        // 基本格式验证：只允许特定格式
+        // 基本格式验证：只允许特定格式（支持数字 ID）
         Pattern pattern = Pattern.compile(
-                "^\\s*AND\\s+\\([a-zA-Z_]+\\.(dept_id|id)\\s+(IN\\s*\\([\\d,]+\\)|=\\s*\\d+)\\s*(OR\\s+[a-zA-Z_]+\\.(dept_id|id)\\s+(IN\\s*\\([\\d,]+\\)|=\\s*\\d+))*\\s*\\)$",
+                "^\\s*AND\\s+\\([a-zA-Z_]+\\.(dept_id|id)\\s+(IN\\s*\\('[0-9]+'(,'[0-9]+')*\\)|=\\s*'\\w+')\\s*(OR\\s+[a-zA-Z_]+\\.(dept_id|id)\\s+(IN\\s*\\('[0-9]+'(,'[0-9]+')*\\)|=\\s*'\\w+'))*\\s*\\)$",
                 Pattern.CASE_INSENSITIVE
         );
         return pattern.matcher(sql).matches();

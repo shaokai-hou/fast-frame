@@ -1,7 +1,5 @@
 package com.fast.modules.job.domain.vo;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -17,13 +15,11 @@ public class JobLogVO {
     /**
      * 日志ID
      */
-    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**
      * 任务ID
      */
-    @JsonSerialize(using = ToStringSerializer.class)
     private Long jobId;
 
     /**

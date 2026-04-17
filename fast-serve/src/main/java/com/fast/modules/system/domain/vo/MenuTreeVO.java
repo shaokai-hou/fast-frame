@@ -1,7 +1,5 @@
 package com.fast.modules.system.domain.vo;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -20,13 +18,11 @@ public class MenuTreeVO implements Serializable {
     /**
      * 节点ID
      */
-    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**
      * 父节点ID
      */
-    @JsonSerialize(using = ToStringSerializer.class)
     private Long parentId;
 
     /**

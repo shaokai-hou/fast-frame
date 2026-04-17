@@ -7,6 +7,8 @@ import com.fast.modules.system.domain.dto.NoticeQuery;
 import com.fast.modules.system.domain.entity.Notice;
 import com.fast.modules.system.domain.vo.NoticeVO;
 
+import java.util.List;
+
 /**
  * 通知公告Service
  *
@@ -43,5 +45,5 @@ public interface NoticeService extends IService<Notice> {
      *
      * @param ids 公告ID列表
      */
-    void deleteNotices(java.util.List<Long> ids);
+    void deleteNotices(List<Long> ids);
 }

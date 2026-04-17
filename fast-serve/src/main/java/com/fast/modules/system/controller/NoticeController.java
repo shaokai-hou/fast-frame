@@ -53,7 +53,7 @@ public class NoticeController extends BaseController {
      */
     @SaCheckPermission("system:notice:query")
     @GetMapping("/{id}")
-    public Result<Notice> getInfo(@PathVariable Long id) {
+    public Result<Notice> getInfo(@PathVariable String id) {
         return success(noticeService.getById(id));
     }
 

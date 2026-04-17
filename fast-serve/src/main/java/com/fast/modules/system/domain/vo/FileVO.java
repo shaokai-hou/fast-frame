@@ -1,7 +1,5 @@
 package com.fast.modules.system.domain.vo;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -20,7 +18,6 @@ public class FileVO implements Serializable {
     /**
      * 文件ID
      */
-    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**

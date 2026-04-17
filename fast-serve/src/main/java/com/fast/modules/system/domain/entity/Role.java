@@ -16,12 +16,6 @@ import lombok.EqualsAndHashCode;
 public class Role extends BaseEntity {
 
     /**
-     * 角色ID
-     */
-    @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
-
-    /**
      * 角色名称
      */
     private String roleName;

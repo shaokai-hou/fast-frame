@@ -1,7 +1,5 @@
 package com.fast.modules.system.domain.vo;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -21,13 +19,11 @@ public class UserVO implements Serializable {
     /**
      * 用户ID
      */
-    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**
      * 部门ID
      */
-    @JsonSerialize(using = ToStringSerializer.class)
     private Long deptId;
 
     /**
@@ -83,7 +79,7 @@ public class UserVO implements Serializable {
     /**
      * 角色ID列表（用于回显）
      */
-    private List<String> roleIds;
+    private List<Long> roleIds;
 
     /**
      * 是否被锁定（登录锁定）

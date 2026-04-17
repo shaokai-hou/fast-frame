@@ -1,7 +1,5 @@
 package com.fast.modules.system.domain.vo;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -17,7 +15,6 @@ public class NoticeVO {
     /**
      * 公告ID
      */
-    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**
@@ -43,7 +40,6 @@ public class NoticeVO {
     /**
      * 创建者
      */
-    @JsonSerialize(using = ToStringSerializer.class)
     private Long createBy;
 
     /**
@@ -54,7 +50,6 @@ public class NoticeVO {
     /**
      * 更新者
      */
-    @JsonSerialize(using = ToStringSerializer.class)
     private Long updateBy;
 
     /**

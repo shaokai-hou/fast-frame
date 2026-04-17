@@ -31,11 +31,11 @@
       </div>
 
       <!-- 数据表格 -->
-    <el-table v-loading="loading" :data="dictList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="dictList" row-key="id" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column type="index" label="序号" width="60" align="center" :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
-      <el-table-column label="字典名称" prop="dictName" width="200"/>
-      <el-table-column label="字典类型" prop="dictType" width="200"/>
+      <el-table-column label="字典名称" prop="dictName" width="200" show-overflow-tooltip/>
+      <el-table-column label="字典类型" prop="dictType" width="200" show-overflow-tooltip/>
       <el-table-column label="状态" align="center" width="120">
         <template #default="scope">
           <el-tag :type="scope.row.status === '0' ? 'success' : 'danger'">
@@ -222,24 +222,6 @@ onMounted(() => {
 <style scoped lang="scss">
 .page-container {
   min-height: 100%;
-}
-
-.search-bar {
-  background: var(--color-surface);
-  padding: 20px 24px;
-  border-radius: 12px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-  border: 1px solid var(--color-border-light);
-
-  :deep(.el-form-item) {
-    margin-bottom: 0;
-  }
-
-  :deep(.el-input),
-  :deep(.el-select) {
-    width: 200px;
-  }
 }
 
 .content-card {
