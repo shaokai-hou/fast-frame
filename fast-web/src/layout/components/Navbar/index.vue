@@ -2,7 +2,7 @@
   <div class="navbar">
     <div class="left-menu">
       <!-- 折叠按钮 -->
-      <div class="hamburger" @click="toggleSidebar">
+      <div class="action-btn" @click="toggleSidebar">
         <el-icon :size="20">
           <Fold v-if="!appStore.sidebarCollapsed" />
           <Expand v-else />
@@ -18,7 +18,7 @@
       <Screenfull />
 
       <!-- 设置按钮 -->
-      <div class="settings-btn" @click="openSettings">
+      <div class="action-btn" @click="openSettings">
         <el-icon :size="18"><Setting /></el-icon>
       </div>
 
@@ -60,16 +60,10 @@ function openSettings() {
   justify-content: space-between;
   padding: 0 24px;
   background: var(--color-surface);
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 1px 3px rgba(59, 130, 246, 0.04);
   border-bottom: 1px solid var(--color-border);
-}
 
-.left-menu {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-
-  .hamburger {
+  .action-btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -87,26 +81,15 @@ function openSettings() {
   }
 }
 
+.left-menu {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
 .right-menu {
   display: flex;
   align-items: center;
   gap: 12px;
-}
-
-.settings-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  cursor: pointer;
-  color: var(--color-foreground-muted);
-  transition: all 0.2s ease;
-  border-radius: 10px;
-
-  &:hover {
-    color: var(--color-primary);
-    background: var(--color-primary-lighter);
-  }
 }
 </style>

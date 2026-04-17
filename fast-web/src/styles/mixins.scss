@@ -1,6 +1,4 @@
-// ==========================================
 // 常用 Mixins
-// ==========================================
 
 // Flex 布局
 @mixin flex-center {
@@ -70,9 +68,40 @@
   }
 }
 
-// ==========================================
+// Plain 按钮 mixin
+@mixin plain-button($color, $lighter, $light) {
+  &.is-plain {
+    background: $lighter;
+    border-color: rgba($color, 0.3);
+    color: $color;
+    box-shadow: none;
+
+    &:hover {
+      background: $light;
+      border-color: $color;
+      color: $color;
+    }
+  }
+}
+
+// Link 按钮 mixin
+@mixin link-button($color, $lighter) {
+  color: $color !important;
+  border-color: rgba($color, 0.2) !important;
+
+  &:hover,
+  &:focus {
+    background: $lighter !important;
+    border-color: rgba($color, 0.5) !important;
+    color: $color !important;
+  }
+
+  &:focus-visible {
+    outline-color: $color;
+  }
+}
+
 // 动画关键帧
-// ==========================================
 @keyframes fadeIn {
   from {
     opacity: 0;

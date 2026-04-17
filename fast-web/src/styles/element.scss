@@ -1,10 +1,6 @@
-// ==========================================
-// Element Plus 样式覆盖 - 专业蓝白配色
-// ==========================================
+// Element Plus 样式覆盖 - Logo Blue 配色
 
-// ==========================================
 // 表格样式
-// ==========================================
 .el-table {
   border-radius: 12px;
   overflow: hidden;
@@ -21,7 +17,7 @@
   }
 
   tr:hover > td.el-table__cell {
-    background-color: var(--color-primary-lighter) !important;
+    background-color: var(--color-primary-lightest) !important;
   }
 
   // 边框颜色
@@ -40,12 +36,10 @@
   background: var(--gray-50);
 }
 
-// ==========================================
 // 对话框样式
-// ==========================================
 .el-dialog {
   border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.15);
+  box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15);
   overflow: hidden;
 
   .el-dialog__header {
@@ -70,9 +64,7 @@
   }
 }
 
-// ==========================================
 // 表单样式
-// ==========================================
 .el-form {
   .el-form-item__label {
     font-weight: 500;
@@ -114,9 +106,7 @@
   }
 }
 
-// ==========================================
 // 按钮样式
-// ==========================================
 .el-button {
   border-radius: 8px;
   font-weight: 500;
@@ -149,16 +139,16 @@
   }
 }
 
-// Primary 按钮
+// Primary 按钮 - Teal
 .el-button--primary {
   background: var(--color-primary);
   border-color: var(--color-primary);
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
 
   &:hover {
     background: var(--color-primary-hover);
     border-color: var(--color-primary-hover);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
   }
 
   // Plain 样式
@@ -172,7 +162,7 @@
       background: var(--color-primary-light);
       border-color: var(--color-primary);
       color: var(--color-primary);
-      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
     }
   }
 }
@@ -261,9 +251,7 @@
   }
 }
 
-// ==========================================
 // 按钮尺寸样式
-// ==========================================
 .el-button--small {
   padding: 6px 12px;
   font-size: 13px;
@@ -276,18 +264,14 @@
   min-height: 48px; // 44pt minimum touch target
 }
 
-// ==========================================
 // Loading 状态样式
-// ==========================================
 .el-button.is-loading {
   pointer-events: none;
   opacity: 0.7;
   cursor: wait;
 }
 
-// ==========================================
 // Icon/Circle 按钮样式 - 确保最小触摸区域
-// ==========================================
 .el-button.is-circle {
   min-width: 44px;
   min-height: 44px;
@@ -302,16 +286,14 @@
   }
 }
 
-// ==========================================
 // 文字/链接按钮样式 - 表格操作区域优化
-// ==========================================
 .el-button.is-link {
   padding: 4px 10px !important;
   min-height: 28px;
   border-radius: 6px !important;
   transition: all 0.2s ease;
   font-weight: 500;
-  border: 1px solid rgba(37, 99, 235, 0.25) !important;
+  border: 1px solid rgba(59, 130, 246, 0.25) !important;
   box-shadow: none !important;
   background: transparent !important;
   color: var(--color-primary) !important;
@@ -319,7 +301,7 @@
   &:hover,
   &:focus {
     background: var(--color-primary-lighter) !important;
-    border-color: rgba(37, 99, 235, 0.5) !important;
+    border-color: rgba(59, 130, 246, 0.5) !important;
     color: var(--color-primary) !important;
     box-shadow: none !important;
   }
@@ -385,9 +367,7 @@
   }
 }
 
-// ==========================================
 // 分页样式
-// ==========================================
 .el-pagination {
   margin-top: 12px;
   justify-content: flex-end;
@@ -399,7 +379,7 @@
     font-weight: 500;
 
     &:hover {
-      background: var(--color-primary-lighter);
+      background: var(--color-primary-lightest);
       color: var(--color-primary);
     }
 
@@ -415,24 +395,22 @@
     transition: all 0.2s ease;
 
     &:hover {
-      background: var(--color-primary-lighter);
+      background: var(--color-primary-lightest);
       color: var(--color-primary);
     }
   }
 }
 
-// ==========================================
 // 卡片样式
-// ==========================================
 .el-card {
   border-radius: 12px;
   border: none;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.04);
   transition: box-shadow 0.3s ease;
   background: var(--color-surface);
 
   &:hover {
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.08);
   }
 
   .el-card__header {
@@ -447,9 +425,7 @@
   }
 }
 
-// ==========================================
 // 标签样式
-// ==========================================
 .el-tag {
   border-radius: 6px;
   font-weight: 500;
@@ -481,12 +457,10 @@
   color: var(--color-info);
 }
 
-// ==========================================
 // 下拉菜单样式
-// ==========================================
 .el-dropdown-menu {
   border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.12);
   border: 1px solid var(--color-border-light);
   padding: 8px;
 
@@ -497,15 +471,13 @@
     color: var(--color-foreground);
 
     &:hover {
-      background: var(--color-primary-lighter);
+      background: var(--color-primary-lightest);
       color: var(--color-primary);
     }
   }
 }
 
-// ==========================================
 // 用户下拉菜单特殊样式
-// ==========================================
 .user-dropdown-popper {
   .el-dropdown-menu {
     padding: 0;
@@ -557,7 +529,7 @@
     }
 
     &:hover {
-      background: var(--color-primary-lighter);
+      background: var(--color-primary-lightest);
     }
   }
 
@@ -587,12 +559,10 @@
   }
 }
 
-// ==========================================
 // 选择器样式
-// ==========================================
 .el-select-dropdown {
   border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.12);
   border: 1px solid var(--color-border-light);
   background: var(--color-surface);
 
@@ -603,23 +573,21 @@
     padding: 0 16px;
 
     &:hover {
-      background: var(--color-primary-lighter);
+      background: var(--color-primary-lightest);
     }
 
     &.selected {
-      background: var(--color-primary-lighter);
+      background: var(--color-primary-lightest);
       color: var(--color-primary);
       font-weight: 500;
     }
   }
 }
 
-// ==========================================
 // 消息提示样式
-// ==========================================
 .el-message {
   border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.12);
   border: none;
   padding: 16px 20px;
 }
@@ -656,17 +624,13 @@
   }
 }
 
-// ==========================================
 // 开关样式
-// ==========================================
 .el-switch {
   --el-switch-on-color: var(--color-primary);
   --el-switch-off-color: var(--gray-300);
 }
 
-// ==========================================
 // 树形控件样式
-// ==========================================
 .el-tree {
   .el-tree-node__content {
     border-radius: 6px;
@@ -674,20 +638,18 @@
     height: 36px;
 
     &:hover {
-      background: var(--color-primary-lighter);
+      background: var(--color-primary-lightest);
     }
   }
 
   .el-tree-node.is-current > .el-tree-node__content {
-    background: var(--color-primary-lighter);
+    background: var(--color-primary-lightest);
     color: var(--color-primary);
     font-weight: 500;
   }
 }
 
-// ==========================================
 // 描述列表样式
-// ==========================================
 .el-descriptions {
   .el-descriptions__label {
     font-weight: 500;
@@ -713,9 +675,7 @@
   }
 }
 
-// ==========================================
 // 空状态样式
-// ==========================================
 .el-empty {
   padding: 48px 0;
 
@@ -724,25 +684,19 @@
   }
 }
 
-// ==========================================
 // 加载样式
-// ==========================================
 .el-loading-mask {
   border-radius: 12px;
 }
 
-// ==========================================
 // 骨架屏样式
-// ==========================================
 .el-skeleton {
   .el-skeleton__item {
     border-radius: 6px;
   }
 }
 
-// ==========================================
 // 复选框样式
-// ==========================================
 .el-checkbox {
   .el-checkbox__label {
     color: var(--color-foreground);
@@ -755,9 +709,7 @@
   }
 }
 
-// ==========================================
 // 单选框样式
-// ==========================================
 .el-radio {
   .el-radio__label {
     color: var(--color-foreground);
@@ -770,9 +722,7 @@
   }
 }
 
-// ==========================================
 // 抽屉样式
-// ==========================================
 .el-drawer {
   .el-drawer__header {
     margin-bottom: 0;
@@ -796,27 +746,21 @@
   }
 }
 
-// ==========================================
 // 弹出框样式
-// ==========================================
 .el-popover {
   border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.12);
   border: 1px solid var(--color-border-light);
 }
 
-// ==========================================
 // 工具提示样式
-// ==========================================
 .el-tooltip__popper {
   border-radius: 8px;
   padding: 8px 12px;
   font-size: 13px;
 }
 
-// ==========================================
 // 进度条样式
-// ==========================================
 .el-progress {
   .el-progress-bar__outer {
     border-radius: 100px;
@@ -828,9 +772,7 @@
   }
 }
 
-// ==========================================
 // 步骤条样式
-// ==========================================
 .el-steps {
   .el-step__head.is-process {
     color: var(--color-primary);
@@ -843,9 +785,7 @@
   }
 }
 
-// ==========================================
 // 面包屑样式
-// ==========================================
 .el-breadcrumb {
   font-size: 14px;
 
@@ -867,9 +807,7 @@
   }
 }
 
-// ==========================================
 // 标签页样式
-// ==========================================
 .el-tabs {
   .el-tabs__item {
     color: var(--color-foreground-muted);
@@ -889,13 +827,11 @@
   }
 }
 
-// ==========================================
 // 菜单弹出样式 - 折叠状态下的子菜单
-// ==========================================
 .el-menu--popup-container {
   .el-menu--popup {
     border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.12);
     border: 1px solid var(--color-border-light);
     background: var(--color-surface);
     padding: 8px;
@@ -917,7 +853,7 @@
 
       // 选中项 - 渐变背景 + 左侧指示条
       &.is-active {
-        background: linear-gradient(90deg, var(--color-primary-lighter) 0%, transparent 100%) !important;
+        background: linear-gradient(90deg, var(--color-primary-lightest) 0%, transparent 100%) !important;
         color: var(--color-primary) !important;
         font-weight: 600;
 
@@ -931,7 +867,7 @@
           width: 4px;
           background: var(--color-primary);
           border-radius: 0 4px 4px 0;
-          box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+          box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
         }
 
         .el-icon {

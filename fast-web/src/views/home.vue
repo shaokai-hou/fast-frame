@@ -53,14 +53,14 @@ const userStore = useUserStore()
 const loading = ref(true)
 const quickLinks = ref([])
 
-// 图标渐变色列表
+// 图标渐变色列表 - Logo Blue 为主色
 const gradients = [
+  'linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%)',
   'linear-gradient(135deg, #2563EB 0%, #3B82F6 100%)',
-  'linear-gradient(135deg, #7C3AED 0%, #A78BFA 100%)',
   'linear-gradient(135deg, #059669 0%, #10B981 100%)',
   'linear-gradient(135deg, #D97706 0%, #FBBF24 100%)',
-  'linear-gradient(135deg, #DC2626 0%, #F87171 100%)',
-  'linear-gradient(135deg, #0891B2 0%, #22D3EE 100%)'
+  'linear-gradient(135deg, #7C3AED 0%, #A78BFA 100%)',
+  'linear-gradient(135deg, #DC2626 0%, #F87171 100%)'
 ]
 
 // 获取渐变色
@@ -116,17 +116,17 @@ onMounted(async () => {
   padding: 0;
 }
 
-// 欢迎区域
+// 欢迎区域 - Logo Blue 渐变
 .welcome-section {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(135deg, var(--color-primary) 0%, #3B82F6 100%);
+  background: var(--gradient-primary);
   padding: 32px 40px;
   border-radius: 16px;
   margin-bottom: 24px;
-  color: #fff;
-  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.25);
+  color: var(--color-foreground-inverse);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.25);
 }
 
 .welcome-title {
@@ -163,7 +163,7 @@ onMounted(async () => {
 .quick-links-card {
   border: none;
   border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.04);
 
   :deep(.el-card__header) {
     padding: 20px 24px;
@@ -203,7 +203,7 @@ onMounted(async () => {
   &:hover {
     background: var(--color-surface);
     transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.08);
   }
 }
 

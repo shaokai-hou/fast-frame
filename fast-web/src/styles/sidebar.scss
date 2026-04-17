@@ -1,14 +1,104 @@
-// ==========================================
-// 侧边栏样式 - 仅容器样式
+// 侧边栏样式 - Logo Blue 配色
 // 菜单组件样式在 Sidebar/index.vue 中定义
-// ==========================================
 .sidebar {
   background: var(--color-surface);
-  border-right: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border-light);
   transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 
   // 折叠状态宽度
   &.collapsed {
     width: 64px;
+  }
+}
+
+// 侧边栏菜单样式（补充 Sidebar/index.vue 中的样式）
+.sidebar-menu {
+  // 菜单项基础样式
+  .el-menu-item {
+    height: 48px;
+    line-height: 48px;
+    padding-left: 20px !important;
+    margin: 4px 12px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    color: var(--sidebar-text);
+
+    &:hover {
+      background-color: var(--sidebar-hover-bg) !important;
+      color: var(--sidebar-text-hover);
+    }
+
+    // 选中状态
+    &.is-active {
+      background: linear-gradient(135deg, var(--color-primary-lightest) 0%, transparent 100%) !important;
+      color: var(--color-primary) !important;
+      font-weight: 600;
+
+      // 左侧指示条
+      &::before {
+        content: '';
+        position: absolute;
+        left: 12px;
+        top: 10px;
+        bottom: 10px;
+        width: 4px;
+        background: var(--color-primary);
+        border-radius: 4px;
+      }
+
+      .el-icon {
+        color: var(--color-primary) !important;
+      }
+    }
+  }
+
+  // 子菜单标题
+  .el-sub-menu__title {
+    height: 48px;
+    line-height: 48px;
+    padding-left: 20px !important;
+    margin: 4px 12px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    color: var(--sidebar-text);
+
+    &:hover {
+      background-color: var(--sidebar-hover-bg) !important;
+      color: var(--sidebar-text-hover);
+    }
+  }
+
+  // 子菜单内嵌菜单项
+  .el-menu {
+    .el-menu-item {
+      padding-left: 40px !important;
+      min-width: 0;
+
+      &.is-active {
+        background: var(--color-primary-lighter) !important;
+      }
+    }
+  }
+}
+
+// 侧边栏 Logo 区域
+.sidebar-logo {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--color-border-light);
+
+  .logo-text {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-primary);
+    letter-spacing: 0.5px;
+  }
+
+  .logo-icon {
+    color: var(--color-primary);
+    font-size: 24px;
   }
 }
