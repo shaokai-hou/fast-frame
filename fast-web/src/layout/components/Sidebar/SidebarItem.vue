@@ -1,18 +1,18 @@
 <template>
   <div v-if="!item.meta?.hidden">
-    <!-- 只有一个可显示的子菜单：直接显示子菜单（跳过父级） -->
-    <template v-if="hasOneShowingChild(item.children, item) && (!onlyOneChild.children || onlyOneChild.noShowingChildren)">
-      <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
-        <el-menu-item :index="resolvePath(onlyOneChild.path)">
-          <el-icon v-if="onlyOneChild.meta?.icon || item.meta?.icon">
-            <component :is="onlyOneChild.meta?.icon || item.meta?.icon" />
+    <!-- 没有子菜单 -->
+    <template v-if="!hasChildren">
+      <app-link :to="resolvePath(item.path)">
+        <el-menu-item :index="resolvePath(item.path)">
+          <el-icon v-if="item.meta?.icon">
+            <component :is="item.meta.icon" />
           </el-icon>
-          <template #title>{{ onlyOneChild.meta?.title }}</template>
+          <template #title>{{ item.meta?.title }}</template>
         </el-menu-item>
       </app-link>
     </template>
 
-    <!-- 有多个子菜单或需要显示父级：显示为子菜单 -->
+    <!-- 有子菜单 -->
     <el-sub-menu v-else :index="resolvePath(item.path)">
       <template #title>
         <el-icon v-if="item.meta?.icon">
@@ -21,7 +21,7 @@
         <span>{{ item.meta?.title }}</span>
       </template>
       <SidebarItem
-        v-for="child in item.children"
+        v-for="child in visibleChildren"
         :key="child.path"
         :item="child"
         :base-path="resolvePath(item.path)"
@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import AppLink from './Link.vue'
 
 const props = defineProps({
@@ -45,44 +45,20 @@ const props = defineProps({
   }
 })
 
-// 存储唯一的子菜单（用于单子菜单情况）
-const onlyOneChild = ref(null)
+/**
+ * 过滤出可显示的子菜单
+ */
+const visibleChildren = computed(() => {
+  const children = props.item.children || []
+  return children.filter(child => !child.meta?.hidden)
+})
 
 /**
- * 判断是否只有一个可显示的子菜单
- * @param children 子菜单列表
- * @param parent 父菜单
- * @returns boolean
+ * 是否有子菜单
  */
-function hasOneShowingChild(children = [], parent) {
-  if (!children) {
-    children = []
-  }
-
-  // 过滤出可显示的子菜单
-  const showingChildren = children.filter(child => {
-    if (child.meta?.hidden) {
-      return false
-    }
-    // 暂存唯一的子菜单（会在后续使用）
-    onlyOneChild.value = child
-    return true
-  })
-
-  // 只有一个可显示的子菜单时，直接显示该子菜单
-  if (showingChildren.length === 1) {
-    return true
-  }
-
-  // 没有可显示的子菜单时，显示父菜单本身（标记为无子菜单显示）
-  if (showingChildren.length === 0) {
-    onlyOneChild.value = { ...parent, path: '', noShowingChildren: true }
-    return true
-  }
-
-  // 多个子菜单，返回 false，显示为子菜单结构
-  return false
-}
+const hasChildren = computed(() => {
+  return visibleChildren.value.length > 0
+})
 
 /**
  * 解析路径
