@@ -198,7 +198,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, getCurrentInstance, onMounted } from 'vue'
+import { ref, reactive, computed, getCurrentInstance, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh, Plus, Sort, QuestionFilled } from '@element-plus/icons-vue'
 import { listMenu, getMenu, addMenu, updateMenu, deleteMenu, getMenuTree } from '@/api/system/menu'
@@ -254,10 +254,27 @@ const queryParams = reactive({
 
 // 表单
 const form = ref({})
-const rules = {
-  menuName: [{ required: true, message: '菜单名称不能为空', trigger: 'blur' }],
-  menuSort: [{ required: true, message: '显示顺序不能为空', trigger: 'blur' }]
-}
+
+// 动态验证规则（根据菜单类型）
+const rules = computed(() => {
+  const baseRules = {
+    menuName: [{ required: true, message: '菜单名称不能为空', trigger: 'blur' }],
+    menuSort: [{ required: true, message: '显示顺序不能为空', trigger: 'blur' }]
+  }
+
+  // 菜单类型(M)：路由地址、组件路径必填
+  if (form.value.menuType === 'M') {
+    baseRules.path = [{ required: true, message: '路由地址不能为空', trigger: 'blur' }]
+    baseRules.component = [{ required: true, message: '组件路径不能为空', trigger: 'blur' }]
+  }
+
+  // 按钮类型(B)：权限标识必填
+  if (form.value.menuType === 'B') {
+    baseRules.perms = [{ required: true, message: '权限标识不能为空', trigger: 'blur' }]
+  }
+
+  return baseRules
+})
 
 // 获取列表
 const getList = async () => {
