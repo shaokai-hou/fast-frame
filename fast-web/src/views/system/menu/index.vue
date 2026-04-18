@@ -115,11 +115,11 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row v-if="form.menuType !== 'B'">
+        <el-row v-if="form.menuType === 'M'">
           <el-col :span="12">
             <el-form-item prop="path">
               <template #label>
-                <el-tooltip content="前端路由路径，如：/system/user（目录类型可不填）" placement="top">
+                <el-tooltip content="前端路由路径，如：/system/user" placement="top">
                   <el-icon class="label-tip"><QuestionFilled /></el-icon>
                 </el-tooltip>
                 路由地址
@@ -130,7 +130,7 @@
           <el-col :span="12">
             <el-form-item prop="component">
               <template #label>
-                <el-tooltip content="Vue组件路径，如：system/user/index（目录类型可不填）" placement="top">
+                <el-tooltip content="Vue组件路径，如：system/user/index" placement="top">
                   <el-icon class="label-tip"><QuestionFilled /></el-icon>
                 </el-tooltip>
                 组件路径
@@ -143,7 +143,7 @@
           <el-col :span="24">
             <el-form-item prop="link">
               <template #label>
-                <el-tooltip content="iframe外链地址，如：/api/druid/index.html（仅菜单类型）" placement="top">
+                <el-tooltip content="iframe外链地址，如：/api/druid/index.html" placement="top">
                   <el-icon class="label-tip"><QuestionFilled /></el-icon>
                 </el-tooltip>
                 外链地址
