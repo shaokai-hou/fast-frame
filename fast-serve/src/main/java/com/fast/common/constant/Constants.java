@@ -8,31 +8,6 @@ package com.fast.common.constant;
 public class Constants {
 
     /**
-     * 成功标记
-     */
-    public static final int SUCCESS = 200;
-
-    /**
-     * 失败标记
-     */
-    public static final int FAIL = 500;
-
-    /**
-     * 未授权标记
-     */
-    public static final int UNAUTHORIZED = 401;
-
-    /**
-     * 禁止访问标记
-     */
-    public static final int FORBIDDEN = 403;
-
-    /**
-     * 参数错误标记
-     */
-    public static final int BAD_REQUEST = 400;
-
-    /**
      * 正常状态
      */
     public static final String NORMAL = "0";
@@ -66,4 +41,29 @@ public class Constants {
      * 性别 - 女
      */
     public static final String GENDER_FEMALE = "2";
+
+    /**
+     * 数据权限 全部数据
+     */
+    public static final String DATA_SCOPE_ALL = "1";
+
+    /**
+     * 数据权限 - 自定义数据
+     */
+    public static final String DATA_SCOPE_CUSTOM = "2";
+
+    /**
+     * 数据权限 - 本部门数据
+     */
+    public static final String DATA_SCOPE_DEPT = "3";
+
+    /**
+     * 数据权限 - 本部门及以下
+     */
+    public static final String DATA_SCOPE_DEPT_AND_CHILD = "4";
+
+    /**
+     * 数据权限 - 仅本人数据
+     */
+    public static final String DATA_SCOPE_SELF = "5";
 }

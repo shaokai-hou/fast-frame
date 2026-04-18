@@ -2,15 +2,15 @@ package com.fast.modules.system.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.StrUtil;
-import com.fast.common.constant.RedisKeyConstants;
+import com.fast.common.constant.RedisConstants;
 import com.fast.modules.system.domain.dto.OnlineUserQuery;
 import com.fast.modules.system.domain.dto.OnlineUserVO;
 import com.fast.modules.system.domain.entity.User;
+import com.fast.framework.helper.RedisHelper;
 import com.fast.modules.system.service.OnlineService;
 import com.fast.modules.system.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -29,14 +29,13 @@ import java.util.*;
 public class OnlineServiceImpl implements OnlineService {
 
     private final UserService userService;
-    private final RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public List<OnlineUserVO> listOnlineUsers(OnlineUserQuery query) {
         List<OnlineUserVO> result = new ArrayList<>();
 
         // 使用 SCAN 命令替代 KEYS，避免阻塞 Redis
-        Set<String> keys = scanKeys(RedisKeyConstants.SA_TOKEN_PREFIX);
+        Set<String> keys = scanKeys(RedisConstants.SA_TOKEN_PREFIX);
         if (keys.isEmpty()) {
             return result;
         }
@@ -46,7 +45,7 @@ public class OnlineServiceImpl implements OnlineService {
         List<Long> userIds = new ArrayList<>();
 
         for (String key : keys) {
-            String token = key.substring(RedisKeyConstants.SA_TOKEN_PREFIX.length());
+            String token = key.substring(RedisConstants.SA_TOKEN_PREFIX.length());
             Object loginId = StpUtil.getLoginIdByToken(token);
             if (loginId != null) {
                 Long userId = Long.parseLong(loginId.toString());
@@ -112,21 +111,6 @@ public class OnlineServiceImpl implements OnlineService {
      * @return 匹配的 key 集合
      */
     private Set<String> scanKeys(String pattern) {
-        Set<String> keys = new HashSet<>();
-        try {
-            org.springframework.data.redis.core.Cursor<String> cursor = redisTemplate.scan(
-                    org.springframework.data.redis.core.ScanOptions.scanOptions()
-                            .match(pattern + "*")
-                            .count(100)
-                            .build()
-            );
-            while (cursor.hasNext()) {
-                keys.add(cursor.next());
-            }
-            cursor.close();
-        } catch (Exception e) {
-            log.error("[OnlineService] SCAN 命令执行失败: {}", e.getMessage());
-        }
-        return keys;
+        return RedisHelper.scan(pattern + "*");
     }
 }

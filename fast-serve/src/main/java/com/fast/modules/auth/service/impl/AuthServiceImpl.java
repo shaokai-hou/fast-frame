@@ -7,8 +7,11 @@ import cn.hutool.captcha.LineCaptcha;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
-import com.fast.common.constant.RedisKeyConstants;
+import com.fast.common.constant.ConfigConstants;
+import com.fast.common.constant.RedisConstants;
 import com.fast.common.exception.BusinessException;
+import com.fast.framework.helper.ConfigHelper;
+import com.fast.framework.helper.RedisHelper;
 import com.fast.modules.auth.domain.dto.*;
 import com.fast.modules.auth.service.AuthService;
 import com.fast.modules.log.domain.entity.LoginLog;
@@ -18,16 +21,13 @@ import com.fast.modules.system.domain.dto.RoleVO;
 import com.fast.modules.system.domain.entity.Menu;
 import com.fast.modules.system.domain.entity.User;
 import com.fast.modules.system.mapper.MenuMapper;
-import com.fast.modules.system.service.ConfigService;
 import com.fast.modules.system.service.MenuService;
 import com.fast.modules.system.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -43,8 +43,6 @@ public class AuthServiceImpl implements AuthService {
     private final MenuService menuService;
     private final MenuMapper menuMapper;
     private final LoginLogService loginLogService;
-    private final RedisTemplate<String, Object> redisTemplate;
-    private final ConfigService configService;
 
     /**
      * 生成验证码
@@ -59,8 +57,8 @@ public class AuthServiceImpl implements AuthService {
         String code = captcha.getCode();
 
         // 存入Redis，5分钟过期
-        String key = RedisKeyConstants.CAPTCHA_CODE_PREFIX + uuid;
-        redisTemplate.opsForValue().set(key, code, 5, TimeUnit.MINUTES);
+        String key = RedisConstants.CAPTCHA_CODE_PREFIX + uuid;
+        RedisHelper.set(key, code, 5 * 60);
 
         // 返回验证码信息
         CaptchaVO vo = new CaptchaVO();
@@ -79,24 +77,24 @@ public class AuthServiceImpl implements AuthService {
      */
     @Override
     public LoginVO login(LoginDTO dto, String ip) {
-        String lockKey = RedisKeyConstants.LOGIN_LOCK_PREFIX + dto.getUsername();
-        if (redisTemplate.hasKey(lockKey)) {
+        String lockKey = RedisConstants.LOGIN_LOCK_PREFIX + dto.getUsername();
+        if (RedisHelper.hasKey(lockKey)) {
             recordLoginLog(dto.getUsername(), ip, "1", "账户已锁定");
             throw new BusinessException("账户已锁定，请联系管理员解锁");
         }
 
         // 校验验证码
-        String captchaKey = RedisKeyConstants.CAPTCHA_CODE_PREFIX + dto.getUuid();
-        Object cacheCode = redisTemplate.opsForValue().get(captchaKey);
+        String captchaKey = RedisConstants.CAPTCHA_CODE_PREFIX + dto.getUuid();
+        String cacheCode = RedisHelper.get(captchaKey);
         if (cacheCode == null) {
             recordLoginLog(dto.getUsername(), ip, "1", "验证码已过期");
             throw new BusinessException("验证码已过期");
         }
-        if (!cacheCode.toString().equalsIgnoreCase(dto.getCaptcha())) {
+        if (!cacheCode.equalsIgnoreCase(dto.getCaptcha())) {
             recordLoginLog(dto.getUsername(), ip, "1", "验证码错误");
             throw new BusinessException("验证码错误");
         }
-        redisTemplate.delete(captchaKey);
+        RedisHelper.delete(captchaKey);
 
         // 校验用户
         User user = userService.getByUsername(dto.getUsername());
@@ -151,13 +149,13 @@ public class AuthServiceImpl implements AuthService {
      * @param username 用户名
      */
     private void incrementLoginFailCount(String username) {
-        String failKey = RedisKeyConstants.LOGIN_FAIL_PREFIX + username;
-        Long failCount = redisTemplate.opsForValue().increment(failKey);
+        String failKey = RedisConstants.LOGIN_FAIL_PREFIX + username;
+        long failCount = RedisHelper.incr(failKey);
 
-        if (failCount != null && failCount >= getMaxFailCount()) {
+        if (failCount >= getMaxFailCount()) {
             // 永久锁定账户（需管理员手动解锁）
-            redisTemplate.opsForValue().set(RedisKeyConstants.LOGIN_LOCK_PREFIX + username, "1");
-            redisTemplate.delete(failKey);
+            RedisHelper.set(RedisConstants.LOGIN_LOCK_PREFIX + username, "1");
+            RedisHelper.delete(failKey);
         }
     }
 
@@ -167,7 +165,7 @@ public class AuthServiceImpl implements AuthService {
      * @param username 用户名
      */
     private void clearLoginFailCount(String username) {
-        redisTemplate.delete(RedisKeyConstants.LOGIN_FAIL_PREFIX + username);
+        RedisHelper.delete(RedisConstants.LOGIN_FAIL_PREFIX + username);
     }
 
     /**
@@ -177,12 +175,12 @@ public class AuthServiceImpl implements AuthService {
      * @return 剩余次数，已锁定返回 0
      */
     private int getRemainingAttempts(String username) {
-        if (redisTemplate.hasKey(RedisKeyConstants.LOGIN_LOCK_PREFIX + username)) {
+        if (RedisHelper.hasKey(RedisConstants.LOGIN_LOCK_PREFIX + username)) {
             return 0;
         }
-        String failKey = RedisKeyConstants.LOGIN_FAIL_PREFIX + username;
-        Object count = redisTemplate.opsForValue().get(failKey);
-        int currentCount = count == null ? 0 : Integer.parseInt(count.toString());
+        String failKey = RedisConstants.LOGIN_FAIL_PREFIX + username;
+        String count = RedisHelper.get(failKey);
+        int currentCount = count == null ? 0 : Integer.parseInt(count);
         return getMaxFailCount() - currentCount;
     }
 
@@ -192,15 +190,7 @@ public class AuthServiceImpl implements AuthService {
      * @return 最大失败次数
      */
     private int getMaxFailCount() {
-        String value = configService.getConfigValue("sys.login.maxFailCount");
-        if (StrUtil.isBlank(value)) {
-            throw new BusinessException("系统参数缺失：sys.login.maxFailCount");
-        }
-        try {
-            return Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-            throw new BusinessException("系统参数配置异常：sys.login.maxFailCount=" + value);
-        }
+        return ConfigHelper.getIntValue(ConfigConstants.LOGIN_MAX_FAIL_COUNT, 5);
     }
 
     /**

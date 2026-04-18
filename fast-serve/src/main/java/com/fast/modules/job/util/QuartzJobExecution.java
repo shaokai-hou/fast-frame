@@ -1,7 +1,8 @@
 package com.fast.modules.job.util;
 
+import cn.hutool.extra.spring.SpringUtil;
+import com.fast.common.constant.Constants;
 import com.fast.common.exception.BusinessException;
-import com.fast.common.util.SpringContextHolder;
 import com.fast.modules.job.domain.entity.JobLog;
 import com.fast.modules.job.service.JobLogService;
 import org.quartz.JobExecutionContext;
@@ -23,7 +24,7 @@ public class QuartzJobExecution extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
-        JobLogService jobLogService = SpringContextHolder.getBean(JobLogService.class);
+        JobLogService jobLogService = SpringUtil.getBean(JobLogService.class);
 
         // 获取任务信息
         String jobIdStr = context.getJobDetail().getJobDataMap().getString("jobId");
@@ -41,15 +42,15 @@ public class QuartzJobExecution extends QuartzJobBean {
         try {
             // 执行任务
             invokeMethod(invokeTarget);
-            jobLog.setStatus("0");
+            jobLog.setStatus(Constants.NORMAL);
             jobLog.setJobMessage("任务执行成功");
         } catch (Exception e) {
             log.error("任务执行失败，任务ID: {}", jobIdStr, e);
-            jobLog.setStatus("1");
+            jobLog.setStatus(Constants.DISABLE);
             jobLog.setJobMessage("任务执行失败");
             jobLog.setExceptionInfo(e.getMessage());
             if (context.getJobDetail().getJobDataMap().containsKey("concurrent")
-                    && "1".equals(context.getJobDetail().getJobDataMap().getString("concurrent"))) {
+                    && Constants.DISABLE.equals(context.getJobDetail().getJobDataMap().getString("concurrent"))) {
                 // 禁止并发，重新触发
                 throw new JobExecutionException(e);
             }
@@ -77,7 +78,7 @@ public class QuartzJobExecution extends QuartzJobBean {
         String params = split.length > 2 ? split[2] : null;
 
         // 获取Bean
-        Object bean = SpringContextHolder.getBean(beanName);
+        Object bean = SpringUtil.getBean(beanName);
 
         // 反射调用方法
         if (params != null) {

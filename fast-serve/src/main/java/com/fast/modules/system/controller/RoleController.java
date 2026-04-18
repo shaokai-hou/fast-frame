@@ -134,4 +134,18 @@ public class RoleController extends BaseController {
     public Result<List<Long>> menuIds(@PathVariable Long roleId) {
         return success(menuService.listMenuIdsByRoleId(roleId));
     }
+
+    /**
+     * 修改角色状态
+     *
+     * @param role 角色状态参数
+     * @return 成功结果
+     */
+    @SaCheckPermission("system:role:edit")
+    @Log(title = "角色管理", businessType = BusinessType.UPDATE)
+    @PutMapping("/status")
+    public Result<Void> changeStatus(@RequestBody Role role) {
+        roleService.updateById(role);
+        return success();
+    }
 }

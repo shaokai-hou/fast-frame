@@ -2,6 +2,7 @@ package com.fast.modules.system.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fast.common.constant.Constants;
 import com.fast.common.exception.BusinessException;
 import com.fast.common.result.PageRequest;
 import com.fast.modules.system.domain.dto.NoticeDTO;
@@ -46,7 +47,7 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
     public void addNotice(NoticeDTO dto) {
         Notice notice = new Notice();
         BeanUtils.copyProperties(dto, notice);
-        notice.setStatus("0");
+        notice.setStatus(Constants.NORMAL);
         save(notice);
     }
 

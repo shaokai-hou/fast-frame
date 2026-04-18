@@ -4,9 +4,10 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.fast.common.constant.RedisKeyConstants;
+import com.fast.common.constant.RedisConstants;
 import com.fast.common.exception.BusinessException;
 import com.fast.common.result.PageRequest;
+import com.fast.framework.helper.RedisHelper;
 import com.fast.modules.system.domain.dto.ConfigQuery;
 import com.fast.modules.system.domain.dto.ConfigVO;
 import com.fast.modules.system.domain.entity.Config;
@@ -14,11 +15,10 @@ import com.fast.modules.system.mapper.ConfigMapper;
 import com.fast.modules.system.service.ConfigService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.Objects;
 
 /**
  * 参数配置Service实现
@@ -30,41 +30,56 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class ConfigServiceImpl extends ServiceImpl<ConfigMapper, Config> implements ConfigService {
 
-    private final RedisTemplate<String, Object> redisTemplate;
-
     /**
-     * 缓存过期时间（小时）
+     * 分页查询参数配置
+     *
+     * @param query      查询条件
+     * @param pageRequest 分页参数
+     * @return 参数配置分页结果
      */
-    private static final long CACHE_EXPIRE_HOURS = 24;
-
     @Override
     public IPage<ConfigVO> pageConfigs(ConfigQuery query, PageRequest pageRequest) {
         return baseMapper.selectConfigPage(pageRequest.toPage(), query);
     }
 
+    /**
+     * 根据参数键名获取参数值
+     *
+     * @param configKey 参数键名
+     * @return 参数值
+     */
     @Override
     public String getConfigValue(String configKey) {
         // 先从缓存获取
-        String cacheKey = RedisKeyConstants.CONFIG_PREFIX + configKey;
-        Object cached = redisTemplate.opsForValue().get(cacheKey);
+        String cacheKey = RedisConstants.CONFIG_PREFIX + configKey;
+        String cached = RedisHelper.get(cacheKey);
         if (cached != null) {
-            return cached.toString();
+            return cached;
         }
 
         // 缓存不存在，从数据库查询
         LambdaQueryWrapper<Config> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Config::getConfigKey, configKey);
         Config config = getOne(wrapper);
-        String value = config != null ? config.getConfigValue() : null;
 
+        if (Objects.isNull(config)) {
+            throw new BusinessException("参数键名不存在");
+        }
         // 写入缓存
-        if (value != null) {
-            redisTemplate.opsForValue().set(cacheKey, value, CACHE_EXPIRE_HOURS, TimeUnit.HOURS);
+        String configValue = config.getConfigValue();
+        if (StrUtil.isNotBlank(configValue)) {
+            RedisHelper.set(cacheKey, config.getConfigValue(),
+                    RedisConstants.CACHE_EXPIRE_HOURS * 3600);
         }
 
-        return value;
+        return configValue;
     }
 
+    /**
+     * 新增参数配置
+     *
+     * @param config 参数配置
+     */
     @Override
     public void addConfig(Config config) {
         LambdaQueryWrapper<Config> wrapper = new LambdaQueryWrapper<>();
@@ -74,9 +89,16 @@ public class ConfigServiceImpl extends ServiceImpl<ConfigMapper, Config> impleme
         }
         save(config);
         // 添加后缓存
-        cacheConfigValue(config.getConfigKey(), config.getConfigValue());
+        RedisHelper.set(RedisConstants.CONFIG_PREFIX + config.getConfigKey(),
+                config.getConfigValue(), RedisConstants.CACHE_EXPIRE_HOURS * 3600
+        );
     }
 
+    /**
+     * 修改参数配置
+     *
+     * @param config 参数配置
+     */
     @Override
     public void updateConfig(Config config) {
         Config exist = getById(config.getId());
@@ -95,13 +117,20 @@ public class ConfigServiceImpl extends ServiceImpl<ConfigMapper, Config> impleme
                 throw new BusinessException("参数键名已存在");
             }
             // 删除旧缓存
-            redisTemplate.delete(RedisKeyConstants.CONFIG_PREFIX + oldKey);
+            RedisHelper.delete(RedisConstants.CONFIG_PREFIX + oldKey);
         }
         updateById(config);
         // 更新缓存
-        cacheConfigValue(config.getConfigKey(), config.getConfigValue());
+        RedisHelper.set(RedisConstants.CONFIG_PREFIX + config.getConfigKey(),
+                config.getConfigValue(), RedisConstants.CACHE_EXPIRE_HOURS * 3600
+        );
     }
 
+    /**
+     * 批量删除参数配置
+     *
+     * @param ids 参数配置ID列表
+     */
     @Override
     public void deleteConfig(List<Long> ids) {
         // 查询待删除的配置
@@ -114,25 +143,8 @@ public class ConfigServiceImpl extends ServiceImpl<ConfigMapper, Config> impleme
         }
         // 删除前清理缓存
         for (Config config : configs) {
-            redisTemplate.delete(RedisKeyConstants.CONFIG_PREFIX + config.getConfigKey());
+            RedisHelper.delete(RedisConstants.CONFIG_PREFIX + config.getConfigKey());
         }
         removeByIds(ids);
-    }
-
-    /**
-     * 缓存配置值
-     *
-     * @param configKey 配置键
-     * @param configValue 配置值
-     */
-    private void cacheConfigValue(String configKey, String configValue) {
-        if (StrUtil.isNotBlank(configKey) && configValue != null) {
-            redisTemplate.opsForValue().set(
-                    RedisKeyConstants.CONFIG_PREFIX + configKey,
-                    configValue,
-                    CACHE_EXPIRE_HOURS,
-                    TimeUnit.HOURS
-            );
-        }
     }
 }

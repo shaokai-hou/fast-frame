@@ -2,7 +2,8 @@ package com.fast.framework.aspect;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson2.JSON;
+import com.fast.common.constant.Constants;
 import com.fast.common.util.IpUtils;
 import com.fast.framework.annotation.Log;
 import com.fast.modules.log.domain.entity.OperLog;
@@ -94,7 +95,7 @@ public class LogAspect {
             operLog.setMethod(joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName());
             operLog.setOperName(username);
             operLog.setOperTime(LocalDateTime.now());
-            operLog.setStatus("0");
+            operLog.setStatus(Constants.NORMAL);
             operLog.setTraceId(MDC.get("traceId"));
 
             // 设置请求信息
@@ -108,7 +109,7 @@ public class LogAspect {
 
             // 处理异常
             if (e != null) {
-                operLog.setStatus("1");
+                operLog.setStatus(Constants.DISABLE);
                 operLog.setErrorMsg(StrUtil.sub(e.getMessage(), 0, 2000));
             }
 
@@ -120,7 +121,7 @@ public class LogAspect {
 
             // 保存响应参数
             if (logAnnotation.isSaveResponseData() && jsonResult != null) {
-                operLog.setJsonResult(StrUtil.sub(JSONUtil.toJsonStr(jsonResult), 0, 2000));
+                operLog.setJsonResult(StrUtil.sub(JSON.toJSONString(jsonResult), 0, 2000));
             }
 
             // 保存日志（异步执行，不阻塞业务线程）
@@ -156,7 +157,7 @@ public class LogAspect {
         }
 
         try {
-            return JSONUtil.toJsonStr(params);
+            return JSON.toJSONString(params);
         } catch (Exception e) {
             return params.toString();
         }

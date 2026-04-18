@@ -122,6 +122,13 @@
             <version>3.3.4</version>
         </dependency>
 
+        <!-- Fastjson -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>2.0.43</version>
+        </dependency>
+
         <!-- Warm-Flow 工作流引擎 (MyBatis-Plus 版本) -->
         <dependency>
             <groupId>org.dromara.warm</groupId>

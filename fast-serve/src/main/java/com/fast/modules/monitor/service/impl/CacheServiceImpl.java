@@ -2,18 +2,16 @@ package com.fast.modules.monitor.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.fast.common.constant.RedisKeyConstants;
+import com.fast.common.constant.RedisConstants;
 import com.fast.common.result.PageRequest;
 import com.fast.modules.monitor.domain.dto.CacheQuery;
 import com.fast.modules.monitor.domain.dto.CacheInfoVO;
 import com.fast.modules.monitor.domain.dto.CacheKeyVO;
 import com.fast.modules.monitor.domain.dto.CachePrefixVO;
 import com.fast.modules.monitor.service.CacheService;
+import com.fast.framework.helper.RedisHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.Cursor;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -31,8 +29,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class CacheServiceImpl implements CacheService {
 
-    private final RedisTemplate<String, Object> redisTemplate;
-
     /**
      * 缓存前缀列表（从常量类反射获取）
      */
@@ -44,7 +40,7 @@ public class CacheServiceImpl implements CacheService {
     @PostConstruct
     public void initPrefixes() {
         cachePrefixes = new ArrayList<>();
-        Field[] fields = RedisKeyConstants.class.getDeclaredFields();
+        Field[] fields = RedisConstants.class.getDeclaredFields();
         for (Field field : fields) {
             // 获取所有 public static final String 常量
             if (field.getType() == String.class
@@ -92,11 +88,11 @@ public class CacheServiceImpl implements CacheService {
                 vo.setPrefix(prefixVO.getValue());
 
                 // 获取缓存类型
-                String type = redisTemplate.type(key).code();
+                String type = RedisHelper.type(key);
                 vo.setType(type);
 
                 // 获取过期时间
-                Long ttl = redisTemplate.getExpire(key);
+                long ttl = RedisHelper.getExpire(key);
                 vo.setTtl(ttl);
 
                 allKeys.add(vo);
@@ -126,20 +122,20 @@ public class CacheServiceImpl implements CacheService {
         vo.setKey(key);
 
         // 获取缓存类型
-        String type = redisTemplate.type(key).code();
+        String type = RedisHelper.type(key);
         vo.setType(type);
 
         // 获取缓存值
-        Object value = redisTemplate.opsForValue().get(key);
-        vo.setValue(value != null ? value.toString() : null);
+        String value = RedisHelper.get(key);
+        vo.setValue(value);
 
         // 获取过期时间
-        Long ttl = redisTemplate.getExpire(key);
+        long ttl = RedisHelper.getExpire(key);
         vo.setTtl(ttl);
 
-        // 计算缓存大小 - 简化处理
+        // 计算缓存大小
         if (value != null) {
-            vo.setSize((long) value.toString().length());
+            vo.setSize((long) value.length());
         } else {
             vo.setSize(0L);
         }
@@ -149,7 +145,7 @@ public class CacheServiceImpl implements CacheService {
 
     @Override
     public void deleteCache(String key) {
-        redisTemplate.delete(key);
+        RedisHelper.delete(key);
     }
 
     @Override
@@ -164,14 +160,14 @@ public class CacheServiceImpl implements CacheService {
             String fullPrefix = value + ":";
             Set<String> keys = scanKeys(fullPrefix);
             if (!keys.isEmpty()) {
-                redisTemplate.delete(keys);
+                RedisHelper.delete(keys);
             }
         }
     }
 
     @Override
     public String getRedisInfo() {
-        Properties info = redisTemplate.getConnectionFactory().getConnection().serverCommands().info();
+        Properties info = RedisHelper.getInfo();
         if (info != null) {
             StringBuilder sb = new StringBuilder();
             for (String key : info.stringPropertyNames()) {
@@ -189,21 +185,6 @@ public class CacheServiceImpl implements CacheService {
      * @return 匹配的key集合
      */
     private Set<String> scanKeys(String pattern) {
-        Set<String> keys = new HashSet<>();
-        try {
-            Cursor<String> cursor = redisTemplate.scan(
-                ScanOptions.scanOptions()
-                    .match(pattern + "*")
-                    .count(100)
-                    .build()
-            );
-            while (cursor.hasNext()) {
-                keys.add(cursor.next());
-            }
-            cursor.close();
-        } catch (Exception e) {
-            log.error("[CacheService] SCAN命令执行失败: {}", e.getMessage());
-        }
-        return keys;
+        return RedisHelper.scan(pattern + "*");
     }
 }

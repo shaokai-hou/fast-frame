@@ -41,7 +41,7 @@
       <el-table-column label="创建时间" prop="createTime" width="180" />
       <el-table-column label="操作" align="center" width="250">
         <template #default="scope">
-          <el-button link type="primary" @click="handleDictData(scope.row)" v-hasPermi="['system:dict:query']">字典数据</el-button>
+          <el-button link type="primary" @click="handleDictData(scope.row)" v-hasPermi="['system:dict:page']">字典数据</el-button>
           <el-button link type="primary" @click="handleUpdate(scope.row)" v-hasPermi="['system:dict:edit']">修改</el-button>
           <el-button link type="danger" @click="handleDelete(scope.row)" v-hasPermi="['system:dict:delete']">删除</el-button>
         </template>

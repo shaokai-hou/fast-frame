@@ -8,23 +8,21 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.fast.common.constant.RedisKeyConstants;
+import com.fast.common.constant.ConfigConstants;
+import com.fast.common.constant.DictConstants;
+import com.fast.common.constant.RedisConstants;
 import com.fast.common.exception.BusinessException;
 import com.fast.common.result.PageRequest;
 import com.fast.framework.annotation.DataScope;
+import com.fast.framework.helper.ConfigHelper;
+import com.fast.framework.helper.DictHelper;
+import com.fast.framework.helper.RedisHelper;
 import com.fast.framework.properties.MinioProperties;
-import com.fast.modules.system.domain.dto.FileVO;
-import com.fast.modules.system.domain.dto.RoleVO;
-import com.fast.modules.system.domain.dto.UserDTO;
-import com.fast.modules.system.domain.dto.UserExportVO;
-import com.fast.modules.system.domain.dto.UserImportDTO;
-import com.fast.modules.system.domain.dto.UserQuery;
-import com.fast.modules.system.domain.dto.UserVO;
+import com.fast.modules.system.domain.dto.*;
 import com.fast.modules.system.domain.entity.User;
 import com.fast.modules.system.mapper.UserMapper;
 import com.fast.modules.system.service.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,10 +40,8 @@ import java.util.stream.Collectors;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
     private final RoleService roleService;
-    private final ConfigService configService;
     private final FileService fileService;
     private final DeptService deptService;
-    private final RedisTemplate<String, Object> redisTemplate;
 
 
     /**
@@ -62,8 +58,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 查询用户锁定状态
         List<UserVO> records = result.getRecords();
         records.forEach(vo -> {
-            Boolean locked = redisTemplate.hasKey(RedisKeyConstants.LOGIN_LOCK_PREFIX + vo.getUsername());
-            vo.setLocked(locked != null && locked);
+            Boolean locked = RedisHelper.hasKey(RedisConstants.LOGIN_LOCK_PREFIX + vo.getUsername());
+            vo.setLocked(locked);
         });
         return result;
     }
@@ -136,10 +132,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 转换为导出 VO，处理字典转换
         return userVOList.stream().map(userVO -> {
             UserExportVO exportVO = BeanUtil.copyProperties(userVO, UserExportVO.class);
-            // 性别转换：0/1/2 → 未知/男/女
-            exportVO.setGender(convertGenderToText(userVO.getGender()));
-            // 状态转换：0/1 → 正常/禁用
-            exportVO.setStatus(convertStatusToText(userVO.getStatus()));
+            exportVO.setGender(DictHelper.getLabel(DictConstants.USER_SEX, userVO.getGender(), "未知"));
+            exportVO.setStatus(DictHelper.getLabel(DictConstants.NORMAL_DISABLE, userVO.getStatus(), "正常"));
             return exportVO;
         }).collect(Collectors.toList());
     }
@@ -163,7 +157,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 前端未提供密码，使用初始化密码
         String password = dto.getPassword();
         if (StrUtil.isBlank(password)) {
-            password = configService.getConfigValue("sys.user.initPassword");
+            password = ConfigHelper.getValue(ConfigConstants.USER_INIT_PASSWORD);
             if (StrUtil.isBlank(password)) {
                 throw new BusinessException("初始化密码未配置");
             }
@@ -226,7 +220,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BusinessException("不能重置管理员密码");
         }
         // 从参数配置获取初始化密码
-        String initPassword = configService.getConfigValue("sys.user.initPassword");
+        String initPassword = ConfigHelper.getValue(ConfigConstants.USER_INIT_PASSWORD);
         if (StrUtil.isBlank(initPassword)) {
             throw new BusinessException("初始化密码错误");
         }
@@ -384,10 +378,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         List<String> errorMessages = new ArrayList<>();
 
         // 获取初始化密码
-        String initPassword = configService.getConfigValue("sys.user.initPassword");
-        if (StrUtil.isBlank(initPassword)) {
-            initPassword = "123456";
-        }
+        String initPassword = ConfigHelper.getValue(ConfigConstants.USER_INIT_PASSWORD, "123456");
 
         for (int i = 0; i < dataList.size(); i++) {
             UserImportDTO dto = dataList.get(i);
@@ -410,10 +401,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 user.setNickname(StrUtil.isBlank(dto.getNickname()) ? dto.getUsername() : dto.getNickname());
                 user.setPhone(dto.getPhone());
                 user.setEmail(dto.getEmail());
-                // 转换性别
-                user.setGender(convertGender(dto.getGender()));
-                // 转换状态
-                user.setStatus(convertStatus(dto.getStatus()));
+                user.setGender(DictHelper.getValue(DictConstants.USER_SEX, dto.getGender(), "0"));
+                user.setStatus(DictHelper.getValue(DictConstants.NORMAL_DISABLE, dto.getStatus(), "0"));
                 // 设置密码
                 String password = StrUtil.isBlank(dto.getPassword()) ? initPassword : dto.getPassword();
                 user.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
@@ -441,71 +430,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
 
     /**
-     * 性别转换为文本
-     *
-     * @param gender 性别代码（0/1/2）
-     * @return 性别文本
-     */
-    private String convertGenderToText(String gender) {
-        if ("1".equals(gender)) {
-            return "男";
-        } else if ("2".equals(gender)) {
-            return "女";
-        } else {
-            return "未知";
-        }
-    }
-
-    /**
-     * 状态转换为文本
-     *
-     * @param status 状态代码（0/1）
-     * @return 状态文本
-     */
-    private String convertStatusToText(String status) {
-        if (status == null) {
-            return "正常";
-        }
-        return "0".equals(status) ? "正常" : "禁用";
-    }
-
-    /**
-     * 转换性别（文字 → 数字）
-     *
-     * @param gender 性别文字
-     * @return 性别数字
-     */
-    private String convertGender(String gender) {
-        if (StrUtil.isBlank(gender)) {
-            return "0";
-        }
-        switch (gender.trim()) {
-            case "男":
-                return "1";
-            case "女":
-                return "2";
-            default:
-                return "0";
-        }
-    }
-
-    /**
-     * 转换状态（文字 → 数字）
-     *
-     * @param status 状态文字
-     * @return 状态数字
-     */
-    private String convertStatus(String status) {
-        if (StrUtil.isBlank(status)) {
-            return "0";
-        }
-        if ("禁用".equals(status.trim())) {
-            return "1";
-        }
-        return "0";
-    }
-
-    /**
      * 解锁用户（清除登录锁定）
      *
      * @param userId 用户ID
@@ -516,7 +440,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (user == null) {
             throw new BusinessException("用户不存在");
         }
-        redisTemplate.delete(RedisKeyConstants.LOGIN_LOCK_PREFIX + user.getUsername());
+        RedisHelper.delete(RedisConstants.LOGIN_LOCK_PREFIX + user.getUsername());
     }
 
     /**

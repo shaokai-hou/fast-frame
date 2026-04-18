@@ -10,8 +10,7 @@
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="用户状态" clearable>
-          <el-option label="正常" value="0" />
-          <el-option label="禁用" value="1" />
+          <el-option v-for="item in statusDict" :key="item.dictValue" :label="item.dictLabel" :value="item.dictValue" />
         </el-select>
       </el-form-item>
     </SearchBar>
@@ -34,11 +33,7 @@
         <el-table-column type="selection" width="55" align="center" :selectable="row => row.id !== '1'" />
         <el-table-column type="index" label="序号" width="60" align="center"
           :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
-        <el-table-column label="用户名" prop="username" min-width="100">
-          <template #default="scope">
-            <span>{{ scope.row.username }}</span>
-          </template>
-        </el-table-column>
+        <el-table-column label="用户名" prop="username" min-width="100"></el-table-column>
         <el-table-column label="昵称" prop="nickname" min-width="100" show-overflow-tooltip />
         <el-table-column label="部门" prop="deptName" min-width="100" show-overflow-tooltip />
         <el-table-column label="角色" min-width="120">
@@ -54,9 +49,8 @@
         <el-table-column label="手机号" prop="phone" min-width="120" />
         <el-table-column label="状态" align="center" width="80">
           <template #default="scope">
-            <el-switch v-if="scope.row.id !== '1'" v-model="scope.row.status" active-value="0" inactive-value="1"
-              @change="handleStatusChange(scope.row)" />
-            <el-tag v-else type="success" size="small">正常</el-tag>
+            <el-switch v-model="scope.row.status" active-value="0" inactive-value="1"
+              @change="handleStatusChange(scope.row)" :disabled="scope.row.id === '1'" />
           </template>
         </el-table-column>
         <el-table-column label="创建时间" prop="createTime" width="180" />
@@ -80,7 +74,7 @@
     </div>
 
     <!-- 新增/修改对话框 -->
-    <el-dialog :title="title" v-model="open" width="600px" append-to-body class="form-dialog">
+    <el-dialog :title="title" v-model="open" width="600px" append-to-body>
       <el-form ref="userFormRef" :model="form" :rules="rules" label-width="80px">
         <el-row :gutter="20">
           <el-col :span="12">
@@ -126,9 +120,8 @@
           <el-col :span="12">
             <el-form-item label="性别" prop="gender">
               <el-select v-model="form.gender" placeholder="请选择性别">
-                <el-option label="未知" value="0" />
-                <el-option label="男" value="1" />
-                <el-option label="女" value="2" />
+                <el-option v-for="item in genderDict" :key="item.dictValue" :label="item.dictLabel"
+                  :value="item.dictValue" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -137,8 +130,8 @@
           <el-col :span="12">
             <el-form-item label="状态" prop="status">
               <el-radio-group v-model="form.status">
-                <el-radio label="0">正常</el-radio>
-                <el-radio label="1">禁用</el-radio>
+                <el-radio v-for="item in statusDict" :key="item.dictValue" :label="item.dictValue">{{ item.dictLabel
+                }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -208,6 +201,7 @@ import { Search, Refresh, Plus, Delete, Download, Upload, UploadFilled } from '@
 import { listUser, getUser, addUser, updateUser, deleteUser, resetPwd, changeStatus, exportUser, importUser, downloadTemplate, unlockUser } from '@/api/system/user'
 import { listAllRole } from '@/api/system/role'
 import { getDeptTree } from '@/api/system/dept'
+import { getDictData } from '@/api/system/dict'
 
 const { proxy } = getCurrentInstance()
 
@@ -221,6 +215,8 @@ const title = ref('')
 const open = ref(false)
 const roleOptions = ref([])
 const deptOptions = ref([])
+const genderDict = ref([])
+const statusDict = ref([])
 const ids = ref([])
 const importOpen = ref(false)
 const uploadRef = ref()
@@ -383,7 +379,7 @@ const reset = () => {
     deptId: undefined,
     phone: undefined,
     email: undefined,
-    gender: '0',
+    gender: undefined,
     status: '0',
     roleIds: [],
     remark: undefined
@@ -475,25 +471,24 @@ const handleDownloadTemplate = async () => {
   }
 }
 
+// 加载字典数据
+const loadDictData = async () => {
+  const [genderRes, statusRes] = await Promise.all([
+    getDictData('sys_user_sex'),
+    getDictData('sys_normal_disable')
+  ])
+  genderDict.value = genderRes.data || []
+  statusDict.value = statusRes.data || []
+}
+
 onMounted(() => {
   getList()
+  loadDictData()
 })
 
 </script>
 
 <style scoped lang="scss">
-.form-dialog {
-  :deep(.el-dialog__body) {
-    padding: 24px;
-  }
-}
-
-.result-dialog {
-  :deep(.el-dialog__body) {
-    padding: 16px 20px;
-  }
-}
-
 .result-content {
   .result-stats {
     display: flex;

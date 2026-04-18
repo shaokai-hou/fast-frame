@@ -40,9 +40,8 @@
         <el-table-column label="显示顺序" prop="roleSort" width="100" />
         <el-table-column label="状态" align="center" width="80">
           <template #default="scope">
-            <el-tag :type="scope.row.status === '0' ? 'success' : 'danger'" effect="light">
-              {{ scope.row.status === '0' ? '正常' : '禁用' }}
-            </el-tag>
+            <el-switch v-model="scope.row.status" active-value="0" inactive-value="1"
+              @change="handleStatusChange(scope.row)" :disabled="scope.row.id === '1'" />
           </template>
         </el-table-column>
         <el-table-column label="创建时间" prop="createTime" width="180" />
@@ -144,7 +143,7 @@ import { ref, reactive, getCurrentInstance, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import TreeSelect from '@/components/TreeSelect/index.vue'
 import { Search, Refresh, Plus, Delete } from '@element-plus/icons-vue'
-import { listRole, getRole, addRole, updateRole, deleteRole, getMenuTree, getRoleMenuIds } from '@/api/system/role'
+import { listRole, getRole, addRole, updateRole, deleteRole, getMenuTree, getRoleMenuIds, changeStatus } from '@/api/system/role'
 import { getDeptTree, getRoleDeptIds } from '@/api/system/dept'
 
 const { proxy } = getCurrentInstance()
@@ -281,6 +280,13 @@ const reset = () => {
     deptIds: [],
     remark: undefined
   }
+}
+
+// 状态切换
+const handleStatusChange = async (row) => {
+  const text = row.status === '0' ? '启用' : '禁用'
+  await changeStatus({ id: row.id, status: row.status })
+  ElMessage.success(`${text}成功`)
 }
 
 // 使用 onMounted 确保只在组件挂载后调用一次

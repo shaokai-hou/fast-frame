@@ -11,6 +11,12 @@
   --color-primary-lighter: #BFDBFE;
   --color-primary-lightest: #EFF6FF;
 
+  // Element Plus 禁用状态边框颜色覆盖 - 使用蓝色边框
+  --el-input-disabled-border-color: #60A5FA;
+  --el-select-disabled-border-color: #60A5FA;
+  --el-input-number-disabled-border-color: #60A5FA;
+  --el-disabled-border-color: #60A5FA;
+
   // 渐变色
   --gradient-primary: linear-gradient(135deg, #3B82F6 0%, #60A5FA 50%, #93C5FD 100%);
   --gradient-primary-hover: linear-gradient(135deg, #2563EB 0%, #3B82F6 100%);

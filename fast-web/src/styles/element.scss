@@ -87,8 +87,16 @@
     box-shadow: 0 0 0 1px var(--color-primary-light) inset;
   }
 
-  .el-input__wrapper.is-focus {
+  // 输入框焦点状态 - is-focus 类在 el-input 上
+  .el-input.is-focus .el-input__wrapper {
     box-shadow: 0 0 0 2px var(--color-primary) inset;
+  }
+
+  // 输入框禁用状态 - is-disabled 类在 el-input 上
+  .el-input.is-disabled .el-input__wrapper {
+    box-shadow: 0 0 0 1px var(--color-primary-light) inset !important;
+    background: var(--gray-100);
+    cursor: not-allowed;
   }
 
   .el-select {
@@ -106,8 +114,16 @@
     box-shadow: 0 0 0 1px var(--color-primary-light) inset;
   }
 
-  .el-select__wrapper.is-focus {
+  // 选择器焦点状态 - is-focus 类在 el-select 上
+  .el-select.is-focus .el-select__wrapper {
     box-shadow: 0 0 0 2px var(--color-primary) inset;
+  }
+
+  // 选择器禁用状态 - is-disabled 类在 el-select 上
+  .el-select.is-disabled .el-select__wrapper {
+    box-shadow: 0 0 0 1px var(--color-primary-light) inset !important;
+    background: var(--gray-100);
+    cursor: not-allowed;
   }
 
   .el-textarea__inner {
@@ -123,6 +139,19 @@
   .el-textarea__inner:focus {
     border-color: var(--color-primary);
     box-shadow: 0 0 0 2px var(--color-primary-lighter);
+  }
+
+  .el-textarea__inner:disabled {
+    border: 1px solid var(--color-primary-light) !important;
+    background: var(--gray-100);
+    cursor: not-allowed;
+  }
+
+  // 数字输入框禁用状态
+  .el-input-number.is-disabled .el-input__wrapper {
+    box-shadow: 0 0 0 1px var(--color-primary-light) inset !important;
+    background: var(--gray-100);
+    cursor: not-allowed;
   }
 }
 
@@ -334,6 +363,24 @@
     outline: 2px solid var(--color-primary);
     outline-offset: 1px;
   }
+
+  // link 按钮禁用状态 - 保持蓝色边框
+  &.is-disabled,
+  &:disabled {
+    border: 1px solid rgba(59, 130, 246, 0.25) !important;
+    background: transparent !important;
+    color: var(--color-primary) !important;
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+
+    &:hover,
+    &:focus {
+      border: 1px solid rgba(59, 130, 246, 0.25) !important;
+      background: transparent !important;
+      color: var(--color-primary) !important;
+    }
+  }
 }
 
 // Danger 类型的 link 按钮 - 用于删除等危险操作
@@ -350,6 +397,23 @@
 
   &:focus-visible {
     outline-color: var(--color-danger);
+  }
+
+  // danger link 按钮禁用状态
+  &.is-disabled,
+  &:disabled {
+    border-color: rgba(220, 38, 38, 0.2) !important;
+    background: transparent !important;
+    color: var(--color-danger) !important;
+    opacity: 0.5;
+    cursor: not-allowed;
+
+    &:hover,
+    &:focus {
+      border-color: rgba(220, 38, 38, 0.2) !important;
+      background: transparent !important;
+      color: var(--color-danger) !important;
+    }
   }
 }
 
@@ -368,6 +432,23 @@
   &:focus-visible {
     outline-color: var(--color-success);
   }
+
+  // success link 按钮禁用状态
+  &.is-disabled,
+  &:disabled {
+    border-color: rgba(5, 150, 105, 0.2) !important;
+    background: transparent !important;
+    color: var(--color-success) !important;
+    opacity: 0.5;
+    cursor: not-allowed;
+
+    &:hover,
+    &:focus {
+      border-color: rgba(5, 150, 105, 0.2) !important;
+      background: transparent !important;
+      color: var(--color-success) !important;
+    }
+  }
 }
 
 // Warning 类型的 link 按钮
@@ -384,6 +465,23 @@
 
   &:focus-visible {
     outline-color: var(--color-warning);
+  }
+
+  // warning link 按钮禁用状态
+  &.is-disabled,
+  &:disabled {
+    border-color: rgba(217, 119, 6, 0.2) !important;
+    background: transparent !important;
+    color: var(--color-warning) !important;
+    opacity: 0.5;
+    cursor: not-allowed;
+
+    &:hover,
+    &:focus {
+      border-color: rgba(217, 119, 6, 0.2) !important;
+      background: transparent !important;
+      color: var(--color-warning) !important;
+    }
   }
 }
 

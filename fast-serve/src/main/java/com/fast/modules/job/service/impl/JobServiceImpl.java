@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fast.common.constant.Constants;
 import com.fast.common.exception.BusinessException;
 import com.fast.common.result.PageRequest;
 import com.fast.modules.job.domain.dto.JobDTO;
@@ -73,7 +74,7 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
 
         Job job = new Job();
         BeanUtils.copyProperties(dto, job);
-        job.setStatus("0"); // 默认正常状态
+        job.setStatus(Constants.NORMAL);
 
         boolean success = save(job);
         if (success) {

@@ -3,7 +3,7 @@ package com.fast.modules.flow.service.impl;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson2.JSON;
 import com.fast.common.exception.BusinessException;
 import com.fast.modules.flow.domain.dto.FlowDefJsonDTO;
 import com.fast.modules.flow.domain.dto.FlowHisTaskVO;
@@ -101,7 +101,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         Definition definition = definitions.get(0);
 
         FlowDefJsonDTO defJsonDto = flowDefService.getDefJsonByDefId(definition.getId());
-        String defJson = JSONUtil.toJsonStr(defJsonDto);
+        String defJson = JSON.toJSONString(defJsonDto);
 
         FlowParams params = FlowParams.build()
                 .flowCode(dto.getFlowCode())

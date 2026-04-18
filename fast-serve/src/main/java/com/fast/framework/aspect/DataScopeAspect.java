@@ -1,6 +1,7 @@
 package com.fast.framework.aspect;
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.fast.common.constant.Constants;
 import com.fast.framework.annotation.DataScope;
 import com.fast.modules.system.domain.dto.RoleVO;
 import com.fast.modules.system.domain.entity.User;
@@ -76,16 +77,16 @@ public class DataScopeAspect {
         for (RoleVO role : roles) {
             String dataScopeValue = role.getDataScope();
             if (dataScopeValue == null) {
-                dataScopeValue = "1"; // 默认全部数据
+                dataScopeValue = Constants.DATA_SCOPE_ALL;
             }
 
             switch (dataScopeValue) {
                 // 全部数据权限
-                case "1":
+                case Constants.DATA_SCOPE_ALL:
                     // 无需过滤
                     return;
                 // 自定义数据权限
-                case "2":
+                case Constants.DATA_SCOPE_CUSTOM:
                     List<Long> deptIds = deptService.getDeptIdsByRoleId(role.getId());
                     if (!deptIds.isEmpty()) {
                         sqlString.append(String.format(
@@ -96,13 +97,13 @@ public class DataScopeAspect {
                     }
                     break;
                 // 本部门数据权限
-                case "3":
+                case Constants.DATA_SCOPE_DEPT:
                     if (user.getDeptId() != null) {
                         sqlString.append(String.format(" OR %s.dept_id = '%s' ", userAlias, user.getDeptId()));
                     }
                     break;
                 // 本部门及以下数据权限
-                case "4":
+                case Constants.DATA_SCOPE_DEPT_AND_CHILD:
                     List<Long> deptAndChildrenIds = deptService.getDeptAndChildrenIds(user.getDeptId());
                     if (!deptAndChildrenIds.isEmpty()) {
                         sqlString.append(String.format(
@@ -113,7 +114,7 @@ public class DataScopeAspect {
                     }
                     break;
                 // 仅本人数据权限
-                case "5":
+                case Constants.DATA_SCOPE_SELF:
                     sqlString.append(String.format(" OR %s.id = '%s' ", userAlias, userId));
                     break;
                 default:

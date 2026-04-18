@@ -5,7 +5,12 @@ package com.fast.common.constant;
  *
  * @author fast-frame
  */
-public class RedisKeyConstants {
+public class RedisConstants {
+
+    /**
+     * 缓存过期时间（小时）
+     */
+    public static final long CACHE_EXPIRE_HOURS = 24;
 
     /**
      * 验证码缓存Key前缀
@@ -24,7 +29,6 @@ public class RedisKeyConstants {
 
     /**
      * Sa-Token登录Token缓存Key前缀
-     * Sa-Token v1.37.0 默认前缀格式为 sa-token: (带中划线)
      */
     public static final String SA_TOKEN_PREFIX = "sa-token:login:token:";
 
