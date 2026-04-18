@@ -86,10 +86,10 @@
           <el-col :span="24">
             <el-form-item prop="menuType">
               <template #label>
-                菜单类型
                 <el-tooltip content="目录：包含子菜单的文件夹；菜单：实际页面；按钮：页面内操作按钮" placement="top">
                   <el-icon class="label-tip"><QuestionFilled /></el-icon>
                 </el-tooltip>
+                菜单类型
               </template>
               <el-radio-group v-model="form.menuType">
                 <el-radio
@@ -119,10 +119,10 @@
           <el-col :span="12">
             <el-form-item prop="path">
               <template #label>
-                路由地址
                 <el-tooltip content="前端路由路径，如：/system/user（目录类型可不填）" placement="top">
                   <el-icon class="label-tip"><QuestionFilled /></el-icon>
                 </el-tooltip>
+                路由地址
               </template>
               <el-input v-model="form.path" placeholder="请输入路由地址" />
             </el-form-item>
@@ -130,10 +130,10 @@
           <el-col :span="12">
             <el-form-item prop="component">
               <template #label>
-                组件路径
                 <el-tooltip content="Vue组件路径，如：system/user/index（目录类型可不填）" placement="top">
                   <el-icon class="label-tip"><QuestionFilled /></el-icon>
                 </el-tooltip>
+                组件路径
               </template>
               <el-input v-model="form.component" placeholder="请输入组件路径" />
             </el-form-item>
@@ -143,10 +143,10 @@
           <el-col :span="24">
             <el-form-item prop="link">
               <template #label>
-                外链地址
                 <el-tooltip content="iframe外链地址，如：/api/druid/index.html（仅菜单类型）" placement="top">
                   <el-icon class="label-tip"><QuestionFilled /></el-icon>
                 </el-tooltip>
+                外链地址
               </template>
               <el-input v-model="form.link" placeholder="如果是iframe页面，填写外链地址，如：/api/druid/index.html" />
             </el-form-item>
@@ -156,10 +156,10 @@
           <el-col :span="12">
             <el-form-item prop="perms">
               <template #label>
-                权限标识
                 <el-tooltip content="权限控制标识，如：system:user:list，多个用逗号分隔" placement="top">
                   <el-icon class="label-tip"><QuestionFilled /></el-icon>
                 </el-tooltip>
+                权限标识
               </template>
               <el-input v-model="form.perms" placeholder="请输入权限标识" />
             </el-form-item>
@@ -408,7 +408,7 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .label-tip {
-  margin-left: 4px;
+  margin-right: 4px;
   color: var(--el-color-info);
   cursor: help;
   font-size: 14px;
