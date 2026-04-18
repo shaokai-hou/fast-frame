@@ -1,11 +1,13 @@
 package com.fast.modules.job.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.fast.common.result.PageResult;
+import com.fast.common.result.PageRequest;
+import com.fast.modules.job.domain.dto.JobLogQuery;
+import com.fast.modules.job.domain.dto.JobLogVO;
 import com.fast.modules.job.domain.entity.JobLog;
-import com.fast.modules.job.domain.vo.JobLogVO;
 import com.fast.modules.job.mapper.JobLogMapper;
 import com.fast.modules.job.service.JobLogService;
 import org.springframework.beans.BeanUtils;
@@ -22,14 +24,14 @@ import java.util.List;
 public class JobLogServiceImpl extends ServiceImpl<JobLogMapper, JobLog> implements JobLogService {
 
     @Override
-    public PageResult<JobLogVO> pageJobLogs(String jobName, String jobGroup, String status, Integer pageNum, Integer pageSize) {
+    public IPage<JobLogVO> pageJobLogs(JobLogQuery query, PageRequest pageRequest) {
         LambdaQueryWrapper<JobLog> wrapper = new LambdaQueryWrapper<>();
-        wrapper.like(jobName != null, JobLog::getJobName, jobName);
-        wrapper.eq(jobGroup != null, JobLog::getJobGroup, jobGroup);
-        wrapper.eq(status != null, JobLog::getStatus, status);
+        wrapper.like(query.getJobName() != null, JobLog::getJobName, query.getJobName());
+        wrapper.eq(query.getJobGroup() != null, JobLog::getJobGroup, query.getJobGroup());
+        wrapper.eq(query.getStatus() != null, JobLog::getStatus, query.getStatus());
         wrapper.orderByDesc(JobLog::getStartTime);
 
-        Page<JobLog> page = page(new Page<>(pageNum, pageSize), wrapper);
+        Page<JobLog> page = page(pageRequest.toPage(), wrapper);
 
         List<JobLogVO> voList = page.getRecords().stream().map(jobLog -> {
             JobLogVO vo = new JobLogVO();
@@ -42,7 +44,10 @@ public class JobLogServiceImpl extends ServiceImpl<JobLogMapper, JobLog> impleme
             return vo;
         }).collect(java.util.stream.Collectors.toList());
 
-        return PageResult.of(voList, page.getTotal());
+        Page<JobLogVO> resultPage = pageRequest.toPage();
+        resultPage.setRecords(voList);
+        resultPage.setTotal(page.getTotal());
+        return resultPage;
     }
 
     @Override

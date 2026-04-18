@@ -3,12 +3,8 @@ package com.fast.modules.auth.controller;
 import com.fast.common.result.Result;
 import com.fast.common.util.IpUtils;
 import com.fast.framework.web.BaseController;
-import com.fast.modules.auth.domain.dto.LoginDTO;
+import com.fast.modules.auth.domain.dto.*;
 import com.fast.modules.auth.service.AuthService;
-import com.fast.modules.auth.domain.vo.CaptchaVO;
-import com.fast.modules.auth.domain.vo.LoginVO;
-import com.fast.modules.auth.domain.vo.RoutesVO;
-import com.fast.modules.auth.domain.vo.UserInfoVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

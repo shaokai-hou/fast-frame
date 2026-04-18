@@ -1,9 +1,6 @@
 package com.fast.framework.web;
 
-import com.fast.common.result.PageResult;
 import com.fast.common.result.Result;
-
-import java.util.List;
 
 /**
  * 基础控制器
@@ -76,17 +73,5 @@ public class BaseController {
      */
     protected <T> Result<T> fail(int code, String msg) {
         return Result.fail(code, msg);
-    }
-
-    /**
-     * 返回分页数据
-     *
-     * @param <T>   数据类型
-     * @param list  数据列表
-     * @param total 总数
-     * @return 分页结果
-     */
-    protected <T> Result<PageResult<T>> pageResult(List<T> list, long total) {
-        return success(PageResult.of(list, total));
     }
 }

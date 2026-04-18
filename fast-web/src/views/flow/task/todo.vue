@@ -1,42 +1,41 @@
 <template>
-  <div class="page-container">
+  <PageContainer>
     <!-- 搜索栏 -->
-    <div class="search-bar">
-      <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch">
-        <el-form-item label="业务ID" prop="businessId">
-          <el-input v-model="queryParams.businessId" placeholder="请输入业务ID" clearable @keyup.enter="handleQuery" />
-        </el-form-item>
-        <el-form-item label="流程名称" prop="flowName">
-          <el-input v-model="queryParams.flowName" placeholder="请输入流程名称" clearable @keyup.enter="handleQuery" />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" :icon="Search" @click="handleQuery">搜索</el-button>
-          <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+    <SearchBar :model="queryParams" :visible="showSearch" @search="handleQuery" @reset="resetQuery">
+      <el-form-item label="业务ID" prop="businessId">
+        <el-input v-model="queryParams.businessId" placeholder="请输入业务ID" clearable @keyup.enter="handleQuery" />
+      </el-form-item>
+      <el-form-item label="流程名称" prop="flowName">
+        <el-input v-model="queryParams.flowName" placeholder="请输入流程名称" clearable @keyup.enter="handleQuery" />
+      </el-form-item>
+    </SearchBar>
 
     <!-- 内容卡片 -->
     <div class="content-card">
       <!-- 数据表格 -->
       <el-table v-loading="loading" :data="taskList" row-key="id">
-        <el-table-column type="index" label="序号" width="60" align="center" :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
+        <el-table-column type="index" label="序号" width="60" align="center"
+          :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
         <el-table-column label="业务ID" prop="businessId" min-width="120" />
         <el-table-column label="当前节点" prop="nodeName" min-width="150" />
         <el-table-column label="流程名称" prop="flowName" min-width="150" />
         <el-table-column label="创建时间" prop="createTime" width="180" />
         <el-table-column label="操作" align="center" width="250" fixed="right">
           <template #default="scope">
-            <el-button link type="primary" @click="handleApprove(scope.row)" v-hasPermi="['flow:task:approve']">审批</el-button>
-            <el-button link type="danger" @click="handleReject(scope.row)" v-hasPermi="['flow:task:reject']">驳回</el-button>
+            <el-button link type="primary" @click="handleApprove(scope.row)"
+              v-hasPermi="['flow:task:approve']">审批</el-button>
+            <el-button link type="danger" @click="handleReject(scope.row)"
+              v-hasPermi="['flow:task:reject']">驳回</el-button>
             <el-button link type="warning" @click="handleBack(scope.row)" v-hasPermi="['flow:task:back']">退回</el-button>
-            <el-button link type="info" @click="handleDelegate(scope.row)" v-hasPermi="['flow:task:delegate']">委派</el-button>
+            <el-button link type="info" @click="handleDelegate(scope.row)"
+              v-hasPermi="['flow:task:delegate']">委派</el-button>
           </template>
         </el-table-column>
       </el-table>
 
       <!-- 分页 -->
-      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
+      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize" @pagination="getList" />
     </div>
 
     <!-- 审批对话框 -->
@@ -93,7 +92,7 @@
         <el-button type="primary" @click="submitDelegate">确定</el-button>
       </template>
     </el-dialog>
-  </div>
+  </PageContainer>
 </template>
 
 <script setup>
@@ -113,7 +112,6 @@ const approveOpen = ref(false)
 const rejectOpen = ref(false)
 const backOpen = ref(false)
 const delegateOpen = ref(false)
-const queryFormRef = ref(null)
 const approveFormRef = ref(null)
 const rejectFormRef = ref(null)
 const backFormRef = ref(null)
@@ -272,17 +270,3 @@ const submitDelegate = () => {
 
 getList()
 </script>
-
-<style scoped lang="scss">
-.page-container {
-  min-height: 100%;
-}
-
-.content-card {
-  background: var(--color-surface);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-  border: 1px solid var(--color-border-light);
-}
-</style>

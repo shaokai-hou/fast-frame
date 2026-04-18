@@ -1,5 +1,5 @@
 <template>
-  <div class="page-container">
+  <PageContainer>
     <!-- 工具栏 -->
     <div class="tool-bar">
       <el-button type="primary" :icon="Refresh" @click="getInfo">刷新</el-button>
@@ -107,7 +107,7 @@
         </el-table-column>
       </el-table>
     </div>
-  </div>
+  </PageContainer>
 </template>
 
 <script setup>
@@ -149,14 +149,6 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-.page-container {
-  min-height: 100%;
-}
-
-.tool-bar {
-  margin-bottom: 16px;
-}
-
 .info-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -218,19 +210,11 @@ onMounted(() => {
   }
 }
 
-.content-card {
-  background: var(--color-surface);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-  border: 1px solid var(--color-border-light);
-
-  .card-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--color-text);
-    margin-bottom: 16px;
-  }
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 16px;
 }
 
 @media (max-width: 1200px) {

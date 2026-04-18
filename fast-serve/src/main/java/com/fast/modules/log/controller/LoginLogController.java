@@ -1,12 +1,15 @@
 package com.fast.modules.log.controller;
 
-import com.fast.common.result.PageResult;
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.fast.common.enums.BusinessType;
+import com.fast.common.result.PageRequest;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
-import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.fast.common.enums.BusinessType;
 import com.fast.framework.web.BaseController;
-import com.fast.modules.log.domain.entity.LoginLog;
+import com.fast.modules.log.domain.dto.LoginLogQuery;
+import com.fast.modules.log.domain.dto.LoginLogVO;
 import com.fast.modules.log.service.LoginLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -28,17 +31,14 @@ public class LoginLogController extends BaseController {
     /**
      * 分页查询登录日志
      *
-     * @param query    查询条件
-     * @param pageNum  页码
-     * @param pageSize 每页数量
+     * @param query       查询条件
+     * @param pageRequest 分页参数
      * @return 登录日志分页结果
      */
-    @SaCheckPermission("log:loginlog:list")
-    @GetMapping("/list")
-    public Result<PageResult<LoginLog>> list(LoginLog query,
-                                              @RequestParam(defaultValue = "1") Integer pageNum,
-                                              @RequestParam(defaultValue = "10") Integer pageSize) {
-        return success(loginLogService.pageLoginLogs(query, pageNum, pageSize));
+    @SaCheckPermission("log:loginlog:page")
+    @GetMapping("/page")
+    public Result<IPage<LoginLogVO>> page(LoginLogQuery query, PageRequest pageRequest) {
+        return success(loginLogService.pageLoginLogs(query, pageRequest));
     }
 
     /**
@@ -64,7 +64,7 @@ public class LoginLogController extends BaseController {
     @Log(title = "登录日志", businessType = BusinessType.CLEAN)
     @DeleteMapping("/clear")
     public Result<Void> clear() {
-        loginLogService.clear();
+        loginLogService.remove(Wrappers.emptyWrapper());
         return success();
     }
 }

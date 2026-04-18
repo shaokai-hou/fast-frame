@@ -17,7 +17,7 @@ export function getCachePrefixes() {
  */
 export function listCacheKeys(params) {
   return request({
-    url: '/monitor/cache/list',
+    url: '/monitor/cache/page',
     method: 'get',
     params
   })

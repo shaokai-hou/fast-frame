@@ -1,23 +1,17 @@
 <template>
-  <div class="page-container">
+  <PageContainer>
     <!-- 搜索栏 -->
-    <div class="search-bar">
-      <el-form :model="queryParams" ref="queryFormRef" :inline="true">
-        <el-form-item label="菜单名称" prop="menuName">
-          <el-input v-model="queryParams.menuName" placeholder="请输入菜单名称" clearable @keyup.enter="handleQuery" />
-        </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-select v-model="queryParams.status" placeholder="菜单状态" clearable>
-            <el-option label="正常" value="0" />
-            <el-option label="禁用" value="1" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" :icon="Search" @click="handleQuery">搜索</el-button>
-          <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+    <SearchBar :model="queryParams" @search="handleQuery" @reset="resetQuery">
+      <el-form-item label="菜单名称" prop="menuName">
+        <el-input v-model="queryParams.menuName" placeholder="请输入菜单名称" clearable @keyup.enter="handleQuery" />
+      </el-form-item>
+      <el-form-item label="状态" prop="status">
+        <el-select v-model="queryParams.status" placeholder="菜单状态" clearable>
+          <el-option label="正常" value="0" />
+          <el-option label="禁用" value="1" />
+        </el-select>
+      </el-form-item>
+    </SearchBar>
 
     <!-- 内容卡片 -->
     <div class="content-card">
@@ -170,7 +164,7 @@
         <el-button type="primary" @click="submitForm">确定</el-button>
       </template>
     </el-dialog>
-  </div>
+  </PageContainer>
 </template>
 
 <script setup>
@@ -382,22 +376,3 @@ onMounted(() => {
 })
 </script>
 
-<style scoped lang="scss">
-.page-container {
-  min-height: 100%;
-}
-
-.content-card {
-  background: var(--color-surface);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-  border: 1px solid var(--color-border-light);
-}
-
-.tool-bar {
-  margin-bottom: 16px;
-  display: flex;
-  gap: 8px;
-}
-</style>

@@ -1,17 +1,11 @@
 <template>
-  <div class="page-container">
+  <PageContainer>
     <!-- 搜索栏 -->
-    <div class="search-bar">
-      <el-form :model="queryParams" ref="queryFormRef" :inline="true">
-        <el-form-item label="文件名" prop="fileName">
-          <el-input v-model="queryParams.fileName" placeholder="请输入文件名" clearable @keyup.enter="handleQuery" />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" :icon="Search" @click="handleQuery">搜索</el-button>
-          <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+    <SearchBar :model="queryParams" @search="handleQuery" @reset="resetQuery">
+      <el-form-item label="文件名" prop="fileName">
+        <el-input v-model="queryParams.fileName" placeholder="请输入文件名" clearable @keyup.enter="handleQuery" />
+      </el-form-item>
+    </SearchBar>
 
     <!-- 内容卡片 -->
     <div class="content-card">
@@ -59,15 +53,8 @@
       </el-table>
 
       <!-- 分页 -->
-      <el-pagination
-        v-model:current-page="queryParams.pageNum"
-        v-model:page-size="queryParams.pageSize"
-        :total="total"
-        :page-sizes="[10, 20, 50, 100]"
-        layout="total, sizes, prev, pager, next, jumper"
-        @size-change="handleQuery"
-        @current-change="handleQuery"
-      />
+      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize" @pagination="getFileList" />
     </div>
 
     <!-- 文件预览组件 -->
@@ -78,7 +65,7 @@
       :file-name="previewFile.fileName"
       @download="handlePreviewDownload"
     />
-  </div>
+  </PageContainer>
 </template>
 
 <script setup>
@@ -236,27 +223,3 @@ onMounted(() => {
 })
 </script>
 
-<style scoped lang="scss">
-.page-container {
-  min-height: 100%;
-}
-
-.content-card {
-  background: var(--color-surface);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-  border: 1px solid var(--color-border-light);
-}
-
-.tool-bar {
-  margin-bottom: 16px;
-  display: flex;
-  gap: 8px;
-}
-
-.el-pagination {
-  margin-top: 16px;
-  justify-content: flex-end;
-}
-</style>

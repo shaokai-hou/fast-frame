@@ -1,10 +1,6 @@
 package com.fast.modules.auth.service;
 
-import com.fast.modules.auth.domain.dto.LoginDTO;
-import com.fast.modules.auth.domain.vo.CaptchaVO;
-import com.fast.modules.auth.domain.vo.LoginVO;
-import com.fast.modules.auth.domain.vo.RoutesVO;
-import com.fast.modules.auth.domain.vo.UserInfoVO;
+import com.fast.modules.auth.domain.dto.*;
 
 /**
  * 认证Service

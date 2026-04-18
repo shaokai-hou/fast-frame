@@ -143,27 +143,3 @@
     transform: scale(1);
   }
 }
-
-// 动画类
-.fade-in {
-  animation: fadeIn 0.3s ease-out forwards;
-}
-
-.slide-up {
-  animation: slideUp 0.3s ease-out forwards;
-}
-
-.slide-in-left {
-  animation: slideInLeft 0.3s ease-out forwards;
-}
-
-.scale-in {
-  animation: scaleIn 0.3s ease-out forwards;
-}
-
-// 延迟动画
-.delay-100 { animation-delay: 100ms; }
-.delay-200 { animation-delay: 200ms; }
-.delay-300 { animation-delay: 300ms; }
-.delay-400 { animation-delay: 400ms; }
-.delay-500 { animation-delay: 500ms; }

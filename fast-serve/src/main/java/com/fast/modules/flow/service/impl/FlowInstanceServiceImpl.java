@@ -4,11 +4,12 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.json.JSONUtil;
+import com.fast.common.exception.BusinessException;
 import com.fast.modules.flow.domain.dto.FlowDefJsonDTO;
-import com.fast.modules.flow.domain.dto.FlowInstanceQueryDTO;
+import com.fast.modules.flow.domain.dto.FlowHisTaskVO;
+import com.fast.modules.flow.domain.dto.FlowInstanceQuery;
 import com.fast.modules.flow.domain.dto.FlowInstanceStartDTO;
-import com.fast.modules.flow.domain.vo.FlowHisTaskVO;
-import com.fast.modules.flow.domain.vo.FlowInstanceVO;
+import com.fast.modules.flow.domain.dto.FlowInstanceVO;
 import com.fast.modules.flow.service.FlowDefService;
 import com.fast.modules.flow.service.FlowInstanceService;
 import org.dromara.warm.flow.core.FlowEngine;
@@ -46,22 +47,29 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
     private FlowDefService flowDefService;
 
     @Override
-    public List<FlowInstanceVO> listInstances(FlowInstanceQueryDTO dto) {
+    public List<FlowInstanceVO> listInstances(FlowInstanceQuery query) {
         String userId = StpUtil.getLoginIdAsString();
-        Instance query = FlowEngine.newIns();
-        query.setCreateBy(userId);
+        Instance insQuery = FlowEngine.newIns();
+        insQuery.setCreateBy(userId);
 
-        List<Instance> instances = insService.list(query);
+        List<Instance> instances = insService.list(insQuery);
         return instances.stream()
                 // 业务ID过滤
-                .filter(ins -> dto.getBusinessId() == null || dto.getBusinessId().isEmpty()
-                        || ins.getBusinessId().contains(dto.getBusinessId()))
+                .filter(ins -> query.getBusinessId() == null || query.getBusinessId().isEmpty()
+                        || ins.getBusinessId().contains(query.getBusinessId()))
                 // 流程状态过滤
-                .filter(ins -> dto.getFlowStatus() == null || dto.getFlowStatus().isEmpty()
-                        || ins.getFlowStatus().equals(dto.getFlowStatus()))
+                .filter(ins -> query.getFlowStatus() == null || query.getFlowStatus().isEmpty()
+                        || ins.getFlowStatus().equals(query.getFlowStatus()))
                 .map(ins -> {
                     FlowInstanceVO vo = BeanUtil.copyProperties(ins, FlowInstanceVO.class);
                     vo.setFlowStatusText(FlowStatus.getValueByKey(ins.getFlowStatus()));
+                    // 通过definitionId获取流程名称
+                    if (ins.getDefinitionId() != null) {
+                        Definition definition = defService.getById(ins.getDefinitionId());
+                        if (definition != null) {
+                            vo.setFlowName(definition.getFlowName());
+                        }
+                    }
                     return vo;
                 })
                 .collect(Collectors.toList());
@@ -72,6 +80,13 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
         Instance instance = insService.getById(id);
         FlowInstanceVO vo = BeanUtil.copyProperties(instance, FlowInstanceVO.class);
         vo.setFlowStatusText(FlowStatus.getValueByKey(instance.getFlowStatus()));
+        // 通过definitionId获取流程名称
+        if (instance.getDefinitionId() != null) {
+            Definition definition = defService.getById(instance.getDefinitionId());
+            if (definition != null) {
+                vo.setFlowName(definition.getFlowName());
+            }
+        }
         return vo;
     }
 
@@ -81,7 +96,7 @@ public class FlowInstanceServiceImpl implements FlowInstanceService {
 
         List<Definition> definitions = defService.getByFlowCode(dto.getFlowCode());
         if (definitions.isEmpty()) {
-            throw new RuntimeException("流程定义不存在: " + dto.getFlowCode());
+            throw new BusinessException("流程定义不存在: " + dto.getFlowCode());
         }
         Definition definition = definitions.get(0);
 

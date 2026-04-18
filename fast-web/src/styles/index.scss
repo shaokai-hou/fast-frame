@@ -63,33 +63,12 @@ ul, ol {
   background: $gray-400;
 }
 
-// 全局组件样式
-
-// 页面容器
-.page-container {
-  min-height: 100%;
-}
-
-// 搜索栏容器
-.search-bar {
-  background: var(--color-surface);
-  padding: 20px 24px;
-  border-radius: 12px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(15, 118, 110, 0.04);
-  border: 1px solid var(--color-border-light);
-
-  .el-form-item {
-    margin-bottom: 0;
-  }
-}
-
 // 内容卡片
 .content-card {
   background: var(--color-surface);
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 2px 8px rgba(15, 118, 110, 0.04);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
   border: 1px solid var(--color-border-light);
 }
 
@@ -100,23 +79,6 @@ ul, ol {
   gap: 8px;
 }
 
-// 动画入场效果
-.page-enter-active {
-  animation: slideUp 0.3s ease-out;
-}
-
 .page-leave-active {
   animation: slideUp 0.3s ease-out reverse;
-}
-
-// Staggered animation for lists
-.stagger-item {
-  opacity: 0;
-  animation: slideUp 0.4s ease-out forwards;
-
-  @for $i from 1 through 10 {
-    &:nth-child(#{$i}) {
-      animation-delay: #{($i - 1) * 0.05}s;
-    }
-  }
 }

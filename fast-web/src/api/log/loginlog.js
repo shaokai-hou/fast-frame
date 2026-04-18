@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 获取登录日志列表
 export function listLoginLog(params) {
   return request({
-    url: '/system/loginlog/list',
+    url: '/system/loginlog/page',
     method: 'get',
     params
   })

@@ -8,7 +8,7 @@ import { download, getBlob } from '@/utils/request'
  */
 export function listFile(params) {
   return request({
-    url: '/system/file/list',
+    url: '/system/file/page',
     method: 'get',
     params
   })

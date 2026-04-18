@@ -1,15 +1,16 @@
 package com.fast.modules.system.controller;
 
-import com.fast.common.result.PageResult;
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fast.common.enums.BusinessType;
+import com.fast.common.result.PageRequest;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
-import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.fast.common.enums.BusinessType;
-import com.fast.framework.web.BaseController;
 import com.fast.framework.properties.MinioProperties;
+import com.fast.framework.web.BaseController;
 import com.fast.modules.system.domain.dto.FileQuery;
+import com.fast.modules.system.domain.dto.FileVO;
 import com.fast.modules.system.service.FileService;
-import com.fast.modules.system.domain.vo.FileVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,10 +50,10 @@ public class FileController extends BaseController {
      * @param query 查询参数
      * @return 文件分页结果
      */
-    @SaCheckPermission("system:file:list")
-    @GetMapping("/list")
-    public Result<PageResult<FileVO>> listFile(FileQuery query) {
-        return success(fileService.pageFiles(query));
+    @SaCheckPermission("system:file:page")
+    @GetMapping("/page")
+    public Result<IPage<FileVO>> pageFile(FileQuery query, PageRequest pageRequest) {
+        return success(fileService.pageFiles(query, pageRequest));
     }
 
     /**

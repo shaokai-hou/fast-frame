@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 获取用户列表
 export function listUser(params) {
   return request({
-    url: '/system/user/list',
+    url: '/system/user/page',
     method: 'get',
     params
   })

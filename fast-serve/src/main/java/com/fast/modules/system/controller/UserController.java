@@ -1,17 +1,19 @@
 package com.fast.modules.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fast.common.enums.BusinessType;
 import com.fast.common.exception.BusinessException;
-import com.fast.common.result.PageResult;
+import com.fast.common.result.PageRequest;
 import com.fast.common.result.Result;
 import com.fast.common.util.ExcelUtil;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
 import com.fast.modules.system.domain.dto.UserDTO;
+import com.fast.modules.system.domain.dto.UserQuery;
+import com.fast.modules.system.domain.dto.UserExportVO;
 import com.fast.modules.system.domain.dto.UserImportDTO;
-import com.fast.modules.system.domain.vo.UserExportVO;
-import com.fast.modules.system.domain.vo.UserVO;
+import com.fast.modules.system.domain.dto.UserVO;
 import com.fast.modules.system.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -38,13 +40,14 @@ public class UserController extends BaseController {
     /**
      * 分页查询用户列表
      *
-     * @param dto 查询参数
+     * @param query    查询条件
+     * @param pageRequest 分页参数
      * @return 用户分页结果
      */
-    @SaCheckPermission("system:user:list")
-    @GetMapping("/list")
-    public Result<PageResult<UserVO>> list(UserDTO dto) {
-        return success(userService.pageUsers(dto));
+    @SaCheckPermission("system:user:page")
+    @GetMapping("/page")
+    public Result<IPage<UserVO>> page(UserQuery query, PageRequest pageRequest) {
+        return success(userService.pageUsers(query, pageRequest));
     }
 
     /**
@@ -101,7 +104,7 @@ public class UserController extends BaseController {
      * @param id 用户ID
      * @return 用户详情
      */
-    @SaCheckPermission("system:user:query")
+    @SaCheckPermission("system:user:detail")
     @GetMapping("/{id}")
     public Result<UserVO> getInfo(@PathVariable Long id) {
         return success(userService.getUserDetailById(id));
@@ -180,14 +183,14 @@ public class UserController extends BaseController {
     /**
      * 导出用户列表
      *
-     * @param dto      查询参数
+     * @param query    查询条件
      * @param response HTTP 响应
      */
     @SaCheckPermission("system:user:export")
     @Log(title = "用户管理", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
-    public void export(UserDTO dto, HttpServletResponse response) {
-        List<UserExportVO> data = userService.listUserForExport(dto);
+    public void export(UserQuery query, HttpServletResponse response) {
+        List<UserExportVO> data = userService.listUserForExport(query);
         ExcelUtil.exportExcel(data, UserExportVO.class, "用户数据", response);
     }
 

@@ -1,10 +1,10 @@
 package com.fast.modules.log.service.impl;
 
-import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.fast.common.result.PageResult;
+import com.fast.common.result.PageRequest;
+import com.fast.modules.log.domain.dto.LoginLogQuery;
+import com.fast.modules.log.domain.dto.LoginLogVO;
 import com.fast.modules.log.domain.entity.LoginLog;
 import com.fast.modules.log.mapper.LoginLogMapper;
 import com.fast.modules.log.service.LoginLogService;
@@ -18,19 +18,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> implements LoginLogService {
 
+    /**
+     * 分页查询登录日志列表
+     *
+     * @param query    查询条件
+     * @param pageRequest 分页参数
+     * @return 登录日志分页结果
+     */
     @Override
-    public PageResult<LoginLog> pageLoginLogs(LoginLog query, Integer pageNum, Integer pageSize) {
-        Page<LoginLog> page = new Page<>(pageNum, pageSize);
-        LambdaQueryWrapper<LoginLog> wrapper = new LambdaQueryWrapper<>();
-        wrapper.like(StrUtil.isNotBlank(query.getUsername()), LoginLog::getUsername, query.getUsername())
-               .eq(StrUtil.isNotBlank(query.getStatus()), LoginLog::getStatus, query.getStatus())
-               .orderByDesc(LoginLog::getLoginTime);
-        Page<LoginLog> result = page(page, wrapper);
-        return PageResult.of(result.getRecords(), result.getTotal());
-    }
-
-    @Override
-    public void clear() {
-        baseMapper.delete(new LambdaQueryWrapper<>());
+    public IPage<LoginLogVO> pageLoginLogs(LoginLogQuery query, PageRequest pageRequest) {
+        return baseMapper.selectLoginLogPage(pageRequest.toPage(), query);
     }
 }

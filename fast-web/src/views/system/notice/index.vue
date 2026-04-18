@@ -1,23 +1,17 @@
 <template>
-  <div class="page-container">
+  <PageContainer>
     <!-- 搜索栏 -->
-    <div class="search-bar">
-      <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch">
-        <el-form-item label="公告标题" prop="noticeTitle">
-          <el-input v-model="queryParams.noticeTitle" placeholder="请输入公告标题" clearable @keyup.enter="handleQuery" />
-        </el-form-item>
-        <el-form-item label="公告类型" prop="noticeType">
-          <el-select v-model="queryParams.noticeType" placeholder="全部" clearable>
-            <el-option label="通知" value="1" />
-            <el-option label="公告" value="2" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" :icon="Search" @click="handleQuery">搜索</el-button>
-          <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+    <SearchBar :model="queryParams" :visible="showSearch" @search="handleQuery" @reset="resetQuery">
+      <el-form-item label="公告标题" prop="noticeTitle">
+        <el-input v-model="queryParams.noticeTitle" placeholder="请输入公告标题" clearable @keyup.enter="handleQuery" />
+      </el-form-item>
+      <el-form-item label="公告类型" prop="noticeType">
+        <el-select v-model="queryParams.noticeType" placeholder="全部" clearable>
+          <el-option label="通知" value="1" />
+          <el-option label="公告" value="2" />
+        </el-select>
+      </el-form-item>
+    </SearchBar>
 
     <!-- 内容卡片 -->
     <div class="content-card">
@@ -110,7 +104,7 @@
         </el-descriptions-item>
       </el-descriptions>
     </el-dialog>
-  </div>
+  </PageContainer>
 </template>
 
 <script setup>
@@ -243,22 +237,3 @@ onMounted(() => {
 })
 </script>
 
-<style scoped lang="scss">
-.page-container {
-  min-height: 100%;
-}
-
-.content-card {
-  background: var(--color-surface);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-  border: 1px solid var(--color-border-light);
-}
-
-.tool-bar {
-  margin-bottom: 16px;
-  display: flex;
-  gap: 8px;
-}
-</style>

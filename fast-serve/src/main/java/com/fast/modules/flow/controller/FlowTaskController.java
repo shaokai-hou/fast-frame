@@ -6,8 +6,8 @@ import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
 import com.fast.modules.flow.domain.dto.FlowTaskApproveDTO;
-import com.fast.modules.flow.domain.dto.FlowTaskQueryDTO;
-import com.fast.modules.flow.domain.vo.FlowTaskVO;
+import com.fast.modules.flow.domain.dto.FlowTaskQuery;
+import com.fast.modules.flow.domain.dto.FlowTaskVO;
 import com.fast.modules.flow.service.FlowTaskService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -30,25 +30,25 @@ public class FlowTaskController extends BaseController {
     /**
      * 查询待办任务列表
      *
-     * @param dto 查询参数
+     * @param query    查询条件
      * @return 待办任务列表
      */
     @SaCheckPermission("flow:task:todo")
     @GetMapping("/todo")
-    public Result<List<FlowTaskVO>> todoList(FlowTaskQueryDTO dto) {
-        return success(flowTaskService.listTodoTasks(dto));
+    public Result<List<FlowTaskVO>> todoList(FlowTaskQuery query) {
+        return success(flowTaskService.listTodoTasks(query));
     }
 
     /**
      * 查询已办任务列表
      *
-     * @param dto 查询参数
+     * @param query    查询条件
      * @return 已办任务列表
      */
     @SaCheckPermission("flow:task:done")
     @GetMapping("/done")
-    public Result<List<FlowTaskVO>> doneList(FlowTaskQueryDTO dto) {
-        return success(flowTaskService.listDoneTasks(dto));
+    public Result<List<FlowTaskVO>> doneList(FlowTaskQuery query) {
+        return success(flowTaskService.listDoneTasks(query));
     }
 
     /**
@@ -57,7 +57,7 @@ public class FlowTaskController extends BaseController {
      * @param id 任务ID
      * @return 任务详情
      */
-    @SaCheckPermission("flow:task:query")
+    @SaCheckPermission("flow:task:detail")
     @GetMapping("/{id}")
     public Result<FlowTaskVO> getInfo(@PathVariable Long id) {
         return success(flowTaskService.getTaskById(id));

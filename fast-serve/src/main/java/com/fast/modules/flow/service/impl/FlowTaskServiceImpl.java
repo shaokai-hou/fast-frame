@@ -1,19 +1,14 @@
 package com.fast.modules.flow.service.impl;
 
-import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import com.fast.modules.flow.domain.dto.FlowTaskApproveDTO;
-import com.fast.modules.flow.domain.dto.FlowTaskQueryDTO;
-import com.fast.modules.flow.domain.vo.FlowTaskVO;
+import com.fast.modules.flow.domain.dto.FlowTaskQuery;
+import com.fast.modules.flow.domain.dto.FlowTaskVO;
 import com.fast.modules.flow.service.FlowTaskService;
 import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.dto.FlowParams;
-import org.dromara.warm.flow.core.entity.Definition;
-import org.dromara.warm.flow.core.entity.HisTask;
-import org.dromara.warm.flow.core.entity.Instance;
-import org.dromara.warm.flow.core.entity.Task;
-import org.dromara.warm.flow.core.entity.User;
+import org.dromara.warm.flow.core.entity.*;
 import org.dromara.warm.flow.core.enums.FlowStatus;
 import org.dromara.warm.flow.core.service.DefService;
 import org.dromara.warm.flow.core.service.HisTaskService;
@@ -41,7 +36,7 @@ public class FlowTaskServiceImpl implements FlowTaskService {
     private DefService defService;
 
     @Override
-    public List<FlowTaskVO> listTodoTasks(FlowTaskQueryDTO dto) {
+    public List<FlowTaskVO> listTodoTasks(FlowTaskQuery query) {
         // 获取当前用户的完整权限标识列表（包括 userId 和 role:xxx）
         List<String> permissions = FlowEngine.permissionHandler().permissions();
         if (CollUtil.isEmpty(permissions)) {
@@ -108,16 +103,16 @@ public class FlowTaskServiceImpl implements FlowTaskService {
                     return vo;
                 })
                 // 业务ID过滤
-                .filter(vo -> dto.getBusinessId() == null || dto.getBusinessId().isEmpty()
-                        || (vo.getBusinessId() != null && vo.getBusinessId().contains(dto.getBusinessId())))
+                .filter(vo -> query.getBusinessId() == null || query.getBusinessId().isEmpty()
+                        || (vo.getBusinessId() != null && vo.getBusinessId().contains(query.getBusinessId())))
                 // 流程名称过滤
-                .filter(vo -> dto.getFlowName() == null || dto.getFlowName().isEmpty()
-                        || (vo.getFlowName() != null && vo.getFlowName().contains(dto.getFlowName())))
+                .filter(vo -> query.getFlowName() == null || query.getFlowName().isEmpty()
+                        || (vo.getFlowName() != null && vo.getFlowName().contains(query.getFlowName())))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<FlowTaskVO> listDoneTasks(FlowTaskQueryDTO dto) {
+    public List<FlowTaskVO> listDoneTasks(FlowTaskQuery query) {
         // 获取当前用户的完整权限标识列表
         List<String> permissions = FlowEngine.permissionHandler().permissions();
         if (CollUtil.isEmpty(permissions)) {
@@ -175,14 +170,14 @@ public class FlowTaskServiceImpl implements FlowTaskService {
                     return vo;
                 })
                 // 业务ID过滤
-                .filter(vo -> dto.getBusinessId() == null || dto.getBusinessId().isEmpty()
-                        || (vo.getBusinessId() != null && vo.getBusinessId().contains(dto.getBusinessId())))
+                .filter(vo -> query.getBusinessId() == null || query.getBusinessId().isEmpty()
+                        || (vo.getBusinessId() != null && vo.getBusinessId().contains(query.getBusinessId())))
                 // 流程名称过滤
-                .filter(vo -> dto.getFlowName() == null || dto.getFlowName().isEmpty()
-                        || (vo.getFlowName() != null && vo.getFlowName().contains(dto.getFlowName())))
+                .filter(vo -> query.getFlowName() == null || query.getFlowName().isEmpty()
+                        || (vo.getFlowName() != null && vo.getFlowName().contains(query.getFlowName())))
                 // 流程状态过滤
-                .filter(vo -> dto.getFlowStatus() == null || dto.getFlowStatus().isEmpty()
-                        || (vo.getFlowStatus() != null && vo.getFlowStatus().equals(dto.getFlowStatus())))
+                .filter(vo -> query.getFlowStatus() == null || query.getFlowStatus().isEmpty()
+                        || (vo.getFlowStatus() != null && vo.getFlowStatus().equals(query.getFlowStatus())))
                 .collect(Collectors.toList());
     }
 

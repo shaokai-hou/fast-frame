@@ -1,13 +1,15 @@
 package com.fast.modules.job.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.fast.common.result.PageResult;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fast.common.enums.BusinessType;
+import com.fast.common.result.PageRequest;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
-import com.fast.common.enums.BusinessType;
 import com.fast.framework.web.BaseController;
+import com.fast.modules.job.domain.dto.JobLogQuery;
+import com.fast.modules.job.domain.dto.JobLogVO;
 import com.fast.modules.job.domain.entity.JobLog;
-import com.fast.modules.job.domain.vo.JobLogVO;
 import com.fast.modules.job.service.JobLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -29,21 +31,14 @@ public class JobLogController extends BaseController {
     /**
      * 分页查询任务日志
      *
-     * @param jobName  任务名称
-     * @param jobGroup 任务分组
-     * @param status   执行状态
-     * @param pageNum  页码
-     * @param pageSize 每页数量
+     * @param query    查询条件
+     * @param pageRequest 分页参数
      * @return 日志分页结果
      */
-    @SaCheckPermission("monitor:jobLog:list")
-    @GetMapping("/list")
-    public Result<PageResult<JobLogVO>> list(@RequestParam(required = false) String jobName,
-                                             @RequestParam(required = false) String jobGroup,
-                                             @RequestParam(required = false) String status,
-                                             @RequestParam(defaultValue = "1") Integer pageNum,
-                                             @RequestParam(defaultValue = "10") Integer pageSize) {
-        return success(jobLogService.pageJobLogs(jobName, jobGroup, status, pageNum, pageSize));
+    @SaCheckPermission("monitor:jobLog:page")
+    @GetMapping("/page")
+    public Result<IPage<JobLogVO>> page(JobLogQuery query, PageRequest pageRequest) {
+        return success(jobLogService.pageJobLogs(query, pageRequest));
     }
 
     /**
@@ -52,7 +47,7 @@ public class JobLogController extends BaseController {
      * @param id 日志ID
      * @return 日志详情
      */
-    @SaCheckPermission("monitor:jobLog:query")
+    @SaCheckPermission("monitor:jobLog:detail")
     @GetMapping("/{id}")
     public Result<JobLog> getInfo(@PathVariable Long id) {
         return success(jobLogService.getById(id));

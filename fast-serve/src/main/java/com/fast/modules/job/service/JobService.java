@@ -1,11 +1,12 @@
 package com.fast.modules.job.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.fast.common.result.PageResult;
+import com.fast.common.result.PageRequest;
 import com.fast.modules.job.domain.dto.JobDTO;
 import com.fast.modules.job.domain.dto.JobQuery;
+import com.fast.modules.job.domain.dto.JobVO;
 import com.fast.modules.job.domain.entity.Job;
-import com.fast.modules.job.domain.vo.JobVO;
 
 import java.util.List;
 
@@ -20,11 +21,10 @@ public interface JobService extends IService<Job> {
      * 分页查询定时任务
      *
      * @param query    查询条件
-     * @param pageNum  页码
-     * @param pageSize 每页数量
+     * @param pageRequest 分页参数
      * @return 分页结果
      */
-    PageResult<JobVO> pageJobs(JobQuery query, Integer pageNum, Integer pageSize);
+    IPage<JobVO> pageJobs(JobQuery query, PageRequest pageRequest);
 
     /**
      * 新增定时任务

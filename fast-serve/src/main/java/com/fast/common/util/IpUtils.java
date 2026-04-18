@@ -1,6 +1,7 @@
 package com.fast.common.util;
 
 import cn.hutool.core.util.StrUtil;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**

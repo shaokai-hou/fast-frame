@@ -1,6 +1,6 @@
 package com.fast.modules.system.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fast.framework.web.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

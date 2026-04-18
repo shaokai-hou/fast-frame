@@ -2,9 +2,10 @@ package com.fast.modules.system.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fast.modules.system.domain.dto.DeptDTO;
+import com.fast.modules.system.domain.dto.DeptQuery;
+import com.fast.modules.system.domain.dto.DeptTreeVO;
+import com.fast.modules.system.domain.dto.DeptVO;
 import com.fast.modules.system.domain.entity.Dept;
-import com.fast.modules.system.domain.vo.DeptTreeVO;
-import com.fast.modules.system.domain.vo.DeptVO;
 
 import java.util.List;
 
@@ -19,10 +20,10 @@ public interface DeptService extends IService<Dept> {
     /**
      * 查询部门树
      *
-     * @param dto 查询条件
+     * @param query    查询条件
      * @return 部门树列表
      */
-    List<DeptVO> listDeptTree(DeptDTO dto);
+    List<DeptVO> listDeptTree(DeptQuery query);
 
     /**
      * 查询部门树选择器

@@ -1,15 +1,16 @@
 package com.fast.modules.system.controller;
 
-import com.fast.common.result.Result;
-import com.fast.framework.annotation.Log;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.fast.common.enums.BusinessType;
+import com.fast.common.result.Result;
+import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
 import com.fast.modules.system.domain.dto.DeptDTO;
+import com.fast.modules.system.domain.dto.DeptQuery;
+import com.fast.modules.system.domain.dto.DeptTreeVO;
+import com.fast.modules.system.domain.dto.DeptVO;
 import com.fast.modules.system.domain.entity.Dept;
 import com.fast.modules.system.service.DeptService;
-import com.fast.modules.system.domain.vo.DeptTreeVO;
-import com.fast.modules.system.domain.vo.DeptVO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,13 +32,13 @@ public class DeptController extends BaseController {
     /**
      * 查询部门树
      *
-     * @param dto 查询参数
+     * @param query    查询条件
      * @return 部门树列表
      */
     @SaCheckPermission("system:dept:list")
     @GetMapping("/list")
-    public Result<List<DeptVO>> list(DeptDTO dto) {
-        return success(deptService.listDeptTree(dto));
+    public Result<List<DeptVO>> list(DeptQuery query) {
+        return success(deptService.listDeptTree(query));
     }
 
     /**
@@ -57,7 +58,7 @@ public class DeptController extends BaseController {
      * @param id 部门ID
      * @return 部门详情
      */
-    @SaCheckPermission("system:dept:query")
+    @SaCheckPermission("system:dept:detail")
     @GetMapping("/{id}")
     public Result<Dept> getInfo(@PathVariable Long id) {
         return success(deptService.getById(id));

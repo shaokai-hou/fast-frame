@@ -6,13 +6,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fast.common.exception.BusinessException;
 import com.fast.modules.system.domain.dto.DeptDTO;
+import com.fast.modules.system.domain.dto.DeptQuery;
+import com.fast.modules.system.domain.dto.DeptTreeVO;
+import com.fast.modules.system.domain.dto.DeptVO;
 import com.fast.modules.system.domain.entity.Dept;
 import com.fast.modules.system.domain.entity.User;
 import com.fast.modules.system.mapper.DeptMapper;
 import com.fast.modules.system.mapper.UserMapper;
 import com.fast.modules.system.service.DeptService;
-import com.fast.modules.system.domain.vo.DeptTreeVO;
-import com.fast.modules.system.domain.vo.DeptVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,17 +39,17 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     /**
      * 查询部门树形列表
      *
-     * @param dto 查询参数 DTO
+     * @param query    查询条件
      * @return 部门树形列表
      */
     @Override
-    public List<DeptVO> listDeptTree(DeptDTO dto) {
+    public List<DeptVO> listDeptTree(DeptQuery query) {
         // 判断是否有搜索条件
-        boolean hasSearchCondition = StrUtil.isNotBlank(dto.getDeptName()) || StrUtil.isNotBlank(dto.getStatus());
+        boolean hasSearchCondition = StrUtil.isNotBlank(query.getDeptName()) || StrUtil.isNotBlank(query.getStatus());
 
         LambdaQueryWrapper<Dept> wrapper = new LambdaQueryWrapper<>();
-        wrapper.like(StrUtil.isNotBlank(dto.getDeptName()), Dept::getDeptName, dto.getDeptName())
-               .eq(StrUtil.isNotBlank(dto.getStatus()), Dept::getStatus, dto.getStatus())
+        wrapper.like(StrUtil.isNotBlank(query.getDeptName()), Dept::getDeptName, query.getDeptName())
+               .eq(StrUtil.isNotBlank(query.getStatus()), Dept::getStatus, query.getStatus())
                .orderByAsc(Dept::getSort)
                .orderByAsc(Dept::getCreateTime);
         List<Dept> depts = list(wrapper);

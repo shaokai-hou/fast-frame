@@ -1,26 +1,20 @@
 <template>
-  <div class="page-container">
+  <PageContainer>
     <!-- 搜索栏 -->
-    <div class="search-bar">
-      <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch">
-        <el-form-item label="业务ID" prop="businessId">
-          <el-input v-model="queryParams.businessId" placeholder="请输入业务ID" clearable @keyup.enter="handleQuery" />
-        </el-form-item>
-        <el-form-item label="流程状态" prop="flowStatus">
-          <el-select v-model="queryParams.flowStatus" placeholder="请选择状态" clearable>
-            <el-option label="审批中" value="1" />
-            <el-option label="审批通过" value="2" />
-            <el-option label="已完成" value="8" />
-            <el-option label="已退回" value="9" />
-            <el-option label="已终止" value="4" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" :icon="Search" @click="handleQuery">搜索</el-button>
-          <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+    <SearchBar :model="queryParams" :visible="showSearch" @search="handleQuery" @reset="resetQuery" ref="searchBarRef">
+      <el-form-item label="业务ID" prop="businessId">
+        <el-input v-model="queryParams.businessId" placeholder="请输入业务ID" clearable @keyup.enter="handleQuery" />
+      </el-form-item>
+      <el-form-item label="流程状态" prop="flowStatus">
+        <el-select v-model="queryParams.flowStatus" placeholder="请选择状态" clearable>
+          <el-option label="审批中" value="1" />
+          <el-option label="审批通过" value="2" />
+          <el-option label="已完成" value="8" />
+          <el-option label="已退回" value="9" />
+          <el-option label="已终止" value="4" />
+        </el-select>
+      </el-form-item>
+    </SearchBar>
 
     <!-- 内容卡片 -->
     <div class="content-card">
@@ -32,6 +26,7 @@
       <!-- 数据表格 -->
       <el-table v-loading="loading" :data="instanceList" row-key="id">
         <el-table-column type="index" label="序号" width="60" align="center" :index="(index) => index + 1" />
+        <el-table-column label="流程名称" prop="flowName" min-width="150" />
         <el-table-column label="业务ID" prop="businessId" min-width="120" />
         <el-table-column label="当前节点" prop="nodeName" min-width="150" />
         <el-table-column label="流程状态" prop="flowStatusText" align="center" width="100">
@@ -93,7 +88,7 @@
         <ApprovalTimeline :history="historyList" />
       </div>
     </el-dialog>
-  </div>
+  </PageContainer>
 </template>
 
 <script setup>
@@ -135,7 +130,7 @@ const data = reactive({
 })
 
 const { loading, showSearch, total, instanceList, startOpen, diagramOpen, diagramUrl, historyOpen, historyList, historyLoading, flowDefOptions, queryParams, startForm, startRules } = toRefs(data)
-const queryFormRef = ref(null)
+const searchBarRef = ref(null)
 const startFormRef = ref(null)
 
 /** 查询流程实例列表 */
@@ -156,7 +151,7 @@ function handleQuery() {
 
 /** 重置按钮 */
 function resetQuery() {
-  queryFormRef.value?.resetFields()
+  searchBarRef.value?.formRef?.resetFields()
   handleQuery()
 }
 
@@ -231,28 +226,6 @@ getList()
 </script>
 
 <style scoped lang="scss">
-.page-container {
-  min-height: 100%;
-}
-
-.content-card {
-  background: var(--color-surface);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-  border: 1px solid var(--color-border-light);
-}
-
-.tool-bar {
-  margin-bottom: 16px;
-  display: flex;
-  gap: 8px;
-}
-
-.search-bar {
-  margin-bottom: 16px;
-}
-
 .diagram-container {
   height: 500px;
 }

@@ -1,8 +1,8 @@
 package com.fast.modules.flow.service;
 
 import com.fast.modules.flow.domain.dto.FlowDefJsonDTO;
-import com.fast.modules.flow.domain.dto.FlowDefQueryDTO;
-import com.fast.modules.flow.domain.vo.FlowDefVO;
+import com.fast.modules.flow.domain.dto.FlowDefQuery;
+import com.fast.modules.flow.domain.dto.FlowDefVO;
 
 import java.util.List;
 
@@ -16,10 +16,10 @@ public interface FlowDefService {
     /**
      * 查询流程定义列表
      *
-     * @param dto 查询参数
+     * @param query    查询条件
      * @return 流程定义列表
      */
-    List<FlowDefVO> listDefs(FlowDefQueryDTO dto);
+    List<FlowDefVO> listDefs(FlowDefQuery query);
 
     /**
      * 根据ID获取流程定义详情

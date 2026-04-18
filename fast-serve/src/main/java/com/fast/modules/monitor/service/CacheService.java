@@ -1,9 +1,11 @@
 package com.fast.modules.monitor.service;
 
-import com.fast.common.result.PageResult;
-import com.fast.modules.monitor.domain.vo.CacheInfoVO;
-import com.fast.modules.monitor.domain.vo.CacheKeyVO;
-import com.fast.modules.monitor.domain.vo.CachePrefixVO;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fast.common.result.PageRequest;
+import com.fast.modules.monitor.domain.dto.CacheQuery;
+import com.fast.modules.monitor.domain.dto.CacheInfoVO;
+import com.fast.modules.monitor.domain.dto.CacheKeyVO;
+import com.fast.modules.monitor.domain.dto.CachePrefixVO;
 
 import java.util.List;
 
@@ -24,12 +26,11 @@ public interface CacheService {
     /**
      * 分页查询缓存键名列表
      *
-     * @param prefix   缓存前缀（可选）
-     * @param pageNum  页码
-     * @param pageSize 每页数量
+     * @param query    查询条件
+     * @param pageRequest 分页参数
      * @return 缓存键名分页结果
      */
-    PageResult<CacheKeyVO> pageCacheKeys(String prefix, Integer pageNum, Integer pageSize);
+    IPage<CacheKeyVO> pageCacheKeys(CacheQuery query, PageRequest pageRequest);
 
     /**
      * 获取缓存详情

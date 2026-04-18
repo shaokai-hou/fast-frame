@@ -1,9 +1,9 @@
 package com.fast.modules.flow.service;
 
-import com.fast.modules.flow.domain.dto.FlowInstanceQueryDTO;
+import com.fast.modules.flow.domain.dto.FlowHisTaskVO;
+import com.fast.modules.flow.domain.dto.FlowInstanceQuery;
 import com.fast.modules.flow.domain.dto.FlowInstanceStartDTO;
-import com.fast.modules.flow.domain.vo.FlowHisTaskVO;
-import com.fast.modules.flow.domain.vo.FlowInstanceVO;
+import com.fast.modules.flow.domain.dto.FlowInstanceVO;
 
 import java.util.List;
 
@@ -17,10 +17,10 @@ public interface FlowInstanceService {
     /**
      * 查询流程实例列表
      *
-     * @param dto 查询参数
+     * @param query    查询条件
      * @return 流程实例列表
      */
-    List<FlowInstanceVO> listInstances(FlowInstanceQueryDTO dto);
+    List<FlowInstanceVO> listInstances(FlowInstanceQuery query);
 
     /**
      * 根据ID获取流程实例详情

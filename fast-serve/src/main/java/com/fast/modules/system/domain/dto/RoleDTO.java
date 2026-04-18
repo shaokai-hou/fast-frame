@@ -65,14 +65,4 @@ public class RoleDTO implements Serializable {
      * 部门ID列表(自定义数据范围时使用)
      */
     private Long[] deptIds;
-
-    /**
-     * 页码
-     */
-    private Integer pageNum = 1;
-
-    /**
-     * 每页数量
-     */
-    private Integer pageSize = 10;
 }

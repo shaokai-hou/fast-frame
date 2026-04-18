@@ -1,16 +1,19 @@
 package com.fast.modules.system.controller;
 
-import com.fast.common.result.PageResult;
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fast.common.enums.BusinessType;
+import com.fast.common.result.PageRequest;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
-import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.fast.common.enums.BusinessType;
 import com.fast.framework.web.BaseController;
+import com.fast.modules.system.domain.dto.DictDataQuery;
+import com.fast.modules.system.domain.dto.DictDataVO;
+import com.fast.modules.system.domain.dto.DictVO;
 import com.fast.modules.system.domain.entity.DictData;
+import com.fast.modules.system.domain.dto.DictTypeQuery;
 import com.fast.modules.system.domain.entity.DictType;
 import com.fast.modules.system.service.DictService;
-import com.fast.modules.system.domain.vo.DictDataVO;
-import com.fast.modules.system.domain.vo.DictVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -33,17 +36,14 @@ public class DictController extends BaseController {
     /**
      * 分页查询字典类型列表
      *
-     * @param query    查询条件
-     * @param pageNum  页码
-     * @param pageSize 每页数量
+     * @param query       查询条件
+     * @param pageRequest 分页参数
      * @return 字典类型分页结果
      */
-    @SaCheckPermission("system:dict:list")
-    @GetMapping("/type/list")
-    public Result<PageResult<DictVO>> listType(DictType query,
-                                                @RequestParam(defaultValue = "1") Integer pageNum,
-                                                @RequestParam(defaultValue = "10") Integer pageSize) {
-        return success(dictService.pageDictTypes(query, pageNum, pageSize));
+    @SaCheckPermission("system:dict:page")
+    @GetMapping("/type/page")
+    public Result<IPage<DictVO>> pageType(DictTypeQuery query, PageRequest pageRequest) {
+        return success(dictService.pageDictTypes(query, pageRequest));
     }
 
     /**
@@ -61,24 +61,17 @@ public class DictController extends BaseController {
     /**
      * 分页查询字典数据
      *
-     * @param dictType   字典类型
-     * @param dictLabel  字典标签
-     * @param dictValue  字典值
-     * @param status     状态
-     * @param pageNum    页码
-     * @param pageSize   每页数量
+     * @param dictType    字典类型
+     * @param dictLabel   字典标签
+     * @param dictValue   字典值
+     * @param status      状态
+     * @param pageRequest 分页参数
      * @return 字典数据分页结果
      */
-    @SaCheckPermission("system:dict:list")
-    @GetMapping("/data/list")
-    public Result<PageResult<DictDataVO>> listDataPage(
-            @RequestParam String dictType,
-            @RequestParam(required = false) String dictLabel,
-            @RequestParam(required = false) String dictValue,
-            @RequestParam(required = false) String status,
-            @RequestParam(defaultValue = "1") Integer pageNum,
-            @RequestParam(defaultValue = "10") Integer pageSize) {
-        return success(dictService.pageDictData(dictType, dictLabel, dictValue, status, pageNum, pageSize));
+    @SaCheckPermission("system:dict:page")
+    @GetMapping("/data/page")
+    public Result<IPage<DictDataVO>> pageData(DictDataQuery query, PageRequest pageRequest) {
+        return success(dictService.pageDictData(query, pageRequest));
     }
 
     /**

@@ -1,13 +1,15 @@
 package com.fast.modules.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fast.common.enums.BusinessType;
-import com.fast.common.result.PageResult;
+import com.fast.common.result.PageRequest;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
+import com.fast.modules.system.domain.dto.ConfigQuery;
+import com.fast.modules.system.domain.dto.ConfigVO;
 import com.fast.modules.system.domain.entity.Config;
-import com.fast.modules.system.domain.vo.ConfigVO;
 import com.fast.modules.system.service.ConfigService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -31,16 +33,13 @@ public class ConfigController extends BaseController {
      * 分页查询参数配置列表
      *
      * @param query    查询条件
-     * @param pageNum  页码
-     * @param pageSize 每页数量
+     * @param pageRequest 分页参数
      * @return 配置分页结果
      */
-    @SaCheckPermission("system:config:list")
-    @GetMapping("/list")
-    public Result<PageResult<ConfigVO>> list(Config query,
-                                              @RequestParam(defaultValue = "1") Integer pageNum,
-                                              @RequestParam(defaultValue = "10") Integer pageSize) {
-        return success(configService.pageConfigs(query, pageNum, pageSize));
+    @SaCheckPermission("system:config:page")
+    @GetMapping("/page")
+    public Result<IPage<ConfigVO>> page(ConfigQuery query, PageRequest pageRequest) {
+        return success(configService.pageConfigs(query, pageRequest));
     }
 
     /**
@@ -49,7 +48,7 @@ public class ConfigController extends BaseController {
      * @param configKey 参数键名
      * @return 参数值
      */
-    @SaCheckPermission("system:config:query")
+    @SaCheckPermission("system:config:detail")
     @GetMapping("/key/{configKey}")
     public Result<String> getByKey(@PathVariable String configKey) {
         return success(configService.getConfigValue(configKey));
@@ -61,7 +60,7 @@ public class ConfigController extends BaseController {
      * @param id 配置ID
      * @return 配置详情
      */
-    @SaCheckPermission("system:config:query")
+    @SaCheckPermission("system:config:detail")
     @GetMapping("/{id}")
     public Result<Config> getInfo(@PathVariable Long id) {
         return success(configService.getById(id));

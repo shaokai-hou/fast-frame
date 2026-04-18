@@ -1,14 +1,16 @@
 package com.fast.modules.monitor.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.fast.common.result.PageResult;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fast.common.enums.BusinessType;
+import com.fast.common.result.PageRequest;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
-import com.fast.common.enums.BusinessType;
 import com.fast.framework.web.BaseController;
-import com.fast.modules.monitor.domain.vo.CacheInfoVO;
-import com.fast.modules.monitor.domain.vo.CacheKeyVO;
-import com.fast.modules.monitor.domain.vo.CachePrefixVO;
+import com.fast.modules.monitor.domain.dto.CacheQuery;
+import com.fast.modules.monitor.domain.dto.CacheInfoVO;
+import com.fast.modules.monitor.domain.dto.CacheKeyVO;
+import com.fast.modules.monitor.domain.dto.CachePrefixVO;
 import com.fast.modules.monitor.service.CacheService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -41,17 +43,14 @@ public class CacheController extends BaseController {
     /**
      * 分页查询缓存键名列表
      *
-     * @param prefix   缓存前缀（可选）
-     * @param pageNum  页码
-     * @param pageSize 每页数量
+     * @param query    查询条件
+     * @param pageRequest 分页参数
      * @return 缓存键名分页结果
      */
-    @SaCheckPermission("monitor:cache:list")
-    @GetMapping("/list")
-    public Result<PageResult<CacheKeyVO>> list(@RequestParam(required = false) String prefix,
-                                                @RequestParam(defaultValue = "1") Integer pageNum,
-                                                @RequestParam(defaultValue = "10") Integer pageSize) {
-        return success(cacheService.pageCacheKeys(prefix, pageNum, pageSize));
+    @SaCheckPermission("monitor:cache:page")
+    @GetMapping("/page")
+    public Result<IPage<CacheKeyVO>> page(CacheQuery query, PageRequest pageRequest) {
+        return success(cacheService.pageCacheKeys(query, pageRequest));
     }
 
     /**
@@ -60,7 +59,7 @@ public class CacheController extends BaseController {
      * @param key 缓存键名
      * @return 缓存详情
      */
-    @SaCheckPermission("monitor:cache:query")
+    @SaCheckPermission("monitor:cache:detail")
     @GetMapping("/info")
     public Result<CacheInfoVO> getInfo(@RequestParam String key) {
         return success(cacheService.getCacheInfo(key));
@@ -98,7 +97,7 @@ public class CacheController extends BaseController {
      *
      * @return Redis信息
      */
-    @SaCheckPermission("monitor:cache:query")
+    @SaCheckPermission("monitor:cache:detail")
     @GetMapping("/redisInfo")
     public Result<String> getRedisInfo() {
         return success(cacheService.getRedisInfo());

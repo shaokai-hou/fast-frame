@@ -1,36 +1,27 @@
 <template>
-  <div class="page-container">
+  <PageContainer>
     <!-- 搜索栏 -->
-    <div class="search-bar">
-      <el-form :model="queryParams" ref="queryFormRef" :inline="true">
-        <el-form-item label="缓存前缀" prop="prefix">
-          <el-select v-model="queryParams.prefix" placeholder="全部" clearable style="width: 200px">
-            <el-option
-              v-for="item in prefixOptions"
-              :key="item.value"
-              :label="item.name"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" :icon="Search" @click="handleQuery">搜索</el-button>
-          <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+    <SearchBar :model="queryParams" @search="handleQuery" @reset="resetQuery">
+      <el-form-item label="缓存前缀" prop="prefix">
+        <el-select v-model="queryParams.prefix" placeholder="全部" clearable style="width: 200px">
+          <el-option v-for="item in prefixOptions" :key="item.value" :label="item.name" :value="item.value" />
+        </el-select>
+      </el-form-item>
+    </SearchBar>
 
     <!-- 内容卡片 -->
     <div class="content-card">
       <!-- 工具栏 -->
       <div class="tool-bar">
-        <el-button type="danger" plain :icon="Delete" @click="handleClear" v-hasPermi="['monitor:cache:delete']">清空缓存</el-button>
+        <el-button type="danger" plain :icon="Delete" @click="handleClear"
+          v-hasPermi="['monitor:cache:delete']">清空缓存</el-button>
         <el-button :icon="Refresh" @click="getList">刷新</el-button>
       </div>
 
       <!-- 数据表格 -->
       <el-table v-loading="loading" :data="cacheList" row-key="key">
-        <el-table-column type="index" label="序号" width="60" align="center" :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
+        <el-table-column type="index" label="序号" width="60" align="center"
+          :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
         <el-table-column label="缓存键名" prop="key" show-overflow-tooltip />
         <el-table-column label="缓存前缀" prop="prefix" width="150">
           <template #default="scope">
@@ -51,14 +42,17 @@
         </el-table-column>
         <el-table-column label="操作" align="center" width="150">
           <template #default="scope">
-            <el-button link type="primary" @click="handleView(scope.row)" v-hasPermi="['monitor:cache:query']">查看</el-button>
-            <el-button link type="danger" @click="handleDelete(scope.row)" v-hasPermi="['monitor:cache:delete']">删除</el-button>
+            <el-button link type="primary" @click="handleView(scope.row)"
+              v-hasPermi="['monitor:cache:query']">查看</el-button>
+            <el-button link type="danger" @click="handleDelete(scope.row)"
+              v-hasPermi="['monitor:cache:delete']">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
 
       <!-- 分页 -->
-      <Pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
+      <Pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize" @pagination="getList" />
     </div>
 
     <!-- 查看缓存内容对话框 -->
@@ -73,7 +67,7 @@
         </el-descriptions-item>
       </el-descriptions>
     </el-dialog>
-  </div>
+  </PageContainer>
 </template>
 
 <script setup>
@@ -178,36 +172,3 @@ onMounted(() => {
   getList()
 })
 </script>
-
-<style scoped lang="scss">
-.page-container {
-  min-height: 100%;
-}
-
-.search-bar {
-  background: var(--color-surface);
-  padding: 20px 24px;
-  border-radius: 12px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-  border: 1px solid var(--color-border-light);
-
-  :deep(.el-form-item) {
-    margin-bottom: 0;
-  }
-}
-
-.content-card {
-  background: var(--color-surface);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-  border: 1px solid var(--color-border-light);
-}
-
-.tool-bar {
-  margin-bottom: 16px;
-  display: flex;
-  gap: 8px;
-}
-</style>

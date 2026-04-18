@@ -4,13 +4,13 @@ import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fast.common.exception.BusinessException;
+import com.fast.modules.system.domain.dto.MenuTreeVO;
+import com.fast.modules.system.domain.dto.MenuVO;
 import com.fast.modules.system.domain.entity.Menu;
 import com.fast.modules.system.domain.entity.User;
 import com.fast.modules.system.mapper.MenuMapper;
 import com.fast.modules.system.service.MenuService;
 import com.fast.modules.system.service.UserService;
-import com.fast.modules.system.domain.vo.MenuTreeVO;
-import com.fast.modules.system.domain.vo.MenuVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

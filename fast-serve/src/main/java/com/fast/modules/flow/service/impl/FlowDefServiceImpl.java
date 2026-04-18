@@ -3,10 +3,10 @@ package com.fast.modules.flow.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.fast.modules.flow.domain.dto.FlowDefJsonDTO;
-import com.fast.modules.flow.domain.dto.FlowDefQueryDTO;
+import com.fast.modules.flow.domain.dto.FlowDefQuery;
+import com.fast.modules.flow.domain.dto.FlowDefVO;
 import com.fast.modules.flow.domain.dto.FlowNodeJsonDTO;
 import com.fast.modules.flow.domain.dto.FlowSkipJsonDTO;
-import com.fast.modules.flow.domain.vo.FlowDefVO;
 import com.fast.modules.flow.service.FlowDefService;
 import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.entity.Definition;
@@ -35,23 +35,23 @@ public class FlowDefServiceImpl implements FlowDefService {
     private DefService defService;
 
     @Override
-    public List<FlowDefVO> listDefs(FlowDefQueryDTO dto) {
+    public List<FlowDefVO> listDefs(FlowDefQuery query) {
         List<Definition> definitions;
 
-        if (StrUtil.isNotBlank(dto.getFlowCode())) {
-            definitions = defService.getByFlowCode(dto.getFlowCode());
+        if (StrUtil.isNotBlank(query.getFlowCode())) {
+            definitions = defService.getByFlowCode(query.getFlowCode());
         } else {
-            Definition query = FlowEngine.newDef();
-            definitions = defService.list(query);
+            Definition defQuery = FlowEngine.newDef();
+            definitions = defService.list(defQuery);
         }
 
         return definitions.stream()
-                .filter(def -> StrUtil.isBlank(dto.getFlowName())
-                        || def.getFlowName().contains(dto.getFlowName()))
-                .filter(def -> dto.getIsPublish() == null
-                        || def.getIsPublish().equals(dto.getIsPublish()))
-                .filter(def -> dto.getActivityStatus() == null
-                        || def.getActivityStatus().equals(dto.getActivityStatus()))
+                .filter(def -> StrUtil.isBlank(query.getFlowName())
+                        || def.getFlowName().contains(query.getFlowName()))
+                .filter(def -> query.getIsPublish() == null
+                        || def.getIsPublish().equals(query.getIsPublish()))
+                .filter(def -> query.getActivityStatus() == null
+                        || def.getActivityStatus().equals(query.getActivityStatus()))
                 .map(def -> BeanUtil.copyProperties(def, FlowDefVO.class))
                 .collect(Collectors.toList());
     }

@@ -542,7 +542,7 @@ VALUES (1, 0, '系统管理', 'D', '/system', 'Setting', 2, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon, menu_sort, status, del_flag, create_by)
 VALUES (2, 1, '用户管理', 'M', '/system/user', 'system/user/index', 'User', 1, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (3, 2, '用户查询', 'B', 'system:user:query', 1, '0', '0', 1);
+VALUES (3, 2, '用户详情', 'B', 'system:user:detail', 1, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
 VALUES (4, 2, '用户新增', 'B', 'system:user:add', 2, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
@@ -560,7 +560,7 @@ VALUES (47, 2, '用户导入', 'B', 'system:user:import', 7, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon, menu_sort, status, del_flag, create_by)
 VALUES (8, 1, '角色管理', 'M', '/system/role', 'system/role/index', 'UserFilled', 2, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (9, 8, '角色查询', 'B', 'system:role:query', 1, '0', '0', 1);
+VALUES (9, 8, '角色详情', 'B', 'system:role:detail', 1, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
 VALUES (10, 8, '角色新增', 'B', 'system:role:add', 2, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
@@ -572,7 +572,7 @@ VALUES (12, 8, '角色删除', 'B', 'system:role:delete', 4, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon, menu_sort, status, del_flag, create_by)
 VALUES (13, 1, '菜单管理', 'M', '/system/menu', 'system/menu/index', 'Menu', 3, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (14, 13, '菜单查询', 'B', 'system:menu:query', 1, '0', '0', 1);
+VALUES (14, 13, '菜单详情', 'B', 'system:menu:detail', 1, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
 VALUES (15, 13, '菜单新增', 'B', 'system:menu:add', 2, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
@@ -584,7 +584,7 @@ VALUES (17, 13, '菜单删除', 'B', 'system:menu:delete', 4, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon, menu_sort, status, del_flag, create_by)
 VALUES (41, 1, '部门管理', 'M', '/system/dept', 'system/dept/index', 'OfficeBuilding', 4, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (42, 41, '部门查询', 'B', 'system:dept:query', 1, '0', '0', 1);
+VALUES (42, 41, '部门详情', 'B', 'system:dept:detail', 1, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
 VALUES (43, 41, '部门新增', 'B', 'system:dept:add', 2, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
@@ -596,7 +596,7 @@ VALUES (45, 41, '部门删除', 'B', 'system:dept:delete', 4, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon, menu_sort, status, del_flag, create_by)
 VALUES (18, 1, '字典管理', 'M', '/system/dict', 'system/dict/index', 'Collection', 5, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (19, 18, '字典查询', 'B', 'system:dict:query', 1, '0', '0', 1);
+VALUES (19, 18, '字典详情', 'B', 'system:dict:detail', 1, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
 VALUES (20, 18, '字典新增', 'B', 'system:dict:add', 2, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
@@ -608,7 +608,7 @@ VALUES (22, 18, '字典删除', 'B', 'system:dict:delete', 4, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon, menu_sort, status, del_flag, create_by)
 VALUES (23, 1, '参数配置', 'M', '/system/config', 'system/config/index', 'Tools', 6, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (24, 23, '参数查询', 'B', 'system:config:query', 1, '0', '0', 1);
+VALUES (24, 23, '参数详情', 'B', 'system:config:detail', 1, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
 VALUES (25, 23, '参数新增', 'B', 'system:config:add', 2, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
@@ -630,7 +630,7 @@ VALUES (30, 0, '日志管理', 'D', '/log', 'Document', 3, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon, menu_sort, status, del_flag, create_by)
 VALUES (31, 30, '登录日志', 'M', '/log/loginlog', 'log/loginlog/index', 'Document', 1, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (32, 31, '日志查询', 'B', 'log:loginlog:query', 1, '0', '0', 1);
+VALUES (32, 31, '日志查询', 'B', 'log:loginlog:detail', 1, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
 VALUES (33, 31, '日志删除', 'B', 'log:loginlog:delete', 2, '0', '0', 1);
 
@@ -638,7 +638,7 @@ VALUES (33, 31, '日志删除', 'B', 'log:loginlog:delete', 2, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon, menu_sort, status, del_flag, create_by)
 VALUES (34, 30, '操作日志', 'M', '/log/operlog', 'log/operlog/index', 'DocumentCopy', 2, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (35, 34, '日志查询', 'B', 'log:operlog:query', 1, '0', '0', 1);
+VALUES (35, 34, '日志查询', 'B', 'log:operlog:detail', 1, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
 VALUES (36, 34, '日志删除', 'B', 'log:operlog:delete', 2, '0', '0', 1);
 
@@ -652,13 +652,13 @@ VALUES (39, 37, '文件删除', 'B', 'system:file:delete', 2, '0', '0', 1);
 
 -- ==================== 补充权限按钮 ====================
 
--- 用户列表权限
+-- 用户分页权限
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (48, 2, '用户列表', 'B', 'system:user:list', 0, '0', '0', 1);
+VALUES (48, 2, '用户分页', 'B', 'system:user:page', 0, '0', '0', 1);
 
--- 角色列表权限
+-- 角色分页权限
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (49, 8, '角色列表', 'B', 'system:role:list', 0, '0', '0', 1);
+VALUES (49, 8, '角色分页', 'B', 'system:role:page', 0, '0', '0', 1);
 
 -- 菜单列表权限
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
@@ -668,42 +668,54 @@ VALUES (50, 13, '菜单列表', 'B', 'system:menu:list', 0, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
 VALUES (51, 41, '部门列表', 'B', 'system:dept:list', 0, '0', '0', 1);
 
--- 字典列表权限
+-- 字典分页权限
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (52, 18, '字典列表', 'B', 'system:dict:list', 0, '0', '0', 1);
+VALUES (52, 18, '字典分页', 'B', 'system:dict:page', 0, '0', '0', 1);
 
--- 参数列表权限
+-- 参数分页权限
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (53, 23, '参数列表', 'B', 'system:config:list', 0, '0', '0', 1);
+VALUES (53, 23, '参数分页', 'B', 'system:config:page', 0, '0', '0', 1);
 
--- 在线用户列表权限
+-- 在线用户分页权限
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (54, 28, '在线列表', 'B', 'monitor:online:list', 0, '0', '0', 1);
+VALUES (54, 28, '在线分页', 'B', 'monitor:online:page', 0, '0', '0', 1);
 
--- 文件列表权限
+-- 文件分页权限
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (55, 37, '文件列表', 'B', 'system:file:list', 0, '0', '0', 1);
+VALUES (55, 37, '文件分页', 'B', 'system:file:page', 0, '0', '0', 1);
 
 -- 文件下载权限
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
 VALUES (56, 37, '文件下载', 'B', 'system:file:download', 3, '0', '0', 1);
 
--- 登录日志列表权限
+-- 登录日志分页权限
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (57, 31, '日志列表', 'B', 'log:loginlog:list', 0, '0', '0', 1);
+VALUES (57, 31, '日志分页', 'B', 'log:loginlog:page', 0, '0', '0', 1);
 
--- 操作日志列表权限
+-- 操作日志分页权限
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (58, 34, '日志列表', 'B', 'log:operlog:list', 0, '0', '0', 1);
+VALUES (58, 34, '日志分页', 'B', 'log:operlog:page', 0, '0', '0', 1);
+
+-- 角色列表权限
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (341, 8, '角色列表', 'B', 'system:role:list', 0, '0', '0', 1);
+
+-- 字典列表权限
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (342, 18, '字典列表', 'B', 'system:dict:list', 0, '0', '0', 1);
+
+-- 缓存列表权限
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (343, 107, '缓存列表', 'B', 'monitor:cache:list', 0, '0', '0', 1);
 
 -- 角色菜单关联(管理员拥有所有菜单权限)
 INSERT INTO sys_role_menu (role_id, menu_id) SELECT 1, id FROM sys_menu;
 
 -- 分公司经理角色菜单权限(用户管理、角色管理、部门管理、流程管理-待办/已办)
--- 新增 list 权限按钮: 48(用户), 49(角色), 51(部门)
+-- 新增 list 权限按钮: 48(用户), 49(角色), 341(角色列表), 51(部门)
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES
 (2, 1), (2, 2), (2, 48), (2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (2, 46), (2, 47),
-(2, 8), (2, 49), (2, 9), (2, 10), (2, 11), (2, 12),
+(2, 8), (2, 341), (2, 49), (2, 9), (2, 10), (2, 11), (2, 12),
 (2, 41), (2, 51), (2, 42), (2, 43), (2, 44), (2, 45),
 -- 流程管理菜单
 (2, 300), (2, 310), (2, 311), (2, 314),
@@ -889,7 +901,7 @@ VALUES (101, 100, '定时任务', 'M', '/monitor/job', 'monitor/job/index', 'Tim
 
 -- 定时任务权限按钮
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (102, 101, '任务查询', 'B', 'monitor:job:query', 1, '0', '0', 1);
+VALUES (102, 101, '任务详情', 'B', 'monitor:job:detail', 1, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
 VALUES (103, 101, '任务新增', 'B', 'monitor:job:add', 2, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
@@ -897,7 +909,7 @@ VALUES (104, 101, '任务修改', 'B', 'monitor:job:edit', 3, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
 VALUES (105, 101, '任务删除', 'B', 'monitor:job:delete', 4, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (106, 101, '任务列表', 'B', 'monitor:job:list', 5, '0', '0', 1);
+VALUES (106, 101, '任务分页', 'B', 'monitor:job:page', 5, '0', '0', 1);
 
 -- 任务日志菜单
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon, menu_sort, status, del_flag, create_by)
@@ -905,11 +917,11 @@ VALUES (110, 100, '任务日志', 'M', '/monitor/jobLog', 'monitor/jobLog/index'
 
 -- 任务日志权限按钮
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (111, 110, '日志查询', 'B', 'monitor:jobLog:query', 1, '0', '0', 1);
+VALUES (111, 110, '日志查询', 'B', 'monitor:jobLog:detail', 1, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
 VALUES (112, 110, '日志删除', 'B', 'monitor:jobLog:delete', 2, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (113, 110, '日志列表', 'B', 'monitor:jobLog:list', 3, '0', '0', 1);
+VALUES (113, 110, '日志分页', 'B', 'monitor:jobLog:page', 3, '0', '0', 1);
 
 -- =============================================
 -- 任务相关字典数据
@@ -991,9 +1003,9 @@ INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon
 VALUES (107, 100, '缓存管理', 'M', '/monitor/cache', 'monitor/cache/index', 'Coin', 4, '0', '0', 1);
 
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (114, 107, '缓存列表', 'B', 'monitor:cache:list', 1, '0', '0', 1);
+VALUES (114, 107, '缓存分页', 'B', 'monitor:cache:page', 1, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (115, 107, '缓存查询', 'B', 'monitor:cache:query', 2, '0', '0', 1);
+VALUES (115, 107, '缓存详情', 'B', 'monitor:cache:detail', 2, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
 VALUES (116, 107, '缓存删除', 'B', 'monitor:cache:delete', 3, '0', '0', 1);
 
@@ -1004,7 +1016,7 @@ INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon
 VALUES (108, 100, '服务监控', 'M', '/monitor/server', 'monitor/server/index', 'DataAnalysis', 5, '0', '0', 1);
 
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (117, 108, '服务器查询', 'B', 'monitor:server:query', 1, '0', '0', 1);
+VALUES (117, 108, '服务器详情', 'B', 'monitor:server:detail', 1, '0', '0', 1);
 
 -- =============================================
 -- 数据库监控菜单
@@ -1019,7 +1031,7 @@ INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon
 VALUES (60, 1, '通知公告', 'M', '/system/notice', 'system/notice/index', 'Message', 9, '0', '0', 1);
 
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (61, 60, '公告查询', 'B', 'system:notice:query', 1, '0', '0', 1);
+VALUES (61, 60, '公告详情', 'B', 'system:notice:detail', 1, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
 VALUES (62, 60, '公告新增', 'B', 'system:notice:add', 2, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
@@ -1027,7 +1039,7 @@ VALUES (63, 60, '公告修改', 'B', 'system:notice:edit', 3, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
 VALUES (64, 60, '公告删除', 'B', 'system:notice:delete', 4, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (65, 60, '公告列表', 'B', 'system:notice:list', 0, '0', '0', 1);
+VALUES (65, 60, '公告分页', 'B', 'system:notice:page', 0, '0', '0', 1);
 
 -- =============================================
 -- 系统工具目录
@@ -1049,7 +1061,7 @@ INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon
 VALUES (301, 300, '流程定义', 'M', '/flow/def', 'flow/def/index', 'Document', 1, '0', '0', 1);
 
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (302, 301, '流程查询', 'B', 'flow:def:query', 1, '0', '0', 1);
+VALUES (302, 301, '流程详情', 'B', 'flow:def:detail', 1, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
 VALUES (303, 301, '流程发布', 'B', 'flow:def:publish', 2, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
@@ -1064,7 +1076,7 @@ INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon
 VALUES (310, 300, '流程实例', 'M', '/flow/instance', 'flow/instance/index', 'DocumentCopy', 2, '0', '0', 1);
 
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (311, 310, '实例查询', 'B', 'flow:instance:query', 1, '0', '0', 1);
+VALUES (311, 310, '实例详情', 'B', 'flow:instance:detail', 1, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
 VALUES (312, 310, '发起流程', 'B', 'flow:instance:start', 2, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
@@ -1087,7 +1099,7 @@ VALUES (324, 320, '任务委派', 'B', 'flow:task:delegate', 4, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
 VALUES (325, 320, '待办列表', 'B', 'flow:task:todo', 0, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (326, 320, '任务查询', 'B', 'flow:task:query', 5, '0', '0', 1);
+VALUES (326, 320, '任务详情', 'B', 'flow:task:detail', 5, '0', '0', 1);
 
 -- 已办任务
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon, menu_sort, status, del_flag, create_by)

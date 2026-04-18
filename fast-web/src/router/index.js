@@ -10,7 +10,7 @@ import Layout from '@/layout/index.vue'
 const modules = import.meta.glob('/src/views/**/*.vue')
 
 // 预加载 ParentView 组件
-const ParentView = () => import('@/layout/ParentView.vue')
+const ParentView = () => import('@/components/ParentView/index.vue')
 
 export function generateRoutes(routes) {
   return routes

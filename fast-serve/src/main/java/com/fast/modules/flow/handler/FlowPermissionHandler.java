@@ -7,7 +7,6 @@ import com.fast.modules.system.mapper.RoleMapper;
 import com.fast.modules.system.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.dromara.warm.flow.core.handler.PermissionHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

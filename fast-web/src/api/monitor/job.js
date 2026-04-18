@@ -7,7 +7,7 @@ import request from '@/utils/request'
  */
 export function listJob(params) {
   return request({
-    url: '/monitor/job/list',
+    url: '/monitor/job/page',
     method: 'get',
     params
   })
@@ -94,7 +94,7 @@ export function checkCronExpression(cronExpression) {
  */
 export function listJobLog(params) {
   return request({
-    url: '/monitor/jobLog/list',
+    url: '/monitor/jobLog/page',
     method: 'get',
     params
   })

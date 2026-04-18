@@ -1,6 +1,7 @@
 package com.fast.modules.system.service;
 
-import com.fast.modules.system.domain.vo.OnlineUserVO;
+import com.fast.modules.system.domain.dto.OnlineUserQuery;
+import com.fast.modules.system.domain.dto.OnlineUserVO;
 
 import java.util.List;
 
@@ -14,10 +15,10 @@ public interface OnlineService {
     /**
      * 查询在线用户列表
      *
-     * @param username 用户名（可选过滤条件）
+     * @param query    查询条件
      * @return 在线用户列表
      */
-    List<OnlineUserVO> listOnlineUsers(String username);
+    List<OnlineUserVO> listOnlineUsers(OnlineUserQuery query);
 
     /**
      * 强制退出

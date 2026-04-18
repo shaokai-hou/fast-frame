@@ -5,10 +5,10 @@ import com.fast.common.enums.BusinessType;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
-import com.fast.modules.flow.domain.dto.FlowInstanceQueryDTO;
+import com.fast.modules.flow.domain.dto.FlowHisTaskVO;
+import com.fast.modules.flow.domain.dto.FlowInstanceQuery;
 import com.fast.modules.flow.domain.dto.FlowInstanceStartDTO;
-import com.fast.modules.flow.domain.vo.FlowHisTaskVO;
-import com.fast.modules.flow.domain.vo.FlowInstanceVO;
+import com.fast.modules.flow.domain.dto.FlowInstanceVO;
 import com.fast.modules.flow.service.FlowInstanceService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -31,13 +31,13 @@ public class FlowInstanceController extends BaseController {
     /**
      * 查询流程实例列表
      *
-     * @param dto 查询参数
+     * @param query    查询条件
      * @return 流程实例列表
      */
     @SaCheckPermission("flow:instance:list")
     @GetMapping("/list")
-    public Result<List<FlowInstanceVO>> list(FlowInstanceQueryDTO dto) {
-        return success(flowInstanceService.listInstances(dto));
+    public Result<List<FlowInstanceVO>> list(FlowInstanceQuery query) {
+        return success(flowInstanceService.listInstances(query));
     }
 
     /**
@@ -46,7 +46,7 @@ public class FlowInstanceController extends BaseController {
      * @param id 流程实例ID
      * @return 流程实例详情
      */
-    @SaCheckPermission("flow:instance:query")
+    @SaCheckPermission("flow:instance:detail")
     @GetMapping("/{id}")
     public Result<FlowInstanceVO> getInfo(@PathVariable Long id) {
         return success(flowInstanceService.getInstanceById(id));
@@ -85,7 +85,7 @@ public class FlowInstanceController extends BaseController {
      * @param id 流程实例ID
      * @return 流程图数据
      */
-    @SaCheckPermission("flow:instance:query")
+    @SaCheckPermission("flow:instance:detail")
     @GetMapping("/diagram/{id}")
     public Result<Object> getDiagram(@PathVariable Long id) {
         return success(flowInstanceService.getDiagram(id));
@@ -97,7 +97,7 @@ public class FlowInstanceController extends BaseController {
      * @param instanceId 流程实例ID
      * @return 审批历史列表
      */
-    @SaCheckPermission("flow:instance:query")
+    @SaCheckPermission("flow:instance:detail")
     @GetMapping("/history/{instanceId}")
     public Result<List<FlowHisTaskVO>> getApprovalHistory(@PathVariable Long instanceId) {
         return success(flowInstanceService.getApprovalHistory(instanceId));

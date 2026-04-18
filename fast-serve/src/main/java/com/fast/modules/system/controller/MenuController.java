@@ -1,14 +1,14 @@
 package com.fast.modules.system.controller;
 
-import com.fast.common.result.Result;
-import com.fast.framework.annotation.Log;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.fast.common.enums.BusinessType;
+import com.fast.common.result.Result;
+import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
+import com.fast.modules.system.domain.dto.MenuTreeVO;
+import com.fast.modules.system.domain.dto.MenuVO;
 import com.fast.modules.system.domain.entity.Menu;
 import com.fast.modules.system.service.MenuService;
-import com.fast.modules.system.domain.vo.MenuTreeVO;
-import com.fast.modules.system.domain.vo.MenuVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +44,7 @@ public class MenuController extends BaseController {
      * @param id 菜单ID
      * @return 菜单详情
      */
-    @SaCheckPermission("system:menu:query")
+    @SaCheckPermission("system:menu:detail")
     @GetMapping("/{id}")
     public Result<Menu> getInfo(@PathVariable Long id) {
         return success(menuService.getById(id));

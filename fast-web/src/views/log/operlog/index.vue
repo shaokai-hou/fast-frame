@@ -1,29 +1,23 @@
 <template>
-  <div class="page-container">
+  <PageContainer>
     <!-- 搜索栏 -->
-    <div class="search-bar">
-      <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch">
-        <el-form-item label="操作人" prop="operName">
-          <el-input v-model="queryParams.operName" placeholder="请输入操作人" clearable @keyup.enter="handleQuery" />
-        </el-form-item>
-        <el-form-item label="业务类型" prop="businessType">
-          <el-select v-model="queryParams.businessType" placeholder="业务类型" clearable>
-            <el-option v-for="item in businessTypeDict" :key="item.dictValue" :label="item.dictLabel"
-              :value="parseInt(item.dictValue)" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-select v-model="queryParams.status" placeholder="操作状态" clearable>
-            <el-option label="成功" value="0" />
-            <el-option label="失败" value="1" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" :icon="Search" @click="handleQuery">搜索</el-button>
-          <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+    <SearchBar :model="queryParams" :visible="showSearch" @search="handleQuery" @reset="resetQuery">
+      <el-form-item label="操作人" prop="operName">
+        <el-input v-model="queryParams.operName" placeholder="请输入操作人" clearable @keyup.enter="handleQuery" />
+      </el-form-item>
+      <el-form-item label="业务类型" prop="businessType">
+        <el-select v-model="queryParams.businessType" placeholder="业务类型" clearable>
+          <el-option v-for="item in businessTypeDict" :key="item.dictValue" :label="item.dictLabel"
+            :value="parseInt(item.dictValue)" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="状态" prop="status">
+        <el-select v-model="queryParams.status" placeholder="操作状态" clearable>
+          <el-option label="成功" value="0" />
+          <el-option label="失败" value="1" />
+        </el-select>
+      </el-form-item>
+    </SearchBar>
 
     <!-- 内容卡片 -->
     <div class="content-card">
@@ -119,7 +113,7 @@
         </el-descriptions-item>
       </el-descriptions>
     </el-dialog>
-  </div>
+  </PageContainer>
 </template>
 
 <script setup>
@@ -151,7 +145,7 @@ const queryParams = reactive({
   status: undefined
 })
 
-// 标签样式映射（字典数据不存储样式，保留预设）
+// 标签样式映射
 const businessTypeTagMap = {
   0: 'info',    // 其它
   1: 'success', // 新增
@@ -162,6 +156,15 @@ const businessTypeTagMap = {
   6: 'success', // 导入
   7: 'danger',  // 强退
   8: 'danger'   // 清空
+}
+
+// 请求方法标签样式映射
+const methodTagMap = {
+  'GET': 'success',
+  'POST': 'primary',
+  'PUT': 'warning',
+  'DELETE': 'danger',
+  'PATCH': 'info'
 }
 
 // 获取业务类型标签
@@ -175,15 +178,6 @@ const getBusinessTypeTag = (type) => {
   return businessTypeTagMap[type] || 'info'
 }
 
-// 请求方法标签样式映射
-const methodTagMap = {
-  'GET': 'success',
-  'POST': 'primary',
-  'PUT': 'warning',
-  'DELETE': 'danger',
-  'PATCH': 'info'
-}
-
 // 获取请求方法标签样式
 const getMethodTag = (method) => {
   return methodTagMap[method] || 'info'
@@ -191,12 +185,8 @@ const getMethodTag = (method) => {
 
 // 加载操作类型字典
 const loadBusinessTypeDict = async () => {
-  try {
-    const res = await getDictData('sys_oper_type')
-    businessTypeDict.value = res.data || []
-  } catch (e) {
-    // 加载失败不影响主流程
-  }
+  const res = await getDictData('sys_oper_type')
+  businessTypeDict.value = res.data || []
 }
 
 // 获取列表
@@ -254,29 +244,8 @@ const handleClear = async () => {
   getList()
 }
 
-// 使用 onMounted 确保只在组件挂载后调用一次
 onMounted(() => {
   loadBusinessTypeDict()
   getList()
 })
 </script>
-
-<style scoped lang="scss">
-.page-container {
-  min-height: 100%;
-}
-
-.content-card {
-  background: var(--color-surface);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-  border: 1px solid var(--color-border-light);
-}
-
-.tool-bar {
-  margin-bottom: 16px;
-  display: flex;
-  gap: 8px;
-}
-</style>

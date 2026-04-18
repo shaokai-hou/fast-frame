@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 分页查询字典数据
 export function listDictData(params) {
   return request({
-    url: '/system/dict/data/list',
+    url: '/system/dict/data/page',
     method: 'get',
     params
   })

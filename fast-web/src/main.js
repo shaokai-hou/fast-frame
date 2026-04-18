@@ -12,6 +12,8 @@ import './permission'
 import { setupDirectives } from './directives'
 import Pagination from './components/Pagination/index.vue'
 import TreeSelect from './components/TreeSelect/index.vue'
+import PageContainer from './components/PageContainer/index.vue'
+import SearchBar from './components/SearchBar/index.vue'
 
 // 全局配置 Dialog - 点击遮罩层不关闭
 ElDialog.props.closeOnClickModal.default = false
@@ -24,6 +26,8 @@ setupDirectives(app)
 // 注册全局组件
 app.component('Pagination', Pagination)
 app.component('TreeSelect', TreeSelect)
+app.component('PageContainer', PageContainer)
+app.component('SearchBar', SearchBar)
 
 // 注册Element Plus图标
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {

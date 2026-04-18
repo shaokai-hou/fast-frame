@@ -1,8 +1,8 @@
 package com.fast.modules.flow.service;
 
 import com.fast.modules.flow.domain.dto.FlowTaskApproveDTO;
-import com.fast.modules.flow.domain.dto.FlowTaskQueryDTO;
-import com.fast.modules.flow.domain.vo.FlowTaskVO;
+import com.fast.modules.flow.domain.dto.FlowTaskQuery;
+import com.fast.modules.flow.domain.dto.FlowTaskVO;
 
 import java.util.List;
 
@@ -16,18 +16,18 @@ public interface FlowTaskService {
     /**
      * 查询待办任务列表
      *
-     * @param dto 查询参数
+     * @param query    查询条件
      * @return 待办任务列表
      */
-    List<FlowTaskVO> listTodoTasks(FlowTaskQueryDTO dto);
+    List<FlowTaskVO> listTodoTasks(FlowTaskQuery query);
 
     /**
      * 查询已办任务列表
      *
-     * @param dto 查询参数
+     * @param query    查询条件
      * @return 已办任务列表
      */
-    List<FlowTaskVO> listDoneTasks(FlowTaskQueryDTO dto);
+    List<FlowTaskVO> listDoneTasks(FlowTaskQuery query);
 
     /**
      * 根据ID获取任务详情

@@ -1,17 +1,17 @@
 package com.fast.modules.system.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fast.common.constant.RedisKeyConstants;
 import com.fast.common.exception.BusinessException;
-import com.fast.common.result.PageResult;
+import com.fast.common.result.PageRequest;
+import com.fast.modules.system.domain.dto.ConfigQuery;
+import com.fast.modules.system.domain.dto.ConfigVO;
 import com.fast.modules.system.domain.entity.Config;
 import com.fast.modules.system.mapper.ConfigMapper;
 import com.fast.modules.system.service.ConfigService;
-import com.fast.modules.system.domain.vo.ConfigVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * 参数配置Service实现
@@ -39,18 +38,8 @@ public class ConfigServiceImpl extends ServiceImpl<ConfigMapper, Config> impleme
     private static final long CACHE_EXPIRE_HOURS = 24;
 
     @Override
-    public PageResult<ConfigVO> pageConfigs(Config query, Integer pageNum, Integer pageSize) {
-        Page<Config> page = new Page<>(pageNum, pageSize);
-        LambdaQueryWrapper<Config> wrapper = new LambdaQueryWrapper<>();
-        wrapper.like(StrUtil.isNotBlank(query.getConfigName()), Config::getConfigName, query.getConfigName())
-               .like(StrUtil.isNotBlank(query.getConfigKey()), Config::getConfigKey, query.getConfigKey())
-               .eq(StrUtil.isNotBlank(query.getConfigType()), Config::getConfigType, query.getConfigType())
-               .orderByDesc(Config::getCreateTime);
-        Page<Config> result = page(page, wrapper);
-        List<ConfigVO> list = result.getRecords().stream()
-                .map(config -> BeanUtil.copyProperties(config, ConfigVO.class))
-                .collect(Collectors.toList());
-        return PageResult.of(list, result.getTotal());
+    public IPage<ConfigVO> pageConfigs(ConfigQuery query, PageRequest pageRequest) {
+        return baseMapper.selectConfigPage(pageRequest.toPage(), query);
     }
 
     @Override

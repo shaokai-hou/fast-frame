@@ -1,10 +1,11 @@
 package com.fast.modules.log.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.fast.common.result.PageResult;
+import com.fast.common.result.PageRequest;
+import com.fast.modules.log.domain.dto.OperLogQuery;
+import com.fast.modules.log.domain.dto.OperLogVO;
 import com.fast.modules.log.domain.entity.OperLog;
-
-import java.util.List;
 
 /**
  * 操作日志Service
@@ -13,22 +14,14 @@ import java.util.List;
  */
 public interface OperLogService extends IService<OperLog> {
 
-
     /**
      * 分页查询操作日志
      *
      * @param query    查询条件
-     * @param pageNum  页码
-     * @param pageSize 每页数量
+     * @param pageRequest 分页参数
      * @return 操作日志分页结果
      */
-    PageResult<OperLog> pageOperLogs(OperLog query, Integer pageNum, Integer pageSize);
-
-
-    /**
-     * 清空操作日志
-     */
-    void clear();
+    IPage<OperLogVO> pageOperLogs(OperLogQuery query, PageRequest pageRequest);
 
     /**
      * 异步保存操作日志

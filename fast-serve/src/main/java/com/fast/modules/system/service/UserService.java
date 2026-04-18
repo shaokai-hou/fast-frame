@@ -1,13 +1,15 @@
 package com.fast.modules.system.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.fast.common.result.PageResult;
+import com.fast.common.result.PageRequest;
+import com.fast.modules.system.domain.dto.RoleVO;
 import com.fast.modules.system.domain.dto.UserDTO;
+import com.fast.modules.system.domain.dto.UserExportVO;
 import com.fast.modules.system.domain.dto.UserImportDTO;
+import com.fast.modules.system.domain.dto.UserQuery;
+import com.fast.modules.system.domain.dto.UserVO;
 import com.fast.modules.system.domain.entity.User;
-import com.fast.modules.system.domain.vo.RoleVO;
-import com.fast.modules.system.domain.vo.UserExportVO;
-import com.fast.modules.system.domain.vo.UserVO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -23,10 +25,11 @@ public interface UserService extends IService<User> {
     /**
      * 分页查询用户列表
      *
-     * @param dto 查询参数
+     * @param query    查询条件
+     * @param pageRequest 分页参数
      * @return 用户分页结果
      */
-    PageResult<UserVO> pageUsers(UserDTO dto);
+    IPage<UserVO> pageUsers(UserQuery query, PageRequest pageRequest);
 
     /**
      * 根据用户名查询用户
@@ -62,10 +65,10 @@ public interface UserService extends IService<User> {
     /**
      * 查询用户列表（用于导出）
      *
-     * @param dto 查询参数
+     * @param query    查询条件
      * @return 用户导出数据列表
      */
-    List<UserExportVO> listUserForExport(UserDTO dto);
+    List<UserExportVO> listUserForExport(UserQuery query);
 
     /**
      * 新增用户

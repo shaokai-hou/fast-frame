@@ -7,7 +7,7 @@ import request from '@/utils/request'
  */
 export function listNotice(params) {
   return request({
-    url: '/system/notice/list',
+    url: '/system/notice/page',
     method: 'get',
     params
   })

@@ -1,5 +1,5 @@
 <template>
-  <div class="page-container">
+  <PageContainer :padding="false">
     <!-- 欢迎区域 -->
     <div class="welcome-section fade-in">
       <div class="welcome-text">
@@ -38,7 +38,7 @@
         </div>
       </div>
     </el-card>
-  </div>
+  </PageContainer>
 </template>
 
 <script setup>
@@ -112,10 +112,6 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.page-container {
-  padding: 0;
-}
-
 // 欢迎区域 - Logo Blue 渐变
 .welcome-section {
   display: flex;

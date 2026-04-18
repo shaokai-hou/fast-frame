@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 获取参数配置列表
 export function listConfig(params) {
   return request({
-    url: '/system/config/list',
+    url: '/system/config/page',
     method: 'get',
     params
   })

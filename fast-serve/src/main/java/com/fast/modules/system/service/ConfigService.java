@@ -1,9 +1,11 @@
 package com.fast.modules.system.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.fast.common.result.PageResult;
+import com.fast.common.result.PageRequest;
+import com.fast.modules.system.domain.dto.ConfigQuery;
+import com.fast.modules.system.domain.dto.ConfigVO;
 import com.fast.modules.system.domain.entity.Config;
-import com.fast.modules.system.domain.vo.ConfigVO;
 
 import java.util.List;
 
@@ -18,11 +20,10 @@ public interface ConfigService extends IService<Config> {
      * 分页查询参数配置列表
      *
      * @param query    查询条件
-     * @param pageNum  页码
-     * @param pageSize 每页数量
+     * @param pageRequest 分页参数
      * @return 配置分页结果
      */
-    PageResult<ConfigVO> pageConfigs(Config query, Integer pageNum, Integer pageSize);
+    IPage<ConfigVO> pageConfigs(ConfigQuery query, PageRequest pageRequest);
 
     /**
      * 根据参数键名查询参数值

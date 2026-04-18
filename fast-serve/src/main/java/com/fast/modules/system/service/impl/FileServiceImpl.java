@@ -5,15 +5,15 @@ import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fast.common.exception.BusinessException;
-import com.fast.common.result.PageResult;
+import com.fast.common.result.PageRequest;
 import com.fast.framework.properties.MinioProperties;
 import com.fast.modules.system.domain.dto.FileQuery;
+import com.fast.modules.system.domain.dto.FileVO;
 import com.fast.modules.system.domain.entity.File;
 import com.fast.modules.system.mapper.FileMapper;
 import com.fast.modules.system.service.FileService;
-import com.fast.modules.system.domain.vo.FileVO;
 import io.minio.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,12 +28,7 @@ import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.stream.Collectors;
+import java.util.*;
 
 /**
  * 文件Service实现
@@ -93,20 +88,12 @@ public class FileServiceImpl implements FileService {
      * 分页查询文件列表
      *
      * @param query 查询参数
+     * @param pageRequest 分页参数
      * @return 文件分页结果
      */
     @Override
-    public PageResult<FileVO> pageFiles(FileQuery query) {
-        Page<File> page = new Page<>(query.getPageNum(), query.getPageSize());
-        LambdaQueryWrapper<File> wrapper = new LambdaQueryWrapper<>();
-        wrapper.like(StrUtil.isNotBlank(query.getFileName()), File::getFileName, query.getFileName());
-        wrapper.eq(StrUtil.isNotBlank(query.getBucketType()), File::getBucketType, query.getBucketType());
-        wrapper.orderByDesc(File::getCreateTime);
-        Page<File> result = fileMapper.selectPage(page, wrapper);
-        List<FileVO> voList = result.getRecords().stream()
-                .map(this::convertToVO)
-                .collect(Collectors.toList());
-        return PageResult.of(voList, result.getTotal());
+    public IPage<FileVO> pageFiles(FileQuery query, PageRequest pageRequest) {
+        return fileMapper.selectFilePage(pageRequest.toPage(), query);
     }
 
 
@@ -456,21 +443,4 @@ public class FileServiceImpl implements FileService {
         return safe;
     }
 
-    /**
-     * 实体转 VO
-     *
-     * @param file 文件实体
-     * @return 文件 VO
-     */
-    private FileVO convertToVO(File file) {
-        FileVO vo = new FileVO();
-        vo.setId(file.getId());
-        vo.setBucket(file.getBucketType());
-        vo.setFileName(file.getFileName());
-        vo.setOriginalFilename(file.getOriginalFilename());
-        vo.setSize(file.getFileSize());
-        vo.setContentType(file.getContentType());
-        vo.setUploadTime(file.getCreateTime());
-        return vo;
     }
-}

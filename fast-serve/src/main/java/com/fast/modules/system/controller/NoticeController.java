@@ -1,15 +1,16 @@
 package com.fast.modules.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fast.common.enums.BusinessType;
-import com.fast.common.result.PageResult;
+import com.fast.common.result.PageRequest;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
 import com.fast.modules.system.domain.dto.NoticeDTO;
 import com.fast.modules.system.domain.dto.NoticeQuery;
+import com.fast.modules.system.domain.dto.NoticeVO;
 import com.fast.modules.system.domain.entity.Notice;
-import com.fast.modules.system.domain.vo.NoticeVO;
 import com.fast.modules.system.service.NoticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -32,17 +33,14 @@ public class NoticeController extends BaseController {
     /**
      * 分页查询公告列表
      *
-     * @param query    查询条件
-     * @param pageNum  页码
-     * @param pageSize 每页数量
+     * @param pageRequest 分页参数
+     * @param query       查询条件
      * @return 公告分页结果
      */
-    @SaCheckPermission("system:notice:list")
-    @GetMapping("/list")
-    public Result<PageResult<NoticeVO>> list(NoticeQuery query,
-                                             @RequestParam(defaultValue = "1") Integer pageNum,
-                                             @RequestParam(defaultValue = "10") Integer pageSize) {
-        return success(noticeService.pageNotices(query, pageNum, pageSize));
+    @SaCheckPermission("system:notice:page")
+    @GetMapping("/page")
+    public Result<IPage<NoticeVO>> page(PageRequest pageRequest, NoticeQuery query) {
+        return success(noticeService.pageNotices(pageRequest, query));
     }
 
     /**
@@ -51,7 +49,7 @@ public class NoticeController extends BaseController {
      * @param id 公告ID
      * @return 公告详情
      */
-    @SaCheckPermission("system:notice:query")
+    @SaCheckPermission("system:notice:detail")
     @GetMapping("/{id}")
     public Result<Notice> getInfo(@PathVariable String id) {
         return success(noticeService.getById(id));
@@ -95,7 +93,7 @@ public class NoticeController extends BaseController {
     @Log(title = "通知公告", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public Result<Void> remove(@PathVariable Long[] ids) {
-        noticeService.deleteNotices(Arrays.asList(ids));
+        noticeService.removeByIds(Arrays.asList(ids));
         return success();
     }
 }

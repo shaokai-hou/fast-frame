@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 获取字典类型列表
 export function listDictType(params) {
   return request({
-    url: '/system/dict/type/list',
+    url: '/system/dict/type/page',
     method: 'get',
     params
   })

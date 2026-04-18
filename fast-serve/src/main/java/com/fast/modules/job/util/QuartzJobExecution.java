@@ -1,5 +1,6 @@
 package com.fast.modules.job.util;
 
+import com.fast.common.exception.BusinessException;
 import com.fast.common.util.SpringContextHolder;
 import com.fast.modules.job.domain.entity.JobLog;
 import com.fast.modules.job.service.JobLogService;
@@ -7,7 +8,6 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import java.time.LocalDateTime;
@@ -69,7 +69,7 @@ public class QuartzJobExecution extends QuartzJobBean {
         // 解析调用目标：beanName.methodName 或 beanName.methodName(params)
         String[] split = invokeTarget.split("\\.");
         if (split.length < 2) {
-            throw new RuntimeException("调用目标格式错误，正确格式：beanName.methodName 或 beanName.methodName(params)");
+            throw new BusinessException("调用目标格式错误，正确格式：beanName.methodName 或 beanName.methodName(params)");
         }
 
         String beanName = split[0];

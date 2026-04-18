@@ -2,18 +2,18 @@ package com.fast.framework.aspect;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.fast.framework.annotation.DataScope;
+import com.fast.modules.system.domain.dto.RoleVO;
 import com.fast.modules.system.domain.entity.User;
 import com.fast.modules.system.service.DeptService;
 import com.fast.modules.system.service.RoleService;
 import com.fast.modules.system.service.UserService;
-import com.fast.modules.system.domain.vo.RoleVO;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -26,16 +26,12 @@ import java.util.stream.Collectors;
 @Slf4j
 @Aspect
 @Component
+@RequiredArgsConstructor
 public class DataScopeAspect {
 
-    @Resource
-    private UserService userService;
-
-    @Resource
-    private RoleService roleService;
-
-    @Resource
-    private DeptService deptService;
+    private final UserService userService;
+    private final RoleService roleService;
+    private final DeptService deptService;
 
     /**
      * 合法字段名正则（只允许字母、数字、下划线）
@@ -84,10 +80,12 @@ public class DataScopeAspect {
             }
 
             switch (dataScopeValue) {
-                case "1": // 全部数据权限
+                // 全部数据权限
+                case "1":
                     // 无需过滤
                     return;
-                case "2": // 自定义数据权限
+                // 自定义数据权限
+                case "2":
                     List<Long> deptIds = deptService.getDeptIdsByRoleId(role.getId());
                     if (!deptIds.isEmpty()) {
                         sqlString.append(String.format(
@@ -97,12 +95,14 @@ public class DataScopeAspect {
                         ));
                     }
                     break;
-                case "3": // 本部门数据权限
+                // 本部门数据权限
+                case "3":
                     if (user.getDeptId() != null) {
                         sqlString.append(String.format(" OR %s.dept_id = '%s' ", userAlias, user.getDeptId()));
                     }
                     break;
-                case "4": // 本部门及以下数据权限
+                // 本部门及以下数据权限
+                case "4":
                     List<Long> deptAndChildrenIds = deptService.getDeptAndChildrenIds(user.getDeptId());
                     if (!deptAndChildrenIds.isEmpty()) {
                         sqlString.append(String.format(
@@ -112,7 +112,8 @@ public class DataScopeAspect {
                         ));
                     }
                     break;
-                case "5": // 仅本人数据权限
+                // 仅本人数据权限
+                case "5":
                     sqlString.append(String.format(" OR %s.id = '%s' ", userAlias, userId));
                     break;
                 default:

@@ -1,22 +1,22 @@
 package com.fast.modules.job.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.fast.common.result.PageResult;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fast.common.enums.BusinessType;
+import com.fast.common.result.PageRequest;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
-import com.fast.common.enums.BusinessType;
 import com.fast.framework.web.BaseController;
 import com.fast.modules.job.domain.dto.JobDTO;
 import com.fast.modules.job.domain.dto.JobQuery;
+import com.fast.modules.job.domain.dto.JobVO;
 import com.fast.modules.job.domain.entity.Job;
-import com.fast.modules.job.domain.vo.JobVO;
 import com.fast.modules.job.service.JobService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * 定时任务Controller
@@ -34,16 +34,13 @@ public class JobController extends BaseController {
      * 分页查询定时任务
      *
      * @param query    查询条件
-     * @param pageNum  页码
-     * @param pageSize 每页数量
+     * @param pageRequest 分页参数
      * @return 定时任务分页结果
      */
-    @SaCheckPermission("monitor:job:list")
-    @GetMapping("/list")
-    public Result<PageResult<JobVO>> list(JobQuery query,
-                                          @RequestParam(defaultValue = "1") Integer pageNum,
-                                          @RequestParam(defaultValue = "10") Integer pageSize) {
-        return success(jobService.pageJobs(query, pageNum, pageSize));
+    @SaCheckPermission("monitor:job:page")
+    @GetMapping("/page")
+    public Result<IPage<JobVO>> page(JobQuery query, PageRequest pageRequest) {
+        return success(jobService.pageJobs(query, pageRequest));
     }
 
     /**
@@ -52,7 +49,7 @@ public class JobController extends BaseController {
      * @param id 任务ID
      * @return 任务详情
      */
-    @SaCheckPermission("monitor:job:query")
+    @SaCheckPermission("monitor:job:detail")
     @GetMapping("/{id}")
     public Result<Job> getInfo(@PathVariable Long id) {
         return success(jobService.getById(id));

@@ -1,11 +1,14 @@
 package com.fast.modules.system.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.fast.common.result.PageResult;
-import com.fast.modules.system.domain.entity.DictType;
+import com.fast.common.result.PageRequest;
+import com.fast.modules.system.domain.dto.DictDataQuery;
+import com.fast.modules.system.domain.dto.DictDataVO;
+import com.fast.modules.system.domain.dto.DictTypeQuery;
+import com.fast.modules.system.domain.dto.DictVO;
 import com.fast.modules.system.domain.entity.DictData;
-import com.fast.modules.system.domain.vo.DictVO;
-import com.fast.modules.system.domain.vo.DictDataVO;
+import com.fast.modules.system.domain.entity.DictType;
 
 import java.util.List;
 
@@ -20,11 +23,10 @@ public interface DictService extends IService<DictType> {
      * 分页查询字典类型列表
      *
      * @param query    查询条件
-     * @param pageNum  页码
-     * @param pageSize 每页数量
+     * @param pageRequest 分页参数
      * @return 字典类型分页结果
      */
-    PageResult<DictVO> pageDictTypes(DictType query, Integer pageNum, Integer pageSize);
+    IPage<DictVO> pageDictTypes(DictTypeQuery query, PageRequest pageRequest);
 
     /**
      * 根据字典类型查询字典数据
@@ -37,15 +39,11 @@ public interface DictService extends IService<DictType> {
     /**
      * 分页查询字典数据
      *
-     * @param dictType   字典类型
-     * @param dictLabel  字典标签
-     * @param dictValue  字典值
-     * @param status     状态
-     * @param pageNum    页码
-     * @param pageSize   每页数量
+     * @param query    查询条件
+     * @param pageRequest 分页参数
      * @return 字典数据分页结果
      */
-    PageResult<DictDataVO> pageDictData(String dictType, String dictLabel, String dictValue, String status, Integer pageNum, Integer pageSize);
+    IPage<DictDataVO> pageDictData(DictDataQuery query, PageRequest pageRequest);
 
     /**
      * 新增字典类型

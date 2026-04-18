@@ -3,7 +3,6 @@ package com.fast.modules.system.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.fast.modules.system.domain.entity.Menu;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -21,7 +20,7 @@ public interface MenuMapper extends BaseMapper<Menu> {
      * @param userId 用户ID
      * @return 菜单列表
      */
-    List<Menu> selectMenusByUserId(@Param("userId") Long userId);
+    List<Menu> selectMenusByUserId(Long userId);
 
     /**
      * 根据用户ID查询权限标识列表
@@ -29,7 +28,7 @@ public interface MenuMapper extends BaseMapper<Menu> {
      * @param userId 用户ID
      * @return 权限标识列表
      */
-    List<String> selectPermissionsByUserId(@Param("userId") Long userId);
+    List<String> selectPermissionsByUserId(Long userId);
 
     /**
      * 根据角色ID查询菜单ID列表
@@ -37,12 +36,12 @@ public interface MenuMapper extends BaseMapper<Menu> {
      * @param roleId 角色ID
      * @return 菜单ID列表
      */
-    List<Long> selectMenuIdsByRoleId(@Param("roleId") Long roleId);
+    List<Long> selectMenuIdsByRoleId(Long roleId);
 
     /**
      * 删除角色菜单关联（按菜单ID）
      *
      * @param menuId 菜单ID
      */
-    void deleteRoleMenuByMenuId(@Param("menuId") Long menuId);
+    void deleteRoleMenuByMenuId(Long menuId);
 }

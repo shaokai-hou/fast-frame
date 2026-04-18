@@ -3,9 +3,10 @@ package com.fast.modules.system.service.impl;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.StrUtil;
 import com.fast.common.constant.RedisKeyConstants;
-import com.fast.modules.system.service.OnlineService;
-import com.fast.modules.system.domain.vo.OnlineUserVO;
+import com.fast.modules.system.domain.dto.OnlineUserQuery;
+import com.fast.modules.system.domain.dto.OnlineUserVO;
 import com.fast.modules.system.domain.entity.User;
+import com.fast.modules.system.service.OnlineService;
 import com.fast.modules.system.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,12 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 在线用户Service实现
@@ -36,7 +32,7 @@ public class OnlineServiceImpl implements OnlineService {
     private final RedisTemplate<String, Object> redisTemplate;
 
     @Override
-    public List<OnlineUserVO> listOnlineUsers(String username) {
+    public List<OnlineUserVO> listOnlineUsers(OnlineUserQuery query) {
         List<OnlineUserVO> result = new ArrayList<>();
 
         // 使用 SCAN 命令替代 KEYS，避免阻塞 Redis
@@ -81,7 +77,7 @@ public class OnlineServiceImpl implements OnlineService {
             }
 
             // 过滤用户名
-            if (StrUtil.isNotBlank(username) && !user.getUsername().contains(username)) {
+            if (StrUtil.isNotBlank(query.getUsername()) && !user.getUsername().contains(query.getUsername())) {
                 continue;
             }
 

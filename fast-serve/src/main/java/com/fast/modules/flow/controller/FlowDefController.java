@@ -5,8 +5,8 @@ import com.fast.common.enums.BusinessType;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
-import com.fast.modules.flow.domain.dto.FlowDefQueryDTO;
-import com.fast.modules.flow.domain.vo.FlowDefVO;
+import com.fast.modules.flow.domain.dto.FlowDefQuery;
+import com.fast.modules.flow.domain.dto.FlowDefVO;
 import com.fast.modules.flow.service.FlowDefService;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,13 +28,13 @@ public class FlowDefController extends BaseController {
     /**
      * 查询流程定义列表
      *
-     * @param dto 查询参数
+     * @param query    查询条件
      * @return 流程定义列表
      */
     @SaCheckPermission("flow:def:list")
     @GetMapping("/list")
-    public Result<List<FlowDefVO>> list(FlowDefQueryDTO dto) {
-        return success(flowDefService.listDefs(dto));
+    public Result<List<FlowDefVO>> list(FlowDefQuery query) {
+        return success(flowDefService.listDefs(query));
     }
 
     /**
@@ -43,7 +43,7 @@ public class FlowDefController extends BaseController {
      * @param id 流程定义ID
      * @return 流程定义详情
      */
-    @SaCheckPermission("flow:def:query")
+    @SaCheckPermission("flow:def:detail")
     @GetMapping("/{id}")
     public Result<FlowDefVO> getInfo(@PathVariable Long id) {
         return success(flowDefService.getDefById(id));

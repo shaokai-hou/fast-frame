@@ -1,23 +1,17 @@
 <template>
-  <div class="page-container">
+  <PageContainer>
     <!-- 搜索栏 -->
-    <div class="search-bar">
-      <el-form :model="queryParams" ref="queryFormRef" :inline="true">
-        <el-form-item label="部门名称" prop="deptName">
-          <el-input v-model="queryParams.deptName" placeholder="请输入部门名称" clearable @keyup.enter="handleQuery" />
-        </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-select v-model="queryParams.status" placeholder="部门状态" clearable>
-            <el-option label="正常" value="0" />
-            <el-option label="禁用" value="1" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" :icon="Search" @click="handleQuery">搜索</el-button>
-          <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+    <SearchBar :model="queryParams" @search="handleQuery" @reset="resetQuery">
+      <el-form-item label="部门名称" prop="deptName">
+        <el-input v-model="queryParams.deptName" placeholder="请输入部门名称" clearable @keyup.enter="handleQuery" />
+      </el-form-item>
+      <el-form-item label="状态" prop="status">
+        <el-select v-model="queryParams.status" placeholder="部门状态" clearable>
+          <el-option label="正常" value="0" />
+          <el-option label="禁用" value="1" />
+        </el-select>
+      </el-form-item>
+    </SearchBar>
 
     <!-- 内容卡片 -->
     <div class="content-card">
@@ -28,14 +22,8 @@
       </div>
 
       <!-- 数据表格 -->
-      <el-table
-        v-if="refreshTable"
-        v-loading="loading"
-        :data="deptList"
-        row-key="id"
-        :default-expand-all="isExpandAll"
-        :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-      >
+      <el-table v-if="refreshTable" v-loading="loading" :data="deptList" row-key="id" :default-expand-all="isExpandAll"
+        :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
         <el-table-column type="index" label="序号" width="60" align="center" />
         <el-table-column label="部门名称" prop="deptName" />
         <el-table-column label="负责人" prop="leader" width="120" />
@@ -51,9 +39,11 @@
         <el-table-column label="创建时间" prop="createTime" width="180" />
         <el-table-column label="操作" align="center" width="200">
           <template #default="scope">
-            <el-button link type="primary" @click="handleUpdate(scope.row)" v-hasPermi="['system:dept:edit']">修改</el-button>
+            <el-button link type="primary" @click="handleUpdate(scope.row)"
+              v-hasPermi="['system:dept:edit']">修改</el-button>
             <el-button link type="success" @click="handleAdd(scope.row)" v-hasPermi="['system:dept:add']">新增</el-button>
-            <el-button link type="danger" @click="handleDelete(scope.row)" v-hasPermi="['system:dept:delete']">删除</el-button>
+            <el-button link type="danger" @click="handleDelete(scope.row)"
+              v-hasPermi="['system:dept:delete']">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -65,14 +55,9 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="上级部门" prop="parentId">
-              <tree-select
-                v-model="form.parentId"
-                :data="deptOptions"
-                :field-props="{ value: 'id', label: 'label', children: 'children' }"
-                value-key="id"
-                placeholder="选择上级部门"
-                check-strictly
-              />
+              <tree-select v-model="form.parentId" :data="deptOptions"
+                :field-props="{ value: 'id', label: 'label', children: 'children' }" value-key="id" placeholder="选择上级部门"
+                check-strictly />
             </el-form-item>
           </el-col>
         </el-row>
@@ -128,7 +113,7 @@
         <el-button type="primary" @click="submitForm">确定</el-button>
       </template>
     </el-dialog>
-  </div>
+  </PageContainer>
 </template>
 
 <script setup>
@@ -303,41 +288,3 @@ onMounted(() => {
   getList()
 })
 </script>
-
-<style scoped lang="scss">
-.page-container {
-  min-height: 100%;
-}
-
-.search-bar {
-  background: var(--color-surface);
-  padding: 20px 24px;
-  border-radius: 12px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-  border: 1px solid var(--color-border-light);
-
-  :deep(.el-form-item) {
-    margin-bottom: 0;
-  }
-
-  :deep(.el-input),
-  :deep(.el-select) {
-    width: 200px;
-  }
-}
-
-.content-card {
-  background: var(--color-surface);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-  border: 1px solid var(--color-border-light);
-}
-
-.tool-bar {
-  margin-bottom: 16px;
-  display: flex;
-  gap: 8px;
-}
-</style>

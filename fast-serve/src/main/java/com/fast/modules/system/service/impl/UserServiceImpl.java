@@ -7,37 +7,29 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fast.common.constant.RedisKeyConstants;
 import com.fast.common.exception.BusinessException;
-import com.fast.common.result.PageResult;
+import com.fast.common.result.PageRequest;
 import com.fast.framework.annotation.DataScope;
 import com.fast.framework.properties.MinioProperties;
-import com.fast.modules.system.service.FileService;
-import com.fast.modules.system.domain.vo.FileVO;
+import com.fast.modules.system.domain.dto.FileVO;
+import com.fast.modules.system.domain.dto.RoleVO;
 import com.fast.modules.system.domain.dto.UserDTO;
+import com.fast.modules.system.domain.dto.UserExportVO;
 import com.fast.modules.system.domain.dto.UserImportDTO;
+import com.fast.modules.system.domain.dto.UserQuery;
+import com.fast.modules.system.domain.dto.UserVO;
 import com.fast.modules.system.domain.entity.User;
 import com.fast.modules.system.mapper.UserMapper;
-import com.fast.modules.system.service.ConfigService;
-import com.fast.modules.system.service.DeptService;
-import com.fast.modules.system.service.RoleService;
-import com.fast.modules.system.service.UserService;
-import com.fast.modules.system.domain.vo.RoleVO;
-import com.fast.modules.system.domain.vo.UserExportVO;
-import com.fast.modules.system.domain.vo.UserVO;
+import com.fast.modules.system.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -59,21 +51,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     /**
      * 分页查询用户列表
      *
-     * @param dto 查询参数 DTO
+     * @param query    查询条件
+     * @param pageRequest 分页参数
      * @return 用户分页结果
      */
     @Override
     @DataScope
-    public PageResult<UserVO> pageUsers(UserDTO dto) {
-        Page<UserVO> page = new Page<>(dto.getPageNum(), dto.getPageSize());
-        IPage<UserVO> result = baseMapper.selectUserPage(page, dto);
+    public IPage<UserVO> pageUsers(UserQuery query, PageRequest pageRequest) {
+        IPage<UserVO> result = baseMapper.selectUserPage(pageRequest.toPage(), query);
         // 查询用户锁定状态
         List<UserVO> records = result.getRecords();
         records.forEach(vo -> {
             Boolean locked = redisTemplate.hasKey(RedisKeyConstants.LOGIN_LOCK_PREFIX + vo.getUsername());
             vo.setLocked(locked != null && locked);
         });
-        return PageResult.of(records, result.getTotal());
+        return result;
     }
 
     /**
@@ -133,14 +125,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     /**
      * 查询用户列表（用于导出）
      *
-     * @param dto 查询参数
+     * @param query    查询条件
      * @return 用户导出数据列表
      */
     @Override
     @DataScope
-    public List<UserExportVO> listUserForExport(UserDTO dto) {
+    public List<UserExportVO> listUserForExport(UserQuery query) {
         // 查询用户列表（不分页）
-        List<UserVO> userVOList = baseMapper.selectUserList(dto);
+        List<UserVO> userVOList = baseMapper.selectUserList(query);
         // 转换为导出 VO，处理字典转换
         return userVOList.stream().map(userVO -> {
             UserExportVO exportVO = BeanUtil.copyProperties(userVO, UserExportVO.class);
@@ -534,7 +526,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @return 是否为管理员
      */
     private boolean isAdmin(Long userId) {
-        // admin 用户固定 ID 为 1
         return userId != null && userId == 1L;
     }
 }

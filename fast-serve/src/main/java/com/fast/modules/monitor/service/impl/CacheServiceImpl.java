@@ -1,12 +1,14 @@
 package com.fast.modules.monitor.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fast.common.constant.RedisKeyConstants;
-import com.fast.common.result.PageResult;
-import com.fast.modules.monitor.domain.vo.CacheInfoVO;
-import com.fast.modules.monitor.domain.vo.CacheKeyVO;
-import com.fast.modules.monitor.domain.vo.CachePrefixVO;
+import com.fast.common.result.PageRequest;
+import com.fast.modules.monitor.domain.dto.CacheQuery;
+import com.fast.modules.monitor.domain.dto.CacheInfoVO;
+import com.fast.modules.monitor.domain.dto.CacheKeyVO;
+import com.fast.modules.monitor.domain.dto.CachePrefixVO;
 import com.fast.modules.monitor.service.CacheService;
-import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.Cursor;
@@ -14,13 +16,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 缓存管理Service实现
@@ -72,14 +71,14 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    public PageResult<CacheKeyVO> pageCacheKeys(String prefix, Integer pageNum, Integer pageSize) {
+    public IPage<CacheKeyVO> pageCacheKeys(CacheQuery query, PageRequest pageRequest) {
         List<CacheKeyVO> allKeys = new ArrayList<>();
 
         // 遍历从常量类反射获取的缓存前缀
         for (CachePrefixVO prefixVO : cachePrefixes) {
             // 如果指定了 prefix 参数，只扫描匹配的前缀
-            if (prefix != null && !prefix.isEmpty()) {
-                if (!prefixVO.getValue().equals(prefix)) {
+            if (query.getPrefix() != null && !query.getPrefix().isEmpty()) {
+                if (!prefixVO.getValue().equals(query.getPrefix())) {
                     continue;
                 }
             }
@@ -108,14 +107,17 @@ public class CacheServiceImpl implements CacheService {
         long total = allKeys.size();
 
         // 内存分页
-        int fromIndex = (pageNum - 1) * pageSize;
-        int toIndex = Math.min(fromIndex + pageSize, allKeys.size());
+        int fromIndex = (pageRequest.getPageNum() - 1) * pageRequest.getPageSize();
+        int toIndex = Math.min(fromIndex + pageRequest.getPageSize(), allKeys.size());
 
         List<CacheKeyVO> pageData = fromIndex < allKeys.size()
             ? allKeys.subList(fromIndex, toIndex)
             : new ArrayList<>();
 
-        return PageResult.of(pageData, total);
+        Page<CacheKeyVO> resultPage = pageRequest.toPage();
+        resultPage.setRecords(pageData);
+        resultPage.setTotal(total);
+        return resultPage;
     }
 
     @Override

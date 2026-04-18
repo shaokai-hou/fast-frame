@@ -4,15 +4,17 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fast.common.exception.BusinessException;
-import com.fast.common.result.PageResult;
+import com.fast.common.result.PageRequest;
 import com.fast.modules.system.domain.dto.RoleDTO;
+import com.fast.modules.system.domain.dto.RoleQuery;
+import com.fast.modules.system.domain.dto.RoleVO;
 import com.fast.modules.system.domain.entity.Role;
 import com.fast.modules.system.mapper.RoleMapper;
 import com.fast.modules.system.service.RoleService;
-import com.fast.modules.system.domain.vo.RoleVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,23 +35,13 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     /**
      * 分页查询角色列表
      *
-     * @param dto 查询参数 DTO
+     * @param query    查询条件
+     * @param pageRequest 分页参数
      * @return 角色分页结果
      */
     @Override
-    public PageResult<RoleVO> pageRoles(RoleDTO dto) {
-        Page<Role> page = new Page<>(dto.getPageNum(), dto.getPageSize());
-        LambdaQueryWrapper<Role> wrapper = new LambdaQueryWrapper<>();
-        wrapper.like(StrUtil.isNotBlank(dto.getRoleName()), Role::getRoleName, dto.getRoleName())
-                .like(StrUtil.isNotBlank(dto.getRoleKey()), Role::getRoleKey, dto.getRoleKey())
-                .eq(StrUtil.isNotBlank(dto.getStatus()), Role::getStatus, dto.getStatus())
-                .orderByAsc(Role::getRoleSort)
-                .orderByDesc(Role::getCreateTime);
-        Page<Role> result = page(page, wrapper);
-        List<RoleVO> list = result.getRecords().stream()
-                .map(role -> BeanUtil.copyProperties(role, RoleVO.class))
-                .collect(Collectors.toList());
-        return PageResult.of(list, result.getTotal());
+    public IPage<RoleVO> pageRoles(RoleQuery query, PageRequest pageRequest) {
+        return baseMapper.selectRolePage(pageRequest.toPage(), query);
     }
 
     /**
@@ -59,12 +51,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
      */
     @Override
     public List<RoleVO> listRoles() {
-        LambdaQueryWrapper<Role> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Role::getStatus, "0")
-                .orderByAsc(Role::getRoleSort);
-        return list(wrapper).stream()
-                .map(role -> BeanUtil.copyProperties(role, RoleVO.class))
-                .collect(Collectors.toList());
+        List<Role> roles = baseMapper.selectList(Wrappers.emptyWrapper());
+        return BeanUtil.copyToList(roles,RoleVO.class);
     }
 
     /**
@@ -75,10 +63,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
      */
     @Override
     public List<RoleVO> listRolesByUserId(Long userId) {
-        List<Role> roles = baseMapper.selectRolesByUserId(userId);
-        return roles.stream()
-                .map(role -> BeanUtil.copyProperties(role, RoleVO.class))
-                .collect(Collectors.toList());
+        return baseMapper.selectRolesByUserId(userId);
     }
 
     /**
@@ -90,7 +75,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     @Override
     public List<String> listRoleKeysByUserId(Long userId) {
         return baseMapper.selectRolesByUserId(userId).stream()
-                .map(Role::getRoleKey)
+                .map(RoleVO::getRoleKey)
                 .filter(StrUtil::isNotBlank)
                 .collect(Collectors.toList());
     }
@@ -207,7 +192,6 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
      * @return 是否为管理员角色
      */
     private boolean isAdminRole(Long roleId) {
-        // 管理员角色固定 ID 为 1
         return roleId != null && roleId == 1L;
     }
 }

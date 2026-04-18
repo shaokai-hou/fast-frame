@@ -1,13 +1,16 @@
 package com.fast.modules.system.controller;
 
-import com.fast.common.result.PageResult;
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fast.common.enums.BusinessType;
+import com.fast.common.result.PageRequest;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
-import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.fast.common.enums.BusinessType;
 import com.fast.framework.web.BaseController;
+import com.fast.modules.system.domain.dto.OnlineUserQuery;
+import com.fast.modules.system.domain.dto.OnlineUserVO;
 import com.fast.modules.system.service.OnlineService;
-import com.fast.modules.system.domain.vo.OnlineUserVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,19 +31,18 @@ public class OnlineController extends BaseController {
     /**
      * 查询在线用户列表
      *
-     * @param username 用户名（可选过滤条件）
-     * @param pageNum  页码
-     * @param pageSize 每页数量
+     * @param query    查询条件
+     * @param pageRequest 分页参数
      * @return 在线用户分页结果
      */
-    @SaCheckPermission("monitor:online:list")
-    @GetMapping("/list")
-    public Result<PageResult<OnlineUserVO>> list(
-            @RequestParam(required = false) String username,
-            @RequestParam(defaultValue = "1") Integer pageNum,
-            @RequestParam(defaultValue = "10") Integer pageSize) {
-        List<OnlineUserVO> list = onlineService.listOnlineUsers(username);
-        return pageResult(list, list.size());
+    @SaCheckPermission("monitor:online:page")
+    @GetMapping("/page")
+    public Result<IPage<OnlineUserVO>> page(OnlineUserQuery query, PageRequest pageRequest) {
+        List<OnlineUserVO> list = onlineService.listOnlineUsers(query);
+        Page<OnlineUserVO> resultPage = pageRequest.toPage();
+        resultPage.setRecords(list);
+        resultPage.setTotal(list.size());
+        return success(resultPage);
     }
 
     /**

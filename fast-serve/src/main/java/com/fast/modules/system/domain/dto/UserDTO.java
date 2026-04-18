@@ -74,16 +74,6 @@ public class UserDTO implements Serializable {
     private Long[] roleIds;
 
     /**
-     * 页码
-     */
-    private Integer pageNum = 1;
-
-    /**
-     * 每页数量
-     */
-    private Integer pageSize = 10;
-
-    /**
      * 数据权限SQL（由切面注入）
      */
     private String dataScope;

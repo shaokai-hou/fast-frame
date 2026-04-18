@@ -23,14 +23,4 @@ public class FileQuery implements Serializable {
      * 桶类型
      */
     private String bucketType;
-
-    /**
-     * 页码
-     */
-    private Integer pageNum = 1;
-
-    /**
-     * 每页数量
-     */
-    private Integer pageSize = 10;
 }
