@@ -409,13 +409,16 @@ onMounted(() => {
 <style scoped lang="scss">
 .label-tip {
   margin-left: 4px;
-  color: var(--color-foreground-muted);
+  color: var(--el-color-info);
   cursor: help;
   font-size: 14px;
+  vertical-align: middle;
+}
 
-  &:hover {
-    color: var(--color-primary);
-  }
+// 确保带 tooltip 的 label 与其他 label 对齐
+:deep(.el-form-item__label) {
+  display: flex;
+  align-items: center;
 }
 </style>
 
