@@ -47,12 +47,11 @@ public class DictController extends BaseController {
     }
 
     /**
-     * 根据字典类型查询字典数据
+     * 根据字典类型查询字典数据（公共接口，无需权限）
      *
      * @param dictType 字典类型
      * @return 字典数据列表
      */
-    @SaCheckPermission("system:dict:list")
     @GetMapping("/data/{dictType}")
     public Result<List<DictDataVO>> listData(@PathVariable String dictType) {
         return success(dictService.listDictDataByType(dictType));
