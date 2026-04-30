@@ -48,12 +48,25 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
 
 
     /**
-     * 查询菜单树形列表
+     * 查询菜单树形列表（用于菜单管理，包含禁用菜单）
      *
      * @return 菜单树形列表
      */
     @Override
     public List<MenuVO> listMenuTree() {
+        LambdaQueryWrapper<Menu> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByAsc(Menu::getMenuSort)
+               .orderByAsc(Menu::getCreateTime);
+        List<Menu> menus = list(wrapper);
+        return buildMenuTree(menus, 0L);
+    }
+
+    /**
+     * 查询正常状态的菜单树形列表（用于路由）
+     *
+     * @return 菜单树形列表
+     */
+    private List<MenuVO> listActiveMenuTree() {
         LambdaQueryWrapper<Menu> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Menu::getStatus, Constants.NORMAL)
                .orderByAsc(Menu::getMenuSort)
@@ -70,9 +83,9 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
      */
     @Override
     public List<MenuVO> listMenusByUserId(Long userId) {
-        // admin 用户直接返回所有菜单
+        // admin 用户返回所有正常菜单
         if (isAdmin(userId)) {
-            return listMenuTree();
+            return listActiveMenuTree();
         }
         List<Menu> menus = baseMapper.selectMenusByUserId(userId);
         return buildMenuTree(menus, 0L);
