@@ -2,14 +2,12 @@
   <div v-if="!item.meta?.hidden">
     <!-- 没有子菜单 -->
     <template v-if="!hasChildren">
-      <app-link :to="resolvePath(item.path)">
-        <el-menu-item :index="resolvePath(item.path)">
-          <el-icon v-if="item.meta?.icon">
-            <component :is="item.meta.icon" />
-          </el-icon>
-          <template #title>{{ item.meta?.title }}</template>
-        </el-menu-item>
-      </app-link>
+      <el-menu-item :index="resolvePath(item.path)" @click="handleMenuClick(resolvePath(item.path))">
+        <el-icon v-if="item.meta?.icon">
+          <component :is="item.meta.icon" />
+        </el-icon>
+        <template #title>{{ item.meta?.title }}</template>
+      </el-menu-item>
     </template>
 
     <!-- 有子菜单 -->
@@ -32,7 +30,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import AppLink from './Link.vue'
+import { useRouter } from 'vue-router'
 
 const props = defineProps({
   item: {
@@ -44,6 +42,8 @@ const props = defineProps({
     default: ''
   }
 })
+
+const router = useRouter()
 
 /**
  * 过滤出可显示的子菜单
@@ -61,33 +61,40 @@ const hasChildren = computed(() => {
 })
 
 /**
+ * 判断是否为外部链接
+ */
+function isExternal(path) {
+  return /^(https?:|mailto:|tel:)/.test(path)
+}
+
+/**
+ * 处理菜单点击
+ */
+function handleMenuClick(path) {
+  if (isExternal(path)) {
+    window.open(path, '_blank', 'noopener')
+  } else {
+    router.push(path)
+  }
+}
+
+/**
  * 解析路径
  */
 function resolvePath(routePath) {
-  // 外部链接直接返回
   if (isExternal(routePath)) {
     return routePath
   }
-  // 外部 basePath 直接返回
   if (isExternal(props.basePath)) {
     return props.basePath
   }
-  // 绝对路径直接返回
   if (routePath.startsWith('/')) {
     return routePath
   }
-  // 拼接路径
   const base = props.basePath || ''
   if (!base) {
     return '/' + routePath
   }
   return base.endsWith('/') ? base + routePath : base + '/' + routePath
-}
-
-/**
- * 判断是否为外部链接
- */
-function isExternal(path) {
-  return /^(https?:|mailto:|tel:)/.test(path)
 }
 </script>

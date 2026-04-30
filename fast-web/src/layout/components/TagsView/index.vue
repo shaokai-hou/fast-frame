@@ -1,10 +1,10 @@
 <template>
   <div class="tags-view-container">
     <ScrollPane ref="scrollPaneRef" class="tags-scroll">
-      <router-link
+      <AppLink
         v-for="tag in tagsViewStore.visitedRoutes"
         :key="tag.path"
-        :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }"
+        :to="tag.path"
         :data-path="tag.path"
         class="tags-item"
         :class="{ active: isActive(tag) }"
@@ -19,7 +19,7 @@
         >
           <Close />
         </el-icon>
-      </router-link>
+      </AppLink>
     </ScrollPane>
 
     <!-- 右键菜单 -->
@@ -57,11 +57,12 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, nextTick } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useTagsViewStore } from '@/store/tagsView'
 import { useAppStore } from '@/store/app'
 import ScrollPane from './ScrollPane.vue'
+import AppLink from '@/layout/components/Sidebar/Link.vue'
 import {
   Close,
   Refresh,
@@ -83,22 +84,26 @@ const contextMenuLeft = ref(0)
 const contextMenuTop = ref(0)
 const selectedTag = ref(null)
 
+// 判断是否为外部链接
+function isExternal(path) {
+  return /^(https?:|mailto:|tel:)/.test(path)
+}
+
 // 判断标签是否激活
 const isActive = (tag) => {
   return route.path === tag.path
 }
 
-// 初始化
-onMounted(() => {
-  tagsViewStore.initTagsView()
-})
+// 在 watch 之前初始化，确保 localStorage 数据已恢复
+tagsViewStore.initTagsView()
 
 // 监听路由变化，添加标签
 watch(
   () => route.path,
   (path) => {
-    // 不添加登录页和 404 页
+    // 不添加登录页、404 页和外链
     if (path === '/login' || path === '/404') return
+    if (isExternal(path)) return
 
     // 添加已访问路由
     tagsViewStore.addVisitedRoute(route)

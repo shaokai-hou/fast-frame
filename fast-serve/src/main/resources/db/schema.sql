@@ -1047,8 +1047,8 @@ VALUES (65, 60, '公告分页', 'B', 'system:notice:page', 0, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, icon, menu_sort, status, del_flag, create_by)
 VALUES (200, 0, '系统工具', 'D', '/tool', 'Tools', 5, '0', '0', 1);
 
-INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon, menu_sort, status, del_flag, create_by)
-VALUES (201, 200, '接口文档', 'M', '/tool/api', 'tool/api/index', 'Document', 1, '0', '0', 1);
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, icon, menu_sort, status, del_flag, create_by)
+VALUES (201, 200, '接口文档', 'M', 'http://localhost:8100/doc.html', 'Document', 1, '0', '0', 1);
 
 -- =============================================
 -- 流程管理目录

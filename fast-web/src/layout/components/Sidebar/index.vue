@@ -7,10 +7,9 @@
       background-color="transparent"
       text-color="var(--color-foreground-muted)"
       active-text-color="var(--color-primary)"
-      router
     >
       <!-- 首页菜单（静态） -->
-      <el-menu-item index="/home">
+      <el-menu-item index="/home" @click="handleMenuClick('/home')">
         <el-icon><HomeFilled /></el-icon>
         <span>首页</span>
       </el-menu-item>
@@ -27,12 +26,13 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useAppStore } from '@/store/app'
 import { usePermissionStore } from '@/store/permission'
 import SidebarItem from './SidebarItem.vue'
 
 const route = useRoute()
+const router = useRouter()
 const appStore = useAppStore()
 const permissionStore = usePermissionStore()
 
@@ -43,6 +43,26 @@ const activeMenu = computed(() => {
 const routes = computed(() => {
   return permissionStore.routes
 })
+
+/**
+ * 判断是否为外部链接
+ */
+function isExternal(path) {
+  return /^(https?:|mailto:|tel:)/.test(path)
+}
+
+/**
+ * 处理菜单点击（手动路由跳转）
+ */
+function handleMenuClick(path) {
+  if (isExternal(path)) {
+    // 外链：新窗口打开
+    window.open(path, '_blank', 'noopener')
+  } else {
+    // 内链：路由跳转
+    router.push(path)
+  }
+}
 </script>
 
 <style scoped lang="scss">

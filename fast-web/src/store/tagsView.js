@@ -1,8 +1,40 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 // 首页路径（不可关闭）
 const HOME_PATH = '/home'
+
+// localStorage key
+const STORAGE_KEY = 'fast-frame-tags-view'
+
+// 判断是否为外部链接
+function isExternal(path) {
+  return /^(https?:|mailto:|tel:)/.test(path)
+}
+
+// 从 localStorage 读取已保存的路由
+function loadFromStorage() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY)
+    if (saved) {
+      const data = JSON.parse(saved)
+      // 过滤掉外链路由（防止历史数据中的外链被恢复）
+      return (data.visitedRoutes || []).filter(r => !isExternal(r.path))
+    }
+  } catch (e) {
+    console.warn('读取 TagsView 缓存失败:', e)
+  }
+  return []
+}
+
+// 保存到 localStorage
+function saveToStorage(visitedRoutes) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ visitedRoutes }))
+  } catch (e) {
+    console.warn('保存 TagsView 缓存失败:', e)
+  }
+}
 
 export const useTagsViewStore = defineStore('tagsView', () => {
   // 已访问的路由列表
@@ -10,20 +42,21 @@ export const useTagsViewStore = defineStore('tagsView', () => {
   // 缓存的路由组件名称列表（用于 keep-alive）
   const cachedRoutes = ref([])
 
-  // 初始化，添加首页
-  function initTagsView() {
-    // 首页默认添加
-    addVisitedRoute({
-      path: HOME_PATH,
-      name: 'Home',
-      meta: { title: '首页', icon: 'HomeFilled' },
-      title: '首页'
-    })
-    addCachedRoute('Home')
+  // 确保首页始终在第一位
+  function sortRoutes() {
+    const homeIndex = visitedRoutes.value.findIndex(r => r.path === HOME_PATH)
+    if (homeIndex > 0) {
+      // 首页不在第一位，将其移到第一位
+      const homeRoute = visitedRoutes.value.splice(homeIndex, 1)[0]
+      visitedRoutes.value.unshift(homeRoute)
+    }
   }
 
   // 添加已访问路由
   function addVisitedRoute(route) {
+    // 过滤外链路由
+    if (isExternal(route.path)) return
+
     // 检查是否已存在
     const exists = visitedRoutes.value.some(r => r.path === route.path)
     if (!exists) {
@@ -45,14 +78,47 @@ export const useTagsViewStore = defineStore('tagsView', () => {
     sortRoutes()
   }
 
-  // 确保首页始终在第一位
-  function sortRoutes() {
-    const homeIndex = visitedRoutes.value.findIndex(r => r.path === HOME_PATH)
-    if (homeIndex > 0) {
-      // 首页不在第一位，将其移到第一位
-      const homeRoute = visitedRoutes.value.splice(homeIndex, 1)[0]
-      visitedRoutes.value.unshift(homeRoute)
+  // 监听 visitedRoutes 变化，自动保存到 localStorage（放在 addVisitedRoute 之后）
+  watch(
+    visitedRoutes,
+    (routes) => {
+      if (routes.length > 0) {
+        saveToStorage(routes)
+      }
+    },
+    { deep: true }
+  )
+
+  // 初始化，恢复已保存的路由
+  function initTagsView() {
+    // 从 localStorage 加载已保存的路由
+    const savedRoutes = loadFromStorage()
+
+    // 确保首页存在
+    const hasHome = savedRoutes.some(r => r.path === HOME_PATH)
+
+    if (savedRoutes.length > 0 && hasHome) {
+      // 恢复已保存的路由
+      visitedRoutes.value = savedRoutes
+      // 同步缓存
+      savedRoutes.forEach(r => {
+        if (r.name) {
+          addCachedRoute(r.name)
+        }
+      })
+    } else {
+      // 没有保存数据，只添加首页
+      addVisitedRoute({
+        path: HOME_PATH,
+        name: 'Home',
+        meta: { title: '首页', icon: 'HomeFilled' },
+        title: '首页'
+      })
+      addCachedRoute('Home')
     }
+
+    // 确保首页在第一位
+    sortRoutes()
   }
 
   // 移除已访问路由（首页不可移除）
