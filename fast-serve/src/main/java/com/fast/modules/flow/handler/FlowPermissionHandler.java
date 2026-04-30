@@ -83,7 +83,6 @@ public class FlowPermissionHandler implements PermissionHandler {
                 Role role = roleMapper.selectOne(
                     new LambdaQueryWrapper<Role>()
                         .eq(Role::getRoleKey, roleKey)
-                        .eq(Role::getDelFlag, "0")
                 );
                 if (role != null) {
                     List<Long> roleUserIds = userMapper.selectUserIdsByRoleId(role.getId());

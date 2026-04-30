@@ -6,15 +6,16 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fast.common.constant.FileConstants;
 import com.fast.common.exception.BusinessException;
 import com.fast.common.result.PageRequest;
+import com.fast.framework.helper.MinioHelper;
 import com.fast.framework.properties.MinioProperties;
 import com.fast.modules.system.domain.dto.FileQuery;
 import com.fast.modules.system.domain.dto.FileVO;
 import com.fast.modules.system.domain.entity.File;
 import com.fast.modules.system.mapper.FileMapper;
 import com.fast.modules.system.service.FileService;
-import io.minio.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -40,54 +41,21 @@ import java.util.*;
 @RequiredArgsConstructor
 public class FileServiceImpl implements FileService {
 
-    private final MinioClient minioClient;
-    private final MinioProperties minioProperties;
     private final FileMapper fileMapper;
-
-    /**
-     * 允许的文件扩展名白名单
-     */
-    private static final Set<String> ALLOWED_EXTENSIONS = new HashSet<>(Arrays.asList(
-            // 文档类型
-            "pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "md",
-            // 图片类型
-            "jpg", "jpeg", "png", "gif", "bmp", "webp", "svg",
-            // 压缩类型
-            "zip", "rar", "7z", "tar", "gz",
-            // 音频视频
-            "mp3", "mp4", "avi", "mov", "wav", "flv"
-    ));
-
-    /**
-     * 最大文件大小（字节）：50MB
-     */
-    private static final long MAX_FILE_SIZE = 50 * 1024 * 1024;
-
-    /**
-     * 头像最大文件大小（字节）：5MB
-     */
-    private static final long MAX_AVATAR_SIZE = 5 * 1024 * 1024;
-
-    /**
-     * 允许的图片扩展名（头像上传）
-     */
-    private static final Set<String> ALLOWED_AVATAR_EXTENSIONS = new HashSet<>(Arrays.asList(
-            "jpg", "jpeg", "png", "gif", "webp"
-    ));
 
     /**
      * 应用启动后初始化桶
      */
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReady() {
-        initBuckets();
+        MinioHelper.createBucket(MinioProperties.BUCKET_TYPE_AVATAR);
+        MinioHelper.createBucket(MinioProperties.BUCKET_TYPE_FILE);
     }
-
 
     /**
      * 分页查询文件列表
      *
-     * @param query 查询参数
+     * @param query       查询参数
      * @param pageRequest 分页参数
      * @return 文件分页结果
      */
@@ -96,9 +64,8 @@ public class FileServiceImpl implements FileService {
         return fileMapper.selectFilePage(pageRequest.toPage(), query);
     }
 
-
     /**
-     * 上传文件（默认 file 桶）
+     * 上传文件
      *
      * @param file 上传的文件
      * @return 文件信息 VO
@@ -107,11 +74,11 @@ public class FileServiceImpl implements FileService {
     @Transactional(rollbackFor = Exception.class)
     public FileVO uploadFile(MultipartFile file) {
         validateFile(file, false);
-        return uploadToBucket(file, MinioProperties.BUCKET_TYPE_FILE);
+        return uploadFileToBucket(file, MinioProperties.BUCKET_TYPE_FILE);
     }
 
     /**
-     * 批量上传文件（默认 file 桶）
+     * 批量上传文件
      *
      * @param files 上传的文件数组
      * @return 文件信息列表
@@ -133,7 +100,7 @@ public class FileServiceImpl implements FileService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public FileVO uploadToBucket(MultipartFile file, String bucketType) {
+    public FileVO uploadFileToBucket(MultipartFile file, String bucketType) {
         // 验证文件
         boolean isAvatar = MinioProperties.BUCKET_TYPE_AVATAR.equals(bucketType);
         validateFile(file, isAvatar);
@@ -150,18 +117,8 @@ public class FileServiceImpl implements FileService {
             String datePath = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
             String objectName = datePath + "/" + fileName;
 
-            // 获取实际桶名称
-            String bucketName = minioProperties.getBucketName(bucketType);
-
             // 上传文件到 MinIO
-            InputStream inputStream = file.getInputStream();
-            minioClient.putObject(PutObjectArgs.builder()
-                    .bucket(bucketName)
-                    .object(objectName)
-                    .stream(inputStream, file.getSize(), -1)
-                    .contentType(file.getContentType())
-                    .build());
-            inputStream.close();
+            MinioHelper.upload(bucketType, objectName, file);
 
             // 记录到数据库（仅 file 桶记录）
             if (MinioProperties.BUCKET_TYPE_FILE.equals(bucketType)) {
@@ -203,11 +160,10 @@ public class FileServiceImpl implements FileService {
     public List<FileVO> uploadFilesToBucket(MultipartFile[] files, String bucketType) {
         List<FileVO> result = new ArrayList<>();
         for (MultipartFile file : files) {
-            result.add(uploadToBucket(file, bucketType));
+            result.add(uploadFileToBucket(file, bucketType));
         }
         return result;
     }
-
 
     /**
      * 根据ID删除文件
@@ -224,48 +180,9 @@ public class FileServiceImpl implements FileService {
             throw new BusinessException("文件不存在");
         }
         // 删除 MinIO 文件
-        deleteFromBucket(file.getBucketType(), file.getFileName());
+        MinioHelper.delete(file.getBucketType(), file.getFileName());
         // 删除数据库记录
         fileMapper.deleteById(id);
-    }
-
-    /**
-     * 删除文件
-     *
-     * @param bucketType 桶类型（avatar/file）
-     * @param objectName 文件对象名称（路径）
-     */
-    @Override
-    public void deleteFromBucket(String bucketType, String objectName) {
-        try {
-            String bucketName = minioProperties.getBucketName(bucketType);
-            minioClient.removeObject(RemoveObjectArgs.builder()
-                    .bucket(bucketName)
-                    .object(objectName)
-                    .build());
-        } catch (Exception e) {
-            log.error("删除文件失败: {}", e.getMessage());
-            throw new BusinessException("删除文件失败: " + e.getMessage());
-        }
-    }
-
-
-    /**
-     * 初始化桶
-     * <p>
-     * 创建 avatar 和 file 桶
-     */
-    @Override
-    public void initBuckets() {
-        try {
-            String avatarBucket = minioProperties.getAvatarBucket();
-            createBucket(avatarBucket);
-
-            String fileBucket = minioProperties.getFileBucket();
-            createBucket(fileBucket);
-        } catch (Exception e) {
-            log.error("初始化MinIO桶失败: {}", e.getMessage());
-        }
     }
 
     /**
@@ -303,7 +220,6 @@ public class FileServiceImpl implements FileService {
         streamFromBucket(bucketType, objectName, response, asDownload, null);
     }
 
-
     /**
      * 流式输出文件（带数据库记录）
      *
@@ -316,36 +232,8 @@ public class FileServiceImpl implements FileService {
     private void streamFromBucket(String bucketType, String objectName, HttpServletResponse response, boolean asDownload, File fileEntity) {
         InputStream inputStream = null;
         try {
-            String bucketName = minioProperties.getBucketName(bucketType);
+            inputStream = MinioHelper.download(bucketType, objectName);
 
-            GetObjectResponse object = minioClient.getObject(GetObjectArgs.builder()
-                    .bucket(bucketName)
-                    .object(objectName)
-                    .build());
-
-            inputStream = object;
-
-            // 优先使用数据库记录的信息设置响应头
-            String contentType;
-            long size;
-
-            if (fileEntity != null) {
-                contentType = StrUtil.isNotBlank(fileEntity.getContentType())
-                        ? fileEntity.getContentType() : "application/octet-stream";
-                size = fileEntity.getFileSize() != null ? fileEntity.getFileSize() : -1L;
-            } else {
-                // 从 MinIO headers 获取
-                contentType = object.headers().get("Content-Type");
-                contentType = StrUtil.isNotBlank(contentType) ? contentType : "application/octet-stream";
-                String contentLength = object.headers().get("Content-Length");
-                size = StrUtil.isNotBlank(contentLength) ? Long.parseLong(contentLength) : -1L;
-            }
-
-            // 设置响应头
-            response.setContentType(contentType);
-            if (size > 0) {
-                response.setContentLengthLong(size);
-            }
 
             if (asDownload) {
                 // 使用原始文件名
@@ -367,27 +255,6 @@ public class FileServiceImpl implements FileService {
     }
 
     /**
-     * 创建桶（如果不存在）
-     *
-     * @param bucketName 桶名称
-     */
-    private void createBucket(String bucketName) {
-        try {
-            boolean exists = minioClient.bucketExists(BucketExistsArgs.builder()
-                    .bucket(bucketName)
-                    .build());
-            if (!exists) {
-                minioClient.makeBucket(MakeBucketArgs.builder()
-                        .bucket(bucketName)
-                        .build());
-                log.info("创建桶: {}", bucketName);
-            }
-        } catch (Exception e) {
-            log.error("创建桶失败 {}: {}", bucketName, e.getMessage());
-        }
-    }
-
-    /**
      * 验证上传文件
      *
      * @param file     上传的文件
@@ -399,7 +266,7 @@ public class FileServiceImpl implements FileService {
         }
 
         // 检查文件大小
-        long maxSize = isAvatar ? MAX_AVATAR_SIZE : MAX_FILE_SIZE;
+        long maxSize = isAvatar ? FileConstants.MAX_AVATAR_SIZE : FileConstants.MAX_FILE_SIZE;
         if (file.getSize() > maxSize) {
             String limit = isAvatar ? "5MB" : "50MB";
             throw new BusinessException("文件大小超出限制，最大允许 " + limit);
@@ -416,7 +283,8 @@ public class FileServiceImpl implements FileService {
             throw new BusinessException("无法识别文件类型");
         }
 
-        Set<String> allowedExtensions = isAvatar ? ALLOWED_AVATAR_EXTENSIONS : ALLOWED_EXTENSIONS;
+        Set<String> allowedExtensions = isAvatar ? FileConstants.ALLOWED_AVATAR_EXTENSIONS :
+                FileConstants.ALLOWED_EXTENSIONS;
         if (!allowedExtensions.contains(extension.toLowerCase())) {
             throw new BusinessException("不允许上传该类型的文件");
         }
@@ -437,10 +305,10 @@ public class FileServiceImpl implements FileService {
         // 移除特殊字符，只保留字母数字
         String safe = extension.toLowerCase().replaceAll("[^a-z0-9]", "");
         // 如果不在白名单中，使用默认值
-        if (!ALLOWED_EXTENSIONS.contains(safe)) {
+        if (!FileConstants.ALLOWED_EXTENSIONS.contains(safe)) {
             return "bin";
         }
         return safe;
     }
 
-    }
+}

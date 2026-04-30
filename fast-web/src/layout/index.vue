@@ -66,7 +66,7 @@ onMounted(() => {
 .sidebar {
   width: 240px;
   background: var(--color-surface);
-  border-right: 1px solid var(--color-border);
+  border-right: 1px solid var(--gray-200);
   transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
   display: flex;

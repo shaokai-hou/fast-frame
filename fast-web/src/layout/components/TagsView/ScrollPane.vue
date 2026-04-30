@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
 
 const scrollWrapperRef = ref(null)
@@ -33,6 +33,9 @@ const showRightBtn = ref(false)
 const scrollWidth = ref(0)
 const containerWidth = ref(0)
 
+// ResizeObserver 引用
+let resizeObserver = null
+
 // 更新按钮显示状态
 const updateScrollBtns = () => {
   if (!scrollContentRef.value || !scrollWrapperRef.value) return
@@ -40,8 +43,16 @@ const updateScrollBtns = () => {
   scrollWidth.value = scrollContentRef.value.offsetWidth
   containerWidth.value = scrollWrapperRef.value.offsetWidth
 
+  // 内容不需要滚动时，重置 offset 并隐藏所有按钮
+  if (scrollWidth.value <= containerWidth.value) {
+    offset.value = 0
+    showLeftBtn.value = false
+    showRightBtn.value = false
+    return
+  }
+
   showLeftBtn.value = offset.value < 0
-  showRightBtn.value = scrollWidth.value > containerWidth.value && offset.value > containerWidth.value - scrollWidth.value
+  showRightBtn.value = offset.value > containerWidth.value - scrollWidth.value
 }
 
 // 滚动到目标标签
@@ -104,13 +115,25 @@ const handleResize = () => {
 }
 
 onMounted(() => {
-  nextTick(() => {
+  // 使用 ResizeObserver 监听内容尺寸变化
+  resizeObserver = new ResizeObserver(() => {
     updateScrollBtns()
   })
+
+  nextTick(() => {
+    if (scrollContentRef.value) {
+      resizeObserver.observe(scrollContentRef.value)
+    }
+    updateScrollBtns()
+  })
+
   window.addEventListener('resize', handleResize)
 })
 
 onUnmounted(() => {
+  if (resizeObserver) {
+    resizeObserver.disconnect()
+  }
   window.removeEventListener('resize', handleResize)
 })
 </script>

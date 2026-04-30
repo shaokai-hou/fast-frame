@@ -54,4 +54,9 @@ public class RoleVO implements Serializable {
      * 创建时间
      */
     private LocalDateTime createTime;
+
+    /**
+     * 用户ID（用于批量查询时关联用户）
+     */
+    private Long userId;
 }

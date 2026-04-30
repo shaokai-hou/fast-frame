@@ -2,6 +2,7 @@ package com.fast.modules.system.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fast.modules.system.domain.dto.RoleVO;
 import com.fast.modules.system.domain.dto.UserQuery;
 import com.fast.modules.system.domain.dto.UserVO;
 import com.fast.modules.system.domain.entity.User;
@@ -64,4 +65,12 @@ public interface UserMapper extends BaseMapper<User> {
      * @return 用户ID列表
      */
     List<Long> selectUserIdsByDeptId(Long deptId);
+
+    /**
+     * 批量查询用户角色
+     *
+     * @param userIds 用户ID列表
+     * @return 角色列表（包含userId字段用于关联）
+     */
+    List<RoleVO> selectRolesByUserIds(List<Long> userIds);
 }

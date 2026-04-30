@@ -3,6 +3,7 @@ package com.fast.modules.system.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fast.common.constant.Constants;
 import com.fast.common.exception.BusinessException;
 import com.fast.modules.system.domain.dto.MenuTreeVO;
 import com.fast.modules.system.domain.dto.MenuVO;
@@ -54,7 +55,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     @Override
     public List<MenuVO> listMenuTree() {
         LambdaQueryWrapper<Menu> wrapper = new LambdaQueryWrapper<>();
-        wrapper.orderByAsc(Menu::getMenuSort)
+        wrapper.eq(Menu::getStatus, Constants.NORMAL)
+               .orderByAsc(Menu::getMenuSort)
                .orderByAsc(Menu::getCreateTime);
         List<Menu> menus = list(wrapper);
         return buildMenuTree(menus, 0L);

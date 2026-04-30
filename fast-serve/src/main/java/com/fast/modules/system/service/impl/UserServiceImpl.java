@@ -16,6 +16,7 @@ import com.fast.common.result.PageRequest;
 import com.fast.framework.annotation.DataScope;
 import com.fast.framework.helper.ConfigHelper;
 import com.fast.framework.helper.DictHelper;
+import com.fast.framework.helper.MinioHelper;
 import com.fast.framework.helper.RedisHelper;
 import com.fast.framework.properties.MinioProperties;
 import com.fast.modules.system.domain.dto.*;
@@ -55,12 +56,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @DataScope
     public IPage<UserVO> pageUsers(UserQuery query, PageRequest pageRequest) {
         IPage<UserVO> result = baseMapper.selectUserPage(pageRequest.toPage(), query);
-        // 查询用户锁定状态
         List<UserVO> records = result.getRecords();
-        records.forEach(vo -> {
-            Boolean locked = RedisHelper.hasKey(RedisConstants.LOGIN_LOCK_PREFIX + vo.getUsername());
-            vo.setLocked(locked);
-        });
+
+        if (!records.isEmpty()) {
+            // 批量查询角色（解决 N+1 问题）
+            List<Long> userIds = records.stream().map(UserVO::getId).collect(Collectors.toList());
+            List<RoleVO> allRoles = baseMapper.selectRolesByUserIds(userIds);
+
+            // 按 userId 分组
+            Map<Long, List<RoleVO>> roleMap = allRoles.stream()
+                .collect(Collectors.groupingBy(RoleVO::getUserId));
+
+            // 设置角色和锁定状态
+            records.forEach(vo -> {
+                vo.setRoles(roleMap.getOrDefault(vo.getId(), new ArrayList<>()));
+                Boolean locked = RedisHelper.hasKey(RedisConstants.LOGIN_LOCK_PREFIX + vo.getUsername());
+                vo.setLocked(locked);
+            });
+        }
         return result;
     }
 
@@ -352,11 +365,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         // 删除旧头像
         if (StrUtil.isNotBlank(user.getAvatar())) {
-            fileService.deleteFromBucket(MinioProperties.BUCKET_TYPE_AVATAR, user.getAvatar());
+            MinioHelper.delete(MinioProperties.BUCKET_TYPE_AVATAR, user.getAvatar());
         }
 
         // 上传新头像到头像桶
-        FileVO fileVO = fileService.uploadToBucket(file, MinioProperties.BUCKET_TYPE_AVATAR);
+        FileVO fileVO = fileService.uploadFileToBucket(file, MinioProperties.BUCKET_TYPE_AVATAR);
         // 更新用户头像（只存储 objectName，不存储桶名前缀）
         updateAvatar(userId, fileVO.getFileName());
         // 返回完整信息

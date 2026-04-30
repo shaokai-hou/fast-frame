@@ -16,7 +16,6 @@ import java.util.List;
  */
 public interface FileService {
 
-
     /**
      * 分页查询文件列表
      *
@@ -25,7 +24,6 @@ public interface FileService {
      * @return 文件分页结果
      */
     IPage<FileVO> pageFiles(FileQuery query, PageRequest pageRequest);
-
 
     /**
      * 上传文件
@@ -54,7 +52,7 @@ public interface FileService {
      * @param bucketType 桶类型（avatar/file）
      * @return 文件信息
      */
-    FileVO uploadToBucket(MultipartFile file, String bucketType);
+    FileVO uploadFileToBucket(MultipartFile file, String bucketType);
 
     /**
      * 批量上传文件到指定桶
@@ -65,7 +63,6 @@ public interface FileService {
      */
     List<FileVO> uploadFilesToBucket(MultipartFile[] files, String bucketType);
 
-
     /**
      * 根据ID删除文件
      * <p>
@@ -74,22 +71,6 @@ public interface FileService {
      * @param id 文件ID
      */
     void deleteFileById(Long id);
-
-    /**
-     * 删除文件
-     *
-     * @param bucketType 桶类型（avatar/file）
-     * @param objectName 对象名称
-     */
-    void deleteFromBucket(String bucketType, String objectName);
-
-
-    /**
-     * 初始化桶
-     * <p>
-     * 应用启动时自动调用，创建 avatar 和 file 桶
-     */
-    void initBuckets();
 
     /**
      * 流式输出文件

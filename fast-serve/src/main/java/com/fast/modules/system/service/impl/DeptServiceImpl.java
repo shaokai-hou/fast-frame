@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fast.common.constant.Constants;
 import com.fast.common.exception.BusinessException;
 import com.fast.modules.system.domain.dto.DeptDTO;
 import com.fast.modules.system.domain.dto.DeptQuery;
@@ -70,7 +71,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     @Override
     public List<DeptTreeVO> listDeptTreeSelect() {
         LambdaQueryWrapper<Dept> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Dept::getStatus, "0")
+        wrapper.eq(Dept::getStatus, Constants.NORMAL)
                .orderByAsc(Dept::getSort);
         List<Dept> depts = list(wrapper);
         return buildTreeSelect(depts, 0L);

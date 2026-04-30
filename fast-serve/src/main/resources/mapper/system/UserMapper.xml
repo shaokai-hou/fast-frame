@@ -15,17 +15,7 @@
         <result property="deptId" column="dept_id"/>
         <result property="deptName" column="dept_name"/>
         <result property="createTime" column="create_time"/>
-        <collection property="roles" ofType="com.fast.modules.system.domain.dto.RoleVO"
-                    select="selectRolesByUserId" column="id"/>
     </resultMap>
-
-    <!-- 根据用户ID查询角色列表 -->
-    <select id="selectRolesByUserId" resultType="com.fast.modules.system.domain.dto.RoleVO">
-        SELECT r.id, r.role_name, r.role_key
-        FROM sys_role r
-        INNER JOIN sys_user_role ur ON r.id = ur.role_id
-        WHERE ur.user_id = #{userId} AND r.del_flag = '0'
-    </select>
 
     <!-- 分页查询用户列表 -->
     <select id="selectUserPage" resultMap="UserVOResultMap">
@@ -101,6 +91,18 @@
     <select id="selectUserIdsByDeptId" resultType="string">
         SELECT id FROM sys_user
         WHERE dept_id = #{deptId} AND del_flag = '0' AND status = '0'
+    </select>
+
+    <!-- 批量查询用户角色 -->
+    <select id="selectRolesByUserIds" resultType="com.fast.modules.system.domain.dto.RoleVO">
+        SELECT r.id, r.role_name, r.role_key, ur.user_id
+        FROM sys_role r
+        INNER JOIN sys_user_role ur ON r.id = ur.role_id
+        WHERE ur.user_id IN
+        <foreach collection="list" item="userId" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+        AND r.del_flag = '0'
     </select>
 
 </mapper>
