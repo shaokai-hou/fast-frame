@@ -700,10 +700,6 @@ VALUES (58, 34, '日志分页', 'B', 'log:operlog:page', 0, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
 VALUES (341, 8, '角色列表', 'B', 'system:role:list', 0, '0', '0', 1);
 
--- 字典列表权限
-INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
-VALUES (342, 18, '字典列表', 'B', 'system:dict:list', 0, '0', '0', 1);
-
 -- 缓存列表权限
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
 VALUES (343, 107, '缓存列表', 'B', 'monitor:cache:list', 0, '0', '0', 1);
