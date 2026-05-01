@@ -700,6 +700,10 @@ VALUES (58, 34, '日志分页', 'B', 'log:operlog:page', 0, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
 VALUES (341, 8, '角色列表', 'B', 'system:role:list', 0, '0', '0', 1);
 
+-- 字典列表权限
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (342, 18, '字典列表', 'B', 'system:dict:list', 0, '0', '0', 1);
+
 -- 缓存列表权限
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
 VALUES (343, 107, '缓存列表', 'B', 'monitor:cache:list', 0, '0', '0', 1);
@@ -948,24 +952,6 @@ VALUES (105, 'sys_job_misfire', '执行一次', '2', 2, '0', 1);
 INSERT INTO sys_dict_data (id, dict_type, dict_label, dict_value, dict_sort, status, create_by)
 VALUES (106, 'sys_job_misfire', '放弃执行', '3', 3, '0', 1);
 
--- =============================================
--- 定时任务示例数据（默认暂停，需手动开启）
--- =============================================
-INSERT INTO sys_job (id, job_name, job_group, invoke_target, cron_expression, misfire_policy, concurrent, status, remark, create_by, create_time, update_by, update_time, del_flag)
-VALUES (1, '操作日志清理', 'SYSTEM', 'logCleanupTask.cleanOperLogs(90)', '0 0 3 * * ?', '3', '1', '1', '每天凌晨3点清理90天前的操作日志', 1, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, '0');
-
-INSERT INTO sys_job (id, job_name, job_group, invoke_target, cron_expression, misfire_policy, concurrent, status, remark, create_by, create_time, update_by, update_time, del_flag)
-VALUES (2, '登录日志清理', 'SYSTEM', 'logCleanupTask.cleanLoginLogs(180)', '0 0 4 * * ?', '3', '1', '1', '每天凌晨4点清理180天前的登录日志', 1, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, '0');
-
-INSERT INTO sys_job (id, job_name, job_group, invoke_target, cron_expression, misfire_policy, concurrent, status, remark, create_by, create_time, update_by, update_time, del_flag)
-VALUES (3, '字典缓存刷新', 'SYSTEM', 'cacheRefreshTask.refreshDictCache', '0 0/30 * * * ?', '3', '1', '1', '每30分钟刷新字典缓存', 1, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, '0');
-
-INSERT INTO sys_job (id, job_name, job_group, invoke_target, cron_expression, misfire_policy, concurrent, status, remark, create_by, create_time, update_by, update_time, del_flag)
-VALUES (4, '临时文件清理', 'SYSTEM', 'fileCleanupTask.cleanTempFiles(7)', '0 0 5 * * ?', '3', '1', '1', '每天凌晨5点清理7天前的临时文件', 1, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, '0');
-
-INSERT INTO sys_job (id, job_name, job_group, invoke_target, cron_expression, misfire_policy, concurrent, status, remark, create_by, create_time, update_by, update_time, del_flag)
-VALUES (5, '系统健康检查', 'SYSTEM', 'systemHealthTask.checkSystemHealth', '0 0/10 * * * ?', '3', '1', '0', '每10分钟检查系统健康状态', 1, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP, '0');
-
 -- 管理员角色菜单权限（添加系统监控菜单）
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 100);
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES (1, 101);
@@ -1061,8 +1047,8 @@ VALUES (65, 60, '公告分页', 'B', 'system:notice:page', 0, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, icon, menu_sort, status, del_flag, create_by)
 VALUES (200, 0, '系统工具', 'D', '/tool', 'Tools', 5, '0', '0', 1);
 
-INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, icon, menu_sort, status, del_flag, create_by)
-VALUES (201, 200, '接口文档', 'M', 'http://localhost:8100/doc.html', 'Document', 1, '0', '0', 1);
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon, menu_sort, status, del_flag, create_by)
+VALUES (201, 200, '接口文档', 'M', '/tool/api', 'tool/api/index', 'Document', 1, '0', '0', 1);
 
 -- =============================================
 -- 流程管理目录

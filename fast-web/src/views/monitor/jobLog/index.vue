@@ -30,7 +30,8 @@
       <!-- 数据表格 -->
       <el-table v-loading="loading" :data="logList" row-key="id" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column type="index" label="序号" width="60" align="center" :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
+        <el-table-column type="index" label="序号" width="60" align="center"
+          :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
         <el-table-column label="任务名称" prop="jobName" />
         <el-table-column label="任务分组" prop="jobGroup" width="100">
           <template #default="scope">
@@ -52,7 +53,7 @@
           </template>
         </el-table-column>
         <el-table-column label="开始时间" prop="startTime" width="180" />
-        <el-table-column label="操作" align="center" width="100">
+        <el-table-column label="操作" align="center" width="140">
           <template #default="scope">
             <el-button link type="primary" @click="handleView(scope.row)">详情</el-button>
             <el-button link type="danger" @click="handleDelete(scope.row)">删除</el-button>
@@ -61,7 +62,8 @@
       </el-table>
 
       <!-- 分页 -->
-      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
+      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize" @pagination="getList" />
     </div>
 
     <!-- 详情对话框 -->
@@ -80,7 +82,8 @@
           <el-tag v-if="detailData.status === '0'" type="success">成功</el-tag>
           <el-tag v-else type="danger">失败</el-tag>
         </el-descriptions-item>
-        <el-descriptions-item label="执行耗时">{{ detailData.duration ? detailData.duration + 'ms' : '-' }}</el-descriptions-item>
+        <el-descriptions-item label="执行耗时">{{ detailData.duration ? detailData.duration + 'ms' : '-'
+          }}</el-descriptions-item>
         <el-descriptions-item label="开始时间">{{ detailData.startTime }}</el-descriptions-item>
         <el-descriptions-item label="结束时间">{{ detailData.endTime }}</el-descriptions-item>
         <el-descriptions-item label="异常信息" :span="2">

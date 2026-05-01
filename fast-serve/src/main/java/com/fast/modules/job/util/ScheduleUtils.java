@@ -44,6 +44,7 @@ public class ScheduleUtils {
         JobDetail jobDetail = JobBuilder.newJob(QuartzJobExecution.class)
                 .withIdentity(getJobKey(job.getId(), job.getJobGroup()))
                 .usingJobData("jobId", String.valueOf(job.getId()))
+                .usingJobData("jobName", job.getJobName())
                 .usingJobData("jobGroup", job.getJobGroup())
                 .usingJobData("invokeTarget", job.getInvokeTarget())
                 .build();

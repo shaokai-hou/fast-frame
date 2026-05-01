@@ -24,13 +24,15 @@
       <!-- 工具栏 -->
       <div class="tool-bar">
         <el-button type="primary" plain :icon="Plus" @click="handleAdd" v-hasPermi="['monitor:job:add']">新增</el-button>
-        <el-button type="danger" plain :icon="Delete" @click="handleDelete" :disabled="multiple" v-hasPermi="['monitor:job:delete']">删除</el-button>
+        <el-button type="danger" plain :icon="Delete" @click="handleDelete" :disabled="multiple"
+          v-hasPermi="['monitor:job:delete']">删除</el-button>
       </div>
 
       <!-- 数据表格 -->
       <el-table v-loading="loading" :data="jobList" row-key="id" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column type="index" label="序号" width="60" align="center" :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
+        <el-table-column type="index" label="序号" width="60" align="center"
+          :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
         <el-table-column label="任务名称" prop="jobName" />
         <el-table-column label="任务分组" prop="jobGroup" width="100">
           <template #default="scope">
@@ -40,27 +42,33 @@
         </el-table-column>
         <el-table-column label="调用目标" prop="invokeTarget" show-overflow-tooltip />
         <el-table-column label="Cron表达式" prop="cronExpression" width="150" />
-        <el-table-column label="状态" prop="status" width="80">
+        <el-table-column label="状态" align="center" width="80">
           <template #default="scope">
-            <el-tag v-if="scope.row.status === '0'" type="success">正常</el-tag>
-            <el-tag v-else type="warning">暂停</el-tag>
+            <el-switch
+              v-model="scope.row.status"
+              active-value="0"
+              inactive-value="1"
+              @change="handleStatusChange(scope.row)"
+              v-hasPermi="['monitor:job:edit']"
+            />
           </template>
         </el-table-column>
         <el-table-column label="创建时间" prop="createTime" width="180" />
         <el-table-column label="操作" align="center" width="200">
           <template #default="scope">
-            <el-button link type="primary" @click="handleUpdate(scope.row)" v-hasPermi="['monitor:job:edit']">修改</el-button>
-            <el-button link type="primary" @click="handleRun(scope.row)" v-hasPermi="['monitor:job:edit']">执行</el-button>
-            <el-button link :type="scope.row.status === '0' ? 'warning' : 'success'" @click="handleStatusChange(scope.row)" v-hasPermi="['monitor:job:edit']">
-              {{ scope.row.status === '0' ? '暂停' : '恢复' }}
-            </el-button>
-            <el-button link type="danger" @click="handleDelete(scope.row)" v-hasPermi="['monitor:job:delete']">删除</el-button>
+            <el-button link type="primary" @click="handleUpdate(scope.row)"
+              v-hasPermi="['monitor:job:edit']">修改</el-button>
+            <el-button link type="primary" @click="handleRun(scope.row)"
+              v-hasPermi="['monitor:job:edit']">执行</el-button>
+            <el-button link type="danger" @click="handleDelete(scope.row)"
+              v-hasPermi="['monitor:job:delete']">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
 
       <!-- 分页 -->
-      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
+      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize" @pagination="getList" />
     </div>
 
     <!-- 新增/修改对话框 -->
@@ -196,14 +204,17 @@ const handleUpdate = async (row) => {
   handleCronValidate()
 }
 
-// 状态切换
+// 状态切换（开关直接切换，无需确认）
 const handleStatusChange = async (row) => {
-  const status = row.status === '0' ? '1' : '0'
-  const text = row.status === '0' ? '暂停' : '恢复'
-  await ElMessageBox.confirm(`确认要${text}任务"${row.jobName}"吗?`, '警告', { type: 'warning' })
-  await changeJobStatus(row.id, status)
-  ElMessage.success(`${text}成功`)
-  getList()
+  const text = row.status === '0' ? '开启' : '暂停'
+  try {
+    await changeJobStatus(row.id, row.status)
+    ElMessage.success(`${text}成功`)
+  } catch {
+    // 切换失败，恢复原状态
+    row.status = row.status === '0' ? '1' : '0'
+    ElMessage.error(`${text}失败`)
+  }
 }
 
 // 立即执行

@@ -28,13 +28,14 @@ public class QuartzJobExecution extends QuartzJobBean {
 
         // 获取任务信息
         String jobIdStr = context.getJobDetail().getJobDataMap().getString("jobId");
+        String jobName = context.getJobDetail().getJobDataMap().getString("jobName");
         String jobGroup = context.getJobDetail().getJobDataMap().getString("jobGroup");
         String invokeTarget = context.getJobDetail().getJobDataMap().getString("invokeTarget");
 
         // 创建日志对象
         JobLog jobLog = new JobLog();
         jobLog.setJobId(Long.parseLong(jobIdStr));
-        jobLog.setJobName(context.getJobDetail().getKey().getName());
+        jobLog.setJobName(jobName);
         jobLog.setJobGroup(jobGroup);
         jobLog.setInvokeTarget(invokeTarget);
         jobLog.setStartTime(LocalDateTime.now());
@@ -63,19 +64,37 @@ public class QuartzJobExecution extends QuartzJobBean {
 
     /**
      * 执行调用方法
+     * 支持格式：beanName.methodName、beanName.methodName()、beanName.methodName(params)
      *
      * @param invokeTarget 调用目标字符串
      */
     private void invokeMethod(String invokeTarget) throws Exception {
-        // 解析调用目标：beanName.methodName 或 beanName.methodName(params)
-        String[] split = invokeTarget.split("\\.");
-        if (split.length < 2) {
+        // 解析调用目标
+        int dotIndex = invokeTarget.indexOf('.');
+        if (dotIndex < 0) {
             throw new BusinessException("调用目标格式错误，正确格式：beanName.methodName 或 beanName.methodName(params)");
         }
 
-        String beanName = split[0];
-        String methodName = split[1];
-        String params = split.length > 2 ? split[2] : null;
+        String beanName = invokeTarget.substring(0, dotIndex);
+        String methodPart = invokeTarget.substring(dotIndex + 1);
+
+        // 解析方法名和参数
+        String methodName;
+        String params = null;
+
+        int parenIndex = methodPart.indexOf('(');
+        if (parenIndex > 0) {
+            // 有括号：methodName(params) 或 methodName()
+            methodName = methodPart.substring(0, parenIndex);
+            int closeParenIndex = methodPart.indexOf(')');
+            if (closeParenIndex > parenIndex + 1) {
+                // 有参数
+                params = methodPart.substring(parenIndex + 1, closeParenIndex);
+            }
+        } else {
+            // 无括号：methodName
+            methodName = methodPart;
+        }
 
         // 获取Bean
         Object bean = SpringUtil.getBean(beanName);
