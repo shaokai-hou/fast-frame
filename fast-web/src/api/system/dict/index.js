@@ -42,3 +42,11 @@ export function deleteDictType(ids) {
     method: 'delete'
   })
 }
+
+// 刷新字典缓存
+export function refreshDictCache() {
+  return request({
+    url: '/system/dict/cache',
+    method: 'delete'
+  })
+}

@@ -22,6 +22,7 @@
       <div class="tool-bar">
         <el-button type="primary" plain :icon="Plus" @click="handleAdd" v-hasPermi="['system:dict:add']">新增</el-button>
         <el-button type="danger" plain :icon="Delete" @click="handleDelete" :disabled="multiple" v-hasPermi="['system:dict:delete']">删除</el-button>
+        <el-button type="warning" plain :icon="RefreshRight" @click="handleRefreshCache" v-hasPermi="['system:dict:edit']">刷新缓存</el-button>
       </div>
 
       <!-- 数据表格 -->
@@ -83,8 +84,8 @@
 import { ref, reactive, getCurrentInstance, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Search, Refresh, Plus, Delete } from '@element-plus/icons-vue'
-import { listDictType, addDictType, updateDictType, deleteDictType } from '@/api/system/dict'
+import { Search, Refresh, Plus, Delete, RefreshRight } from '@element-plus/icons-vue'
+import { listDictType, addDictType, updateDictType, deleteDictType, refreshDictCache } from '@/api/system/dict'
 
 const router = useRouter()
 const { proxy } = getCurrentInstance()
@@ -205,6 +206,13 @@ const reset = () => {
     status: '0',
     remark: undefined
   }
+}
+
+// 刷新缓存
+const handleRefreshCache = async () => {
+  await ElMessageBox.confirm('确认要刷新字典缓存吗？', '提示', { type: 'warning' })
+  await refreshDictCache()
+  ElMessage.success('刷新缓存成功')
 }
 
 // 使用 onMounted 确保只在组件挂载后调用一次

@@ -2,10 +2,10 @@ package com.fast.modules.monitor.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fast.common.result.PageRequest;
-import com.fast.modules.monitor.domain.dto.CacheQuery;
-import com.fast.modules.monitor.domain.dto.CacheInfoVO;
-import com.fast.modules.monitor.domain.dto.CacheKeyVO;
-import com.fast.modules.monitor.domain.dto.CachePrefixVO;
+import com.fast.modules.monitor.domain.query.CacheQuery;
+import com.fast.modules.monitor.domain.vo.CacheInfoVO;
+import com.fast.modules.monitor.domain.vo.CacheKeyVO;
+import com.fast.modules.monitor.domain.vo.CachePrefixVO;
 
 import java.util.List;
 

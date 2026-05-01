@@ -1,8 +1,8 @@
 package com.fast.modules.system.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.fast.modules.system.domain.dto.MenuTreeVO;
-import com.fast.modules.system.domain.dto.MenuVO;
+import com.fast.modules.system.domain.vo.MenuTreeVO;
+import com.fast.modules.system.domain.vo.MenuVO;
 import com.fast.modules.system.domain.entity.Menu;
 
 import java.util.List;

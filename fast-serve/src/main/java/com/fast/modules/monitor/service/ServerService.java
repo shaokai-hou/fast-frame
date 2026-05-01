@@ -1,6 +1,6 @@
 package com.fast.modules.monitor.service;
 
-import com.fast.modules.monitor.domain.dto.ServerVO;
+import com.fast.modules.monitor.domain.vo.ServerVO;
 
 /**
  * 服务监控Service

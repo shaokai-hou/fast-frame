@@ -1,9 +1,12 @@
 package com.fast.modules.auth.controller;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.fast.common.result.Result;
-import com.fast.common.util.IpUtils;
 import com.fast.framework.web.BaseController;
-import com.fast.modules.auth.domain.dto.*;
+import com.fast.modules.auth.domain.dto.LoginDTO;
+import com.fast.modules.auth.domain.vo.LoginVO;
+import com.fast.modules.auth.domain.vo.RoutesVO;
+import com.fast.modules.auth.domain.vo.UserInfoVO;
 import com.fast.modules.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -23,26 +26,15 @@ public class AuthController extends BaseController {
     private final AuthService authService;
 
     /**
-     * 生成验证码
-     *
-     * @return 验证码信息
-     */
-    @GetMapping("/captcha")
-    public Result<CaptchaVO> captcha() {
-        return success(authService.generateCaptcha());
-    }
-
-    /**
      * 登录
      *
-     * @param dto    登录参数
+     * @param dto     登录参数
      * @param request HTTP请求
      * @return 登录结果
      */
     @PostMapping("/login")
     public Result<LoginVO> login(@RequestBody LoginDTO dto, HttpServletRequest request) {
-        String ip = IpUtils.getClientIp(request);
-        return success(authService.login(dto, ip));
+        return success(authService.login(dto, request));
     }
 
     /**
@@ -72,7 +64,7 @@ public class AuthController extends BaseController {
      */
     @PostMapping("/logout")
     public Result<Void> logout() {
-        authService.logout();
+        StpUtil.logout();
         return success();
     }
 }

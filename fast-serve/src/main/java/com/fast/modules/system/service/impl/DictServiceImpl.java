@@ -9,10 +9,10 @@ import com.fast.common.constant.RedisConstants;
 import com.fast.common.exception.BusinessException;
 import com.fast.common.result.PageRequest;
 import com.fast.framework.helper.RedisHelper;
-import com.fast.modules.system.domain.dto.DictDataQuery;
-import com.fast.modules.system.domain.dto.DictDataVO;
-import com.fast.modules.system.domain.dto.DictTypeQuery;
-import com.fast.modules.system.domain.dto.DictVO;
+import com.fast.modules.system.domain.query.DictDataQuery;
+import com.fast.modules.system.domain.vo.DictDataVO;
+import com.fast.modules.system.domain.query.DictTypeQuery;
+import com.fast.modules.system.domain.vo.DictVO;
 import com.fast.modules.system.domain.entity.DictData;
 import com.fast.modules.system.domain.entity.DictType;
 import com.fast.modules.system.mapper.DictDataMapper;
@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 字典Service实现
@@ -181,6 +182,18 @@ public class DictServiceImpl extends ServiceImpl<DictTypeMapper, DictType> imple
             }
         }
         dictDataMapper.deleteBatchIds(ids);
+    }
+
+    /**
+     * 刷新字典缓存
+     */
+    @Override
+    public void refreshCache() {
+        Set<String> keys = RedisHelper.scan(RedisConstants.DICT_PREFIX + "*");
+        if (!keys.isEmpty()) {
+            long count = RedisHelper.delete(keys);
+            log.info("刷新字典缓存完成，删除 {} 个缓存Key", count);
+        }
     }
 
 }

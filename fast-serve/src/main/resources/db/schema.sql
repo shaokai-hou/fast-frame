@@ -804,14 +804,16 @@ VALUES (17, 'sys_data_scope', '仅本人数据', '5', 5, '0', 1);
 -- =============================================
 -- 系统参数
 -- =============================================
-INSERT INTO sys_config (id, config_name, config_key, config_value, config_type, create_by)
-VALUES (1, '系统名称', 'sys.system.name', 'Fast Frame', '0', 1);
-INSERT INTO sys_config (id, config_name, config_key, config_value, config_type, create_by)
-VALUES (2, '验证码开关', 'sys.captcha.enabled', 'true', '0', 1);
-INSERT INTO sys_config (id, config_name, config_key, config_value, config_type, create_by)
-VALUES (3, '账号初始密码', 'sys.user.initPassword', '123456', '0', 1);
-INSERT INTO sys_config (id, config_name, config_key, config_value, config_type, create_by)
-VALUES (4, '登录失败锁定阈值', 'sys.login.maxFailCount', '3', '0', 1);
+INSERT INTO sys_config (id, config_name, config_key, config_value, config_type, remark, create_by)
+VALUES (1, '系统名称', 'sys.system.name', 'Fast Frame', '0', '系统显示名称', 1);
+INSERT INTO sys_config (id, config_name, config_key, config_value, config_type, remark, create_by)
+VALUES (2, '账号初始密码', 'sys.user.initPassword', '123456', '0', '新建用户的默认密码', 1);
+INSERT INTO sys_config (id, config_name, config_key, config_value, config_type, remark, create_by)
+VALUES (3, '登录失败锁定阈值', 'sys.login.maxFailCount', '3', '0', '登录失败次数达到阈值后锁定账户', 1);
+INSERT INTO sys_config (id, config_name, config_key, config_value, config_type, remark, create_by)
+VALUES (4, '验证码启用', 'sys.captcha.enabled', 'true', '0', '是否启用登录验证码（true启用/false禁用）', 1);
+INSERT INTO sys_config (id, config_name, config_key, config_value, config_type, remark, create_by)
+VALUES (5, '验证码类型', 'sys.captcha.type', 'line', '0', '验证码类型：line=字符验证码，slider=滑块验证码', 1);
 
 -- =============================================
 -- 14. 定时任务配置表

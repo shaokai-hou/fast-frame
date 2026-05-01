@@ -1,8 +1,8 @@
 package com.fast.modules.flow.service;
 
 import com.fast.modules.flow.domain.dto.FlowDefJsonDTO;
-import com.fast.modules.flow.domain.dto.FlowDefQuery;
-import com.fast.modules.flow.domain.dto.FlowDefVO;
+import com.fast.modules.flow.domain.query.FlowDefQuery;
+import com.fast.modules.flow.domain.vo.FlowDefVO;
 
 import java.util.List;
 

@@ -22,6 +22,7 @@
       <div class="tool-bar">
         <el-button type="primary" plain :icon="Plus" @click="handleAdd" v-hasPermi="['system:config:add']">新增</el-button>
         <el-button type="danger" plain :icon="Delete" @click="handleDelete" :disabled="multiple" v-hasPermi="['system:config:delete']">删除</el-button>
+        <el-button type="warning" plain :icon="RefreshRight" @click="handleRefreshCache" v-hasPermi="['system:config:edit']">刷新缓存</el-button>
       </div>
 
       <!-- 数据表格 -->
@@ -78,8 +79,8 @@
 <script setup>
 import { ref, reactive, getCurrentInstance, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Search, Refresh, Plus, Delete } from '@element-plus/icons-vue'
-import { listConfig, addConfig, updateConfig, deleteConfig } from '@/api/system/config'
+import { Search, Refresh, Plus, Delete, RefreshRight } from '@element-plus/icons-vue'
+import { listConfig, addConfig, updateConfig, deleteConfig, refreshConfigCache } from '@/api/system/config'
 
 const { proxy } = getCurrentInstance()
 
@@ -204,6 +205,13 @@ const reset = () => {
     configType: '1',
     remark: undefined
   }
+}
+
+// 刷新缓存
+const handleRefreshCache = async () => {
+  await ElMessageBox.confirm('确认要刷新参数配置缓存吗？', '提示', { type: 'warning' })
+  await refreshConfigCache()
+  ElMessage.success('刷新缓存成功')
 }
 
 // 使用 onMounted 确保只在组件挂载后调用一次

@@ -9,14 +9,6 @@ export function login(data) {
   })
 }
 
-// 获取验证码
-export function getCaptcha() {
-  return request({
-    url: '/auth/captcha',
-    method: 'get'
-  })
-}
-
 // 获取用户信息
 export function getUserInfo() {
   return request({

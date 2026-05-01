@@ -5,8 +5,8 @@ import com.fast.common.enums.BusinessType;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
-import com.fast.modules.flow.domain.dto.FlowDefQuery;
-import com.fast.modules.flow.domain.dto.FlowDefVO;
+import com.fast.modules.flow.domain.query.FlowDefQuery;
+import com.fast.modules.flow.domain.vo.FlowDefVO;
 import com.fast.modules.flow.service.FlowDefService;
 import org.springframework.web.bind.annotation.*;
 

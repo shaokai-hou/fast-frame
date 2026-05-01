@@ -2,8 +2,8 @@ package com.fast.modules.system.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.fast.modules.system.domain.dto.NoticeQuery;
-import com.fast.modules.system.domain.dto.NoticeVO;
+import com.fast.modules.system.domain.query.NoticeQuery;
+import com.fast.modules.system.domain.vo.NoticeVO;
 import com.fast.modules.system.domain.entity.Notice;
 import org.apache.ibatis.annotations.Mapper;
 

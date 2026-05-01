@@ -1,10 +1,10 @@
 package com.fast.modules.home.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
-import com.fast.modules.home.domain.dto.HomeVO;
-import com.fast.modules.home.domain.dto.QuickLinkVO;
+import com.fast.modules.home.domain.vo.HomeVO;
+import com.fast.modules.home.domain.vo.QuickLinkVO;
 import com.fast.modules.home.service.HomeService;
-import com.fast.modules.system.domain.dto.MenuVO;
+import com.fast.modules.system.domain.vo.MenuVO;
 import com.fast.modules.system.service.MenuService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

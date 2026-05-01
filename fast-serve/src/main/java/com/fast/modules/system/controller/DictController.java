@@ -7,11 +7,11 @@ import com.fast.common.result.PageRequest;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
-import com.fast.modules.system.domain.dto.DictDataQuery;
-import com.fast.modules.system.domain.dto.DictDataVO;
-import com.fast.modules.system.domain.dto.DictVO;
+import com.fast.modules.system.domain.query.DictDataQuery;
+import com.fast.modules.system.domain.vo.DictDataVO;
+import com.fast.modules.system.domain.vo.DictVO;
 import com.fast.modules.system.domain.entity.DictData;
-import com.fast.modules.system.domain.dto.DictTypeQuery;
+import com.fast.modules.system.domain.query.DictTypeQuery;
 import com.fast.modules.system.domain.entity.DictType;
 import com.fast.modules.system.service.DictService;
 import lombok.RequiredArgsConstructor;
@@ -154,6 +154,19 @@ public class DictController extends BaseController {
     @DeleteMapping("/data/{ids}")
     public Result<Void> removeData(@PathVariable Long[] ids) {
         dictService.deleteDictData(Arrays.asList(ids));
+        return success();
+    }
+
+    /**
+     * 刷新字典缓存
+     *
+     * @return 成功结果
+     */
+    @SaCheckPermission("system:dict:edit")
+    @Log(title = "字典管理", businessType = BusinessType.CLEAN)
+    @DeleteMapping("/cache")
+    public Result<Void> refreshCache() {
+        dictService.refreshCache();
         return success();
     }
 }

@@ -50,3 +50,11 @@ export function deleteConfig(ids) {
     method: 'delete'
   })
 }
+
+// 刷新参数配置缓存
+export function refreshConfigCache() {
+  return request({
+    url: '/system/config/cache',
+    method: 'delete'
+  })
+}

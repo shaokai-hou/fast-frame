@@ -3,10 +3,10 @@ package com.fast.modules.system.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fast.common.result.PageRequest;
-import com.fast.modules.system.domain.dto.DictDataQuery;
-import com.fast.modules.system.domain.dto.DictDataVO;
-import com.fast.modules.system.domain.dto.DictTypeQuery;
-import com.fast.modules.system.domain.dto.DictVO;
+import com.fast.modules.system.domain.query.DictDataQuery;
+import com.fast.modules.system.domain.vo.DictDataVO;
+import com.fast.modules.system.domain.query.DictTypeQuery;
+import com.fast.modules.system.domain.vo.DictVO;
 import com.fast.modules.system.domain.entity.DictData;
 import com.fast.modules.system.domain.entity.DictType;
 
@@ -86,4 +86,9 @@ public interface DictService extends IService<DictType> {
      * @param ids 字典数据ID列表
      */
     void deleteDictData(List<Long> ids);
+
+    /**
+     * 刷新字典缓存
+     */
+    void refreshCache();
 }

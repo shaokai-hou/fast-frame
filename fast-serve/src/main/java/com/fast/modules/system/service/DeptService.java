@@ -2,9 +2,9 @@ package com.fast.modules.system.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fast.modules.system.domain.dto.DeptDTO;
-import com.fast.modules.system.domain.dto.DeptQuery;
-import com.fast.modules.system.domain.dto.DeptTreeVO;
-import com.fast.modules.system.domain.dto.DeptVO;
+import com.fast.modules.system.domain.query.DeptQuery;
+import com.fast.modules.system.domain.vo.DeptTreeVO;
+import com.fast.modules.system.domain.vo.DeptVO;
 import com.fast.modules.system.domain.entity.Dept;
 
 import java.util.List;

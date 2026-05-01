@@ -143,6 +143,13 @@
             <version>${warm-flow}</version>
         </dependency>
 
+        <!-- captcha-plus 滑块验证码 -->
+        <dependency>
+            <groupId>com.xingyuv</groupId>
+            <artifactId>spring-boot-starter-captcha-plus</artifactId>
+            <version>1.0.8</version>
+        </dependency>
+
         <!-- Quartz 定时任务 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -186,6 +193,17 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

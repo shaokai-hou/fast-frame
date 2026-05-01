@@ -2,7 +2,7 @@ package com.fast.modules.home.controller;
 
 import com.fast.common.result.Result;
 import com.fast.framework.web.BaseController;
-import com.fast.modules.home.domain.dto.HomeVO;
+import com.fast.modules.home.domain.vo.HomeVO;
 import com.fast.modules.home.service.HomeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

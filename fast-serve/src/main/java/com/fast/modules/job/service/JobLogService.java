@@ -3,8 +3,8 @@ package com.fast.modules.job.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fast.common.result.PageRequest;
-import com.fast.modules.job.domain.dto.JobLogQuery;
-import com.fast.modules.job.domain.dto.JobLogVO;
+import com.fast.modules.job.domain.query.JobLogQuery;
+import com.fast.modules.job.domain.vo.JobLogVO;
 import com.fast.modules.job.domain.entity.JobLog;
 
 /**

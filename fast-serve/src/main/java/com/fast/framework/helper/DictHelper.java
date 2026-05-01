@@ -1,7 +1,7 @@
 package com.fast.framework.helper;
 
 import cn.hutool.extra.spring.SpringUtil;
-import com.fast.modules.system.domain.dto.DictDataVO;
+import com.fast.modules.system.domain.vo.DictDataVO;
 import com.fast.modules.system.service.DictService;
 
 import java.util.List;

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fast.modules.system.mapper.NoticeMapper">
+
+    <!-- 分页查询通知公告列表 -->
+    <select id="selectNoticePage" resultType="com.fast.modules.system.domain.vo.NoticeVO">
+        SELECT id, notice_title, notice_type, notice_content, status, create_by, create_time, update_by, update_time
+        FROM sys_notice
+        WHERE del_flag = '0'
+        <if test="query.noticeTitle != null and query.noticeTitle != ''">
+            AND notice_title LIKE CONCAT('%', #{query.noticeTitle}, '%')
+        </if>
+        <if test="query.noticeType != null and query.noticeType != ''">
+            AND notice_type = #{query.noticeType}
+        </if>
+        <if test="query.status != null and query.status != ''">
+            AND status = #{query.status}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+
+</mapper>

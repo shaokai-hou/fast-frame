@@ -2,8 +2,8 @@ package com.fast.modules.system.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.fast.modules.system.domain.dto.DictTypeQuery;
-import com.fast.modules.system.domain.dto.DictVO;
+import com.fast.modules.system.domain.query.DictTypeQuery;
+import com.fast.modules.system.domain.vo.DictVO;
 import com.fast.modules.system.domain.entity.DictType;
 import org.apache.ibatis.annotations.Mapper;
 

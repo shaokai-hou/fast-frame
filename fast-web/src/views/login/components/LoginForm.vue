@@ -28,24 +28,6 @@
             @keyup.enter="handleLogin"
           />
         </el-form-item>
-        <el-form-item prop="captcha" v-if="captchaEnabled">
-          <div class="captcha-row">
-            <el-input
-              v-model="form.captcha"
-              placeholder="请输入验证码"
-              prefix-icon="Picture"
-              size="large"
-              @keyup.enter="handleLogin"
-            />
-            <img
-              :src="captchaImg"
-              class="captcha-img"
-              @click="refreshCaptcha"
-              alt="验证码"
-              title="点击刷新"
-            />
-          </div>
-        </el-form-item>
         <el-form-item>
           <el-button
             type="primary"
@@ -60,6 +42,15 @@
       </el-form>
     </div>
 
+    <!-- 滑块验证码弹窗 -->
+    <Verify
+      ref="verifyRef"
+      mode="pop"
+      captchaType="blockPuzzle"
+      @success="onVerifySuccess"
+      @error="onVerifyError"
+    />
+
     <!-- 底部版权 -->
     <div class="footer">
       <p>© 2024 Fast Frame. All rights reserved.</p>
@@ -68,64 +59,73 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { getCaptcha } from '@/api/auth'
 import { useUserStore } from '@/store/user'
+import Verify from './Verify.vue'
 
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
 
 const formRef = ref(null)
+const verifyRef = ref(null)
 const loading = ref(false)
-const captchaEnabled = ref(true)
-const captchaImg = ref('')
+const captchaVerification = ref('')
 const form = ref({
   username: '',
-  password: '',
-  captcha: '',
-  uuid: ''
+  password: ''
 })
 
 const rules = {
   username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
-  password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
-  captcha: [{ required: true, message: '请输入验证码', trigger: 'blur' }]
+  password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
 }
 
-async function refreshCaptcha() {
-  try {
-    const res = await getCaptcha()
-    captchaImg.value = res.data.img
-    form.value.uuid = res.data.uuid
-    form.value.captcha = ''
-  } catch {
-    // 获取验证码失败，静默处理
-  }
-}
-
+// 点击登录按钮
 async function handleLogin() {
   const valid = await formRef.value.validate().catch(() => false)
   if (!valid) return
 
+  // 显示滑块验证码弹窗
+  verifyRef.value.show()
+}
+
+// 滑块验证成功
+async function onVerifySuccess(params) {
+  captchaVerification.value = params.captchaVerification
+  // 验证成功后自动提交登录
+  await submitLogin()
+}
+
+// 滑块验证失败
+function onVerifyError() {
+  ElMessage.warning('验证失败，请重试')
+}
+
+// 提交登录请求
+async function submitLogin() {
   loading.value = true
   try {
-    await userStore.loginAction(form.value)
+    const loginParams = {
+      username: form.value.username,
+      password: form.value.password,
+      captchaVerification: captchaVerification.value
+    }
+
+    await userStore.loginAction(loginParams)
     ElMessage.success('登录成功')
     const redirect = route.query.redirect || '/home'
     router.push(redirect)
   } catch {
-    refreshCaptcha()
+    captchaVerification.value = ''
+    // 登录失败，刷新验证码让用户重新验证
+    verifyRef.value.instance?.refresh?.()
   } finally {
     loading.value = false
   }
 }
-
-onMounted(() => {
-  refreshCaptcha()
-})
 </script>
 
 <style scoped lang="scss">
@@ -171,29 +171,6 @@ onMounted(() => {
 }
 
 .login-form {
-  .captcha-row {
-    display: flex;
-    gap: 12px;
-
-    .el-input {
-      flex: 1;
-    }
-  }
-
-  .captcha-img {
-    width: 120px;
-    height: 40px;
-    cursor: pointer;
-    border-radius: 8px;
-    border: 1px solid var(--color-border-light);
-    transition: all 0.2s ease;
-
-    &:hover {
-      border-color: var(--color-primary);
-      transform: scale(1.02);
-    }
-  }
-
   .login-btn {
     width: 100%;
     height: 48px;

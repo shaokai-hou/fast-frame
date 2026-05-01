@@ -7,8 +7,8 @@ import com.fast.common.result.PageRequest;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
-import com.fast.modules.system.domain.dto.ConfigQuery;
-import com.fast.modules.system.domain.dto.ConfigVO;
+import com.fast.modules.system.domain.query.ConfigQuery;
+import com.fast.modules.system.domain.vo.ConfigVO;
 import com.fast.modules.system.domain.entity.Config;
 import com.fast.modules.system.service.ConfigService;
 import lombok.RequiredArgsConstructor;
@@ -105,6 +105,19 @@ public class ConfigController extends BaseController {
     @DeleteMapping("/{ids}")
     public Result<Void> remove(@PathVariable Long[] ids) {
         configService.deleteConfig(Arrays.asList(ids));
+        return success();
+    }
+
+    /**
+     * 刷新参数配置缓存
+     *
+     * @return 成功结果
+     */
+    @SaCheckPermission("system:config:edit")
+    @Log(title = "参数配置", businessType = BusinessType.CLEAN)
+    @DeleteMapping("/cache")
+    public Result<Void> refreshCache() {
+        configService.refreshCache();
         return success();
     }
 }

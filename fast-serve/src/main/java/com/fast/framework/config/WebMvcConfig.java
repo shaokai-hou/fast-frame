@@ -25,8 +25,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 .excludePathPatterns(
                         "/auth/login",
-                        "/auth/captcha",
                         "/auth/register",
+                        "/captcha/get",
+                        "/captcha/check",
                         "/error",
                         "/favicon.ico",
                         "/doc.html",

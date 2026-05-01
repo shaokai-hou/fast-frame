@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fast.modules.system.mapper.ConfigMapper">
+
+    <!-- 分页查询参数配置列表 -->
+    <select id="selectConfigPage" resultType="com.fast.modules.system.domain.vo.ConfigVO">
+        SELECT id, config_name, config_key, config_value, config_type, remark, create_time
+        FROM sys_config
+        WHERE del_flag = '0'
+        <if test="query.configName != null and query.configName != ''">
+            AND config_name LIKE CONCAT('%', #{query.configName}, '%')
+        </if>
+        <if test="query.configKey != null and query.configKey != ''">
+            AND config_key LIKE CONCAT('%', #{query.configKey}, '%')
+        </if>
+        <if test="query.configType != null and query.configType != ''">
+            AND config_type = #{query.configType}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+
+</mapper>

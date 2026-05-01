@@ -1,6 +1,11 @@
 package com.fast.modules.auth.service;
 
-import com.fast.modules.auth.domain.dto.*;
+import com.fast.modules.auth.domain.dto.LoginDTO;
+import com.fast.modules.auth.domain.vo.LoginVO;
+import com.fast.modules.auth.domain.vo.UserInfoVO;
+import com.fast.modules.auth.domain.vo.RoutesVO;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 认证Service
@@ -10,20 +15,13 @@ import com.fast.modules.auth.domain.dto.*;
 public interface AuthService {
 
     /**
-     * 生成验证码
-     *
-     * @return 验证码信息
-     */
-    CaptchaVO generateCaptcha();
-
-    /**
      * 登录
      *
-     * @param dto 登录参数
-     * @param ip  登录IP
+     * @param dto     登录参数
+     * @param request HTTP请求
      * @return 登录结果
      */
-    LoginVO login(LoginDTO dto, String ip);
+    LoginVO login(LoginDTO dto, HttpServletRequest request);
 
     /**
      * 获取用户信息
@@ -38,9 +36,4 @@ public interface AuthService {
      * @return 路由信息
      */
     RoutesVO getRoutes();
-
-    /**
-     * 退出登录
-     */
-    void logout();
 }

@@ -3,7 +3,7 @@ package com.fast.framework.aspect;
 import cn.dev33.satoken.stp.StpUtil;
 import com.fast.common.constant.Constants;
 import com.fast.framework.annotation.DataScope;
-import com.fast.modules.system.domain.dto.RoleVO;
+import com.fast.modules.system.domain.vo.RoleVO;
 import com.fast.modules.system.domain.entity.User;
 import com.fast.modules.system.service.DeptService;
 import com.fast.modules.system.service.RoleService;

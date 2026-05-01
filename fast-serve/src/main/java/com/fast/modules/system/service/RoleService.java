@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fast.common.result.PageRequest;
 import com.fast.modules.system.domain.dto.RoleDTO;
-import com.fast.modules.system.domain.dto.RoleQuery;
-import com.fast.modules.system.domain.dto.RoleVO;
+import com.fast.modules.system.domain.query.RoleQuery;
+import com.fast.modules.system.domain.vo.RoleVO;
 import com.fast.modules.system.domain.entity.Role;
 
 import java.util.List;

@@ -3,8 +3,8 @@ package com.fast.modules.system.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fast.common.result.PageRequest;
-import com.fast.modules.system.domain.dto.ConfigQuery;
-import com.fast.modules.system.domain.dto.ConfigVO;
+import com.fast.modules.system.domain.query.ConfigQuery;
+import com.fast.modules.system.domain.vo.ConfigVO;
 import com.fast.modules.system.domain.entity.Config;
 
 import java.util.List;
@@ -53,4 +53,9 @@ public interface ConfigService extends IService<Config> {
      * @param ids 配置ID列表
      */
     void deleteConfig(List<Long> ids);
+
+    /**
+     * 刷新参数配置缓存
+     */
+    void refreshCache();
 }

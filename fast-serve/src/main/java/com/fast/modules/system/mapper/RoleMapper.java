@@ -2,8 +2,8 @@ package com.fast.modules.system.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.fast.modules.system.domain.dto.RoleQuery;
-import com.fast.modules.system.domain.dto.RoleVO;
+import com.fast.modules.system.domain.query.RoleQuery;
+import com.fast.modules.system.domain.vo.RoleVO;
 import com.fast.modules.system.domain.entity.Role;
 import org.apache.ibatis.annotations.Mapper;
 

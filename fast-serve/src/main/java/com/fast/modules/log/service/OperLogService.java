@@ -3,8 +3,8 @@ package com.fast.modules.log.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fast.common.result.PageRequest;
-import com.fast.modules.log.domain.dto.OperLogQuery;
-import com.fast.modules.log.domain.dto.OperLogVO;
+import com.fast.modules.log.domain.query.OperLogQuery;
+import com.fast.modules.log.domain.vo.OperLogVO;
 import com.fast.modules.log.domain.entity.OperLog;
 
 /**

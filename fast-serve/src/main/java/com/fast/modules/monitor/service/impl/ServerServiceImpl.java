@@ -1,6 +1,11 @@
 package com.fast.modules.monitor.service.impl;
 
-import com.fast.modules.monitor.domain.dto.*;
+import com.fast.modules.monitor.domain.vo.CpuVO;
+import com.fast.modules.monitor.domain.vo.JvmVO;
+import com.fast.modules.monitor.domain.vo.MemVO;
+import com.fast.modules.monitor.domain.vo.ServerVO;
+import com.fast.modules.monitor.domain.vo.SysVO;
+import com.fast.modules.monitor.domain.vo.SysFileVO;
 import com.fast.modules.monitor.service.ServerService;
 import org.springframework.stereotype.Service;
 import oshi.SystemInfo;

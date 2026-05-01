@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fast.common.result.PageRequest;
 import com.fast.modules.system.domain.dto.NoticeDTO;
-import com.fast.modules.system.domain.dto.NoticeQuery;
-import com.fast.modules.system.domain.dto.NoticeVO;
+import com.fast.modules.system.domain.query.NoticeQuery;
+import com.fast.modules.system.domain.vo.NoticeVO;
 import com.fast.modules.system.domain.entity.Notice;
 
 /**

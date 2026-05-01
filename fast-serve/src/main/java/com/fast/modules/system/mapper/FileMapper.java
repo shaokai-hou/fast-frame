@@ -2,8 +2,8 @@ package com.fast.modules.system.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.fast.modules.system.domain.dto.FileQuery;
-import com.fast.modules.system.domain.dto.FileVO;
+import com.fast.modules.system.domain.query.FileQuery;
+import com.fast.modules.system.domain.vo.FileVO;
 import com.fast.modules.system.domain.entity.File;
 import org.apache.ibatis.annotations.Mapper;
 

@@ -2,32 +2,39 @@ package com.fast.modules.auth.service.impl;
 
 import cn.dev33.satoken.secure.BCrypt;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.hutool.captcha.CaptchaUtil;
-import cn.hutool.captcha.LineCaptcha;
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.fast.common.constant.ConfigConstants;
+import com.fast.common.constant.Constants;
 import com.fast.common.constant.RedisConstants;
 import com.fast.common.exception.BusinessException;
+import com.fast.common.util.IpUtils;
 import com.fast.framework.helper.ConfigHelper;
 import com.fast.framework.helper.RedisHelper;
-import com.fast.modules.auth.domain.dto.*;
+import com.fast.modules.auth.domain.dto.LoginDTO;
+import com.fast.modules.auth.domain.vo.LoginVO;
+import com.fast.modules.auth.domain.vo.RoutesVO;
+import com.fast.modules.auth.domain.vo.UserInfoVO;
 import com.fast.modules.auth.service.AuthService;
 import com.fast.modules.log.domain.entity.LoginLog;
 import com.fast.modules.log.service.LoginLogService;
-import com.fast.modules.system.domain.dto.MenuVO;
-import com.fast.modules.system.domain.dto.RoleVO;
 import com.fast.modules.system.domain.entity.Menu;
 import com.fast.modules.system.domain.entity.User;
+import com.fast.modules.system.domain.vo.MenuVO;
+import com.fast.modules.system.domain.vo.RoleVO;
 import com.fast.modules.system.mapper.MenuMapper;
 import com.fast.modules.system.service.MenuService;
 import com.fast.modules.system.service.UserService;
+import com.xingyuv.captcha.model.common.ResponseModel;
+import com.xingyuv.captcha.model.vo.CaptchaVO;
+import com.xingyuv.captcha.service.CaptchaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -43,76 +50,83 @@ public class AuthServiceImpl implements AuthService {
     private final MenuService menuService;
     private final MenuMapper menuMapper;
     private final LoginLogService loginLogService;
+    private final CaptchaService captchaService;
 
     /**
-     * 生成验证码
+     * 获取客户端浏览器信息
      *
-     * @return 验证码信息 VO
+     * @param request HTTP请求
+     * @return 浏览器信息(ip+ua)
      */
-    @Override
-    public CaptchaVO generateCaptcha() {
-        // 生成验证码
-        LineCaptcha captcha = CaptchaUtil.createLineCaptcha(120, 40, 4, 20);
-        String uuid = IdUtil.fastSimpleUUID();
-        String code = captcha.getCode();
-
-        // 存入Redis，5分钟过期
-        String key = RedisConstants.CAPTCHA_CODE_PREFIX + uuid;
-        RedisHelper.set(key, code, 5 * 60);
-
-        // 返回验证码信息
-        CaptchaVO vo = new CaptchaVO();
-        vo.setUuid(uuid);
-        vo.setImg(captcha.getImageBase64Data());
-        vo.setExpireTime(LocalDateTime.now().plusMinutes(5));
-        return vo;
+    private String getBrowserInfo(HttpServletRequest request) {
+        String xfwd = request.getHeader("X-Forwarded-For");
+        String ip = null;
+        if (StrUtil.isNotBlank(xfwd)) {
+            ip = xfwd.split(",")[0].trim();
+        }
+        if (ip == null) {
+            ip = request.getRemoteHost();
+        }
+        String ua = request.getHeader("user-agent");
+        return ip + ua;
     }
 
     /**
      * 用户登录
      *
      * @param dto 登录参数 DTO
-     * @param ip 用户 IP 地址
+     * @param request HTTP请求
      * @return 登录信息 VO
      */
     @Override
-    public LoginVO login(LoginDTO dto, String ip) {
+    public LoginVO login(LoginDTO dto, HttpServletRequest request) {
+
+        String ip = IpUtils.getClientIp(request);
+
         String lockKey = RedisConstants.LOGIN_LOCK_PREFIX + dto.getUsername();
         if (RedisHelper.hasKey(lockKey)) {
-            recordLoginLog(dto.getUsername(), ip, "1", "账户已锁定");
+            recordLoginLog(dto.getUsername(), ip, Constants.DISABLE, "账户已锁定");
             throw new BusinessException("账户已锁定，请联系管理员解锁");
         }
 
-        // 校验验证码
-        String captchaKey = RedisConstants.CAPTCHA_CODE_PREFIX + dto.getUuid();
-        String cacheCode = RedisHelper.get(captchaKey);
-        if (cacheCode == null) {
-            recordLoginLog(dto.getUsername(), ip, "1", "验证码已过期");
-            throw new BusinessException("验证码已过期");
+        // 校验滑块验证码
+        boolean captchaEnabled = ConfigHelper.getBooleanValue(ConfigConstants.CAPTCHA_ENABLED, true);
+        if (captchaEnabled) {
+            CaptchaVO captchaVo = new CaptchaVO();
+            captchaVo.setCaptchaVerification(dto.getCaptchaVerification());
+            captchaVo.setBrowserInfo(getBrowserInfo(request));
+            ResponseModel response = captchaService.verification(captchaVo);
+            if (!response.isSuccess()) {
+                recordLoginLog(dto.getUsername(), ip, Constants.DISABLE, "滑块验证码错误");
+                throw new BusinessException("滑块验证码验证失败");
+            }
         }
-        if (!cacheCode.equalsIgnoreCase(dto.getCaptcha())) {
-            recordLoginLog(dto.getUsername(), ip, "1", "验证码错误");
-            throw new BusinessException("验证码错误");
-        }
-        RedisHelper.delete(captchaKey);
 
         // 校验用户
         User user = userService.getByUsername(dto.getUsername());
 
-        if (user == null || !BCrypt.checkpw(dto.getPassword(), user.getPassword())) {
-            // 增加失败计数
+        // 用户不存在
+        if (Objects.isNull(user)) {
+            recordLoginLog(dto.getUsername(), ip, Constants.DISABLE, "用户不存在");
+            throw new BusinessException("用户名或密码错误");
+        }
+
+        // 检查账号禁用状态
+        if (Constants.DISABLE.equals(user.getStatus())) {
+            recordLoginLog(dto.getUsername(), ip, Constants.DISABLE, "账号已被禁用");
+            throw new BusinessException("账号已被禁用");
+        }
+
+        // 校验密码（密码错误才增加失败计数）
+        if (!BCrypt.checkpw(dto.getPassword(), user.getPassword())) {
             incrementLoginFailCount(dto.getUsername());
-            recordLoginLog(dto.getUsername(), ip, "1", "认证失败");
+            recordLoginLog(dto.getUsername(), ip, Constants.DISABLE, "密码错误");
             int remaining = getRemainingAttempts(dto.getUsername());
             if (remaining > 0) {
                 throw new BusinessException("用户名或密码错误，剩余" + remaining + "次机会");
             } else {
                 throw new BusinessException("账户已锁定，请联系管理员解锁");
             }
-        }
-        if ("1".equals(user.getStatus())) {
-            recordLoginLog(dto.getUsername(), ip, "1", "账号已被禁用");
-            throw new BusinessException("账号已被禁用");
         }
 
         // 登录成功，清除失败计数
@@ -121,59 +135,44 @@ public class AuthServiceImpl implements AuthService {
         // 登录
         StpUtil.login(user.getId());
 
-        // 将 IP 地址存入 token session,用于在线用户显示
+        // 将 IP 地址存入 token session
         StpUtil.getTokenSession()
                 .set("ip", ip)
                 .set("username", user.getUsername());
 
         // 记录登录日志
-        recordLoginLog(dto.getUsername(), ip, "0", "登录成功");
+        recordLoginLog(dto.getUsername(), ip, Constants.NORMAL, "登录成功");
 
         // 返回登录信息
         LoginVO vo = new LoginVO();
         vo.setAccessToken(StpUtil.getTokenValue());
         vo.setUsername(user.getUsername());
         vo.setNickname(user.getNickname());
-        // avatar 存储格式: 2026/04/11/abc.jpg（不带桶名前缀）
-        // 访问 URL: /api/file/avatar/2026/04/11/abc.jpg
         if (StrUtil.isNotBlank(user.getAvatar())) {
             vo.setAvatar("/api/file/avatar/" + user.getAvatar());
         }
         return vo;
     }
 
-    /**
-     * 增加登录失败计数
-     * 达到阈值后锁定账户
-     *
-     * @param username 用户名
-     */
     private void incrementLoginFailCount(String username) {
         String failKey = RedisConstants.LOGIN_FAIL_PREFIX + username;
         long failCount = RedisHelper.incr(failKey);
-
+        // 设置失败计数key过期时间（30分钟）
+        if (failCount == 1) {
+            RedisHelper.expire(failKey, 1800);
+        }
         if (failCount >= getMaxFailCount()) {
-            // 永久锁定账户（需管理员手动解锁）
-            RedisHelper.set(RedisConstants.LOGIN_LOCK_PREFIX + username, "1");
+            // 设置锁定key（30分钟自动解锁）
+            String lockKey = RedisConstants.LOGIN_LOCK_PREFIX + username;
+            RedisHelper.set(lockKey, "1", 1800);
             RedisHelper.delete(failKey);
         }
     }
 
-    /**
-     * 清除登录失败计数
-     *
-     * @param username 用户名
-     */
     private void clearLoginFailCount(String username) {
         RedisHelper.delete(RedisConstants.LOGIN_FAIL_PREFIX + username);
     }
 
-    /**
-     * 获取剩余尝试次数
-     *
-     * @param username 用户名
-     * @return 剩余次数，已锁定返回 0
-     */
     private int getRemainingAttempts(String username) {
         if (RedisHelper.hasKey(RedisConstants.LOGIN_LOCK_PREFIX + username)) {
             return 0;
@@ -184,79 +183,38 @@ public class AuthServiceImpl implements AuthService {
         return getMaxFailCount() - currentCount;
     }
 
-    /**
-     * 获取登录失败锁定阈值
-     *
-     * @return 最大失败次数
-     */
     private int getMaxFailCount() {
         return ConfigHelper.getIntValue(ConfigConstants.LOGIN_MAX_FAIL_COUNT, 5);
     }
 
-    /**
-     * 获取当前用户信息
-     *
-     * @return 用户信息 VO
-     */
     @Override
     public UserInfoVO getUserInfo() {
         Long userId = StpUtil.getLoginIdAsLong();
         User user = userService.getById(userId);
-
         UserInfoVO vo = BeanUtil.copyProperties(user, UserInfoVO.class);
-
-        // avatar 存储格式: 2026/04/11/abc.jpg
-        // 访问 URL: /api/system/file/avatar/2026/04/11/abc.jpg
         if (StrUtil.isNotBlank(user.getAvatar())) {
             vo.setAvatar("/api/system/file/avatar/" + user.getAvatar());
         }
-
-        // 获取角色列表
         List<RoleVO> roles = userService.listRolesByUserId(userId);
         vo.setRoles(roles);
-
-        // 获取权限列表
         List<Menu> menus = menuMapper.selectMenusByUserId(userId);
         List<String> permissions = menus.stream()
                 .map(Menu::getPerms)
                 .filter(StrUtil::isNotBlank)
                 .collect(Collectors.toList());
         vo.setPermissions(permissions);
-
         return vo;
     }
 
-    /**
-     * 获取当前用户路由菜单
-     *
-     * @return 路由信息 VO
-     */
     @Override
     public RoutesVO getRoutes() {
         Long userId = StpUtil.getLoginIdAsLong();
         List<MenuVO> menus = menuService.listMenusByUserId(userId);
-
         RoutesVO vo = new RoutesVO();
         vo.setRoutes(buildRoutes(menus));
         return vo;
     }
 
-    /**
-     * 用户登出
-     */
-    @Override
-    public void logout() {
-        StpUtil.logout();
-    }
-
-    /**
-     * 记录登录日志
-     *
-     * @param username 用户名
-     * @param ip IP 地址
-     * @param status 登录状态（0: 成功, 1: 失败）
-     * @param msg 登录消息
-     */
     private void recordLoginLog(String username, String ip, String status, String msg) {
         LoginLog log = new LoginLog();
         log.setUsername(username);
@@ -267,12 +225,6 @@ public class AuthServiceImpl implements AuthService {
         loginLogService.save(log);
     }
 
-    /**
-     * 构建路由
-     *
-     * @param menus 菜单列表
-     * @return 路由列表
-     */
     private List<RoutesVO.RouteItem> buildRoutes(List<MenuVO> menus) {
         return menus.stream()
                 .filter(menu -> !"B".equals(menu.getMenuType()))
@@ -281,14 +233,12 @@ public class AuthServiceImpl implements AuthService {
                     item.setPath(menu.getPath());
                     item.setName(menu.getMenuName());
                     item.setComponent(menu.getComponent());
-
                     RoutesVO.RouteMeta meta = new RoutesVO.RouteMeta();
                     meta.setTitle(menu.getMenuName());
                     meta.setIcon(menu.getIcon());
                     meta.setHidden("1".equals(menu.getVisible()));
                     meta.setLink(menu.getLink());
                     item.setMeta(meta);
-
                     if (menu.getChildren() != null && !menu.getChildren().isEmpty()) {
                         item.setChildren(buildRoutes(menu.getChildren()));
                     }

@@ -3,12 +3,12 @@ package com.fast.modules.system.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fast.common.result.PageRequest;
-import com.fast.modules.system.domain.dto.RoleVO;
+import com.fast.modules.system.domain.vo.RoleVO;
 import com.fast.modules.system.domain.dto.UserDTO;
-import com.fast.modules.system.domain.dto.UserExportVO;
+import com.fast.modules.system.domain.vo.UserExportVO;
 import com.fast.modules.system.domain.dto.UserImportDTO;
-import com.fast.modules.system.domain.dto.UserQuery;
-import com.fast.modules.system.domain.dto.UserVO;
+import com.fast.modules.system.domain.query.UserQuery;
+import com.fast.modules.system.domain.vo.UserVO;
 import com.fast.modules.system.domain.entity.User;
 import org.springframework.web.multipart.MultipartFile;
 

@@ -2,8 +2,8 @@ package com.fast.modules.log.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.fast.modules.log.domain.dto.LoginLogQuery;
-import com.fast.modules.log.domain.dto.LoginLogVO;
+import com.fast.modules.log.domain.query.LoginLogQuery;
+import com.fast.modules.log.domain.vo.LoginLogVO;
 import com.fast.modules.log.domain.entity.LoginLog;
 import org.apache.ibatis.annotations.Mapper;
 

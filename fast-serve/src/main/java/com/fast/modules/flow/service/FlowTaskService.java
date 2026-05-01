@@ -1,8 +1,8 @@
 package com.fast.modules.flow.service;
 
 import com.fast.modules.flow.domain.dto.FlowTaskApproveDTO;
-import com.fast.modules.flow.domain.dto.FlowTaskQuery;
-import com.fast.modules.flow.domain.dto.FlowTaskVO;
+import com.fast.modules.flow.domain.query.FlowTaskQuery;
+import com.fast.modules.flow.domain.vo.FlowTaskVO;
 
 import java.util.List;
 

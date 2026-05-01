@@ -2,9 +2,9 @@ package com.fast.modules.system.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.fast.modules.system.domain.dto.RoleVO;
-import com.fast.modules.system.domain.dto.UserQuery;
-import com.fast.modules.system.domain.dto.UserVO;
+import com.fast.modules.system.domain.vo.RoleVO;
+import com.fast.modules.system.domain.query.UserQuery;
+import com.fast.modules.system.domain.vo.UserVO;
 import com.fast.modules.system.domain.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 

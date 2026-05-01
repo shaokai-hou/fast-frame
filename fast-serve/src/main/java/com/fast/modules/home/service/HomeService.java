@@ -1,6 +1,6 @@
 package com.fast.modules.home.service;
 
-import com.fast.modules.home.domain.dto.HomeVO;
+import com.fast.modules.home.domain.vo.HomeVO;
 
 /**
  * 首页Service

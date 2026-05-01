@@ -2,8 +2,8 @@ package com.fast.modules.system.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fast.common.result.PageRequest;
-import com.fast.modules.system.domain.dto.FileQuery;
-import com.fast.modules.system.domain.dto.FileVO;
+import com.fast.modules.system.domain.query.FileQuery;
+import com.fast.modules.system.domain.vo.FileVO;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;

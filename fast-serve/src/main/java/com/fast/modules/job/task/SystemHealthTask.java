@@ -1,6 +1,6 @@
 package com.fast.modules.job.task;
 
-import com.fast.modules.monitor.domain.dto.ServerVO;
+import com.fast.modules.monitor.domain.vo.ServerVO;
 import com.fast.modules.monitor.service.ServerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

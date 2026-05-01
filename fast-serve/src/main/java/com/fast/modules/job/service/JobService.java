@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fast.common.result.PageRequest;
 import com.fast.modules.job.domain.dto.JobDTO;
-import com.fast.modules.job.domain.dto.JobQuery;
-import com.fast.modules.job.domain.dto.JobVO;
+import com.fast.modules.job.domain.query.JobQuery;
+import com.fast.modules.job.domain.vo.JobVO;
 import com.fast.modules.job.domain.entity.Job;
 
 import java.util.List;

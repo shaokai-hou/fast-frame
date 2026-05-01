@@ -1,6 +1,6 @@
 package com.fast.modules.system.service;
 
-import com.fast.modules.system.domain.dto.RoleVO;
+import com.fast.modules.system.domain.vo.RoleVO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

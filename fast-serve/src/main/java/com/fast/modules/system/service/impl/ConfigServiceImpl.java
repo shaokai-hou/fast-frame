@@ -8,8 +8,8 @@ import com.fast.common.constant.RedisConstants;
 import com.fast.common.exception.BusinessException;
 import com.fast.common.result.PageRequest;
 import com.fast.framework.helper.RedisHelper;
-import com.fast.modules.system.domain.dto.ConfigQuery;
-import com.fast.modules.system.domain.dto.ConfigVO;
+import com.fast.modules.system.domain.query.ConfigQuery;
+import com.fast.modules.system.domain.vo.ConfigVO;
 import com.fast.modules.system.domain.entity.Config;
 import com.fast.modules.system.mapper.ConfigMapper;
 import com.fast.modules.system.service.ConfigService;
@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * 参数配置Service实现
@@ -146,5 +147,17 @@ public class ConfigServiceImpl extends ServiceImpl<ConfigMapper, Config> impleme
             RedisHelper.delete(RedisConstants.CONFIG_PREFIX + config.getConfigKey());
         }
         removeByIds(ids);
+    }
+
+    /**
+     * 刷新参数配置缓存
+     */
+    @Override
+    public void refreshCache() {
+        Set<String> keys = RedisHelper.scan(RedisConstants.CONFIG_PREFIX + "*");
+        if (!keys.isEmpty()) {
+            long count = RedisHelper.delete(keys);
+            log.info("刷新参数配置缓存完成，删除 {} 个缓存Key", count);
+        }
     }
 }
