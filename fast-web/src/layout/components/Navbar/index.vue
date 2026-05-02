@@ -72,8 +72,7 @@ function openSettings() {
   justify-content: space-between;
   padding: 0 24px;
   background: var(--color-surface);
-  box-shadow: 0 1px 3px rgba(59, 130, 246, 0.04);
-  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 2px 8px rgba(0, 21, 41, 0.1);
 
   .action-btn {
     display: flex;

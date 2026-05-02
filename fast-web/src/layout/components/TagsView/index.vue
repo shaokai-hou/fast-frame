@@ -249,13 +249,14 @@ const closeAllTags = () => {
 <style scoped lang="scss">
 .tags-view-container {
   width: 100%;
-  height: 34px;
+  height: 40px;
   background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
+  border-top: 1px solid var(--gray-200);
+  border-bottom: 1px solid var(--gray-200);
   position: relative;
-  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
   display: flex;
   align-items: center;
+  padding: 4px 0;
 }
 
 .tags-scroll {
