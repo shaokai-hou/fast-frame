@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.fast.common.constant.Constants;
+import com.fast.common.enums.DataScope;
 import com.fast.common.exception.BusinessException;
 import com.fast.framework.helper.AdminHelper;
 import com.fast.common.result.PageRequest;
@@ -110,7 +110,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
             baseMapper.insertRoleMenu(role.getId(), Arrays.asList(dto.getMenuIds()));
         }
         // 保存角色部门关联（自定义数据权限时）
-        if (Constants.DATA_SCOPE_CUSTOM.equals(dto.getDataScope()) && ArrayUtil.isNotEmpty(dto.getDeptIds())) {
+        if (DataScope.CUSTOM.getCode().equals(dto.getDataScope()) && ArrayUtil.isNotEmpty(dto.getDeptIds())) {
             baseMapper.insertRoleDept(role.getId(), Arrays.asList(dto.getDeptIds()));
         }
     }
@@ -157,7 +157,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         }
         // 删除原有部门关联，保存新的
         baseMapper.deleteRoleDeptByRoleId(role.getId());
-        if ("2".equals(dto.getDataScope()) && ArrayUtil.isNotEmpty(dto.getDeptIds())) {
+        if (DataScope.CUSTOM.getCode().equals(dto.getDataScope()) && ArrayUtil.isNotEmpty(dto.getDeptIds())) {
             baseMapper.insertRoleDept(role.getId(), Arrays.asList(dto.getDeptIds()));
         }
     }

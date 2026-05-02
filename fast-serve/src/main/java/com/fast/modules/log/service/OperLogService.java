@@ -4,8 +4,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fast.common.result.PageRequest;
 import com.fast.modules.log.domain.query.OperLogQuery;
+import com.fast.modules.log.domain.vo.OperLogExportVO;
 import com.fast.modules.log.domain.vo.OperLogVO;
 import com.fast.modules.log.domain.entity.OperLog;
+
+import java.util.List;
 
 /**
  * 操作日志Service
@@ -22,6 +25,14 @@ public interface OperLogService extends IService<OperLog> {
      * @return 操作日志分页结果
      */
     IPage<OperLogVO> pageOperLogs(OperLogQuery query, PageRequest pageRequest);
+
+    /**
+     * 查询操作日志列表（用于导出）
+     *
+     * @param query 查询条件
+     * @return 操作日志导出数据列表
+     */
+    List<OperLogExportVO> listOperLogForExport(OperLogQuery query);
 
     /**
      * 异步保存操作日志

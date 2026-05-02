@@ -9,6 +9,24 @@ export function login(data) {
   })
 }
 
+// 手机号登录
+export function loginByPhone(data) {
+  return request({
+    url: '/auth/loginByPhone',
+    method: 'post',
+    data
+  })
+}
+
+// 发送登录短信验证码（需滑块验证）
+export function sendLoginSmsCode(data) {
+  return request({
+    url: '/sms/sendLoginCode',
+    method: 'post',
+    data
+  })
+}
+
 // 获取用户信息
 export function getUserInfo() {
   return request({

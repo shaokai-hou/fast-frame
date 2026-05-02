@@ -19,16 +19,16 @@
                                               'line-height':barSize.height}">
       <span class="verify-msg" v-text="text"></span>
       <div class="verify-left-bar"
-           :style="{width: (leftBarWidth!==undefined)?leftBarWidth: barSize.height, height: barSize.height, 'border-color': leftBarBorderColor, 'background-color': leftBarBackgroundColor, 'border-radius': leftBarBorderRadius, transaction: transitionWidth}">
+           :style="{width: (leftBarWidth!==undefined)?leftBarWidth: (subBlockWidth - 2) + 'px', height: barSize.height, 'border-color': leftBarBorderColor, 'background-color': leftBarBackgroundColor, 'border-radius': leftBarBorderRadius, transaction: transitionWidth}">
         <span class="verify-msg" v-text="finishText"></span>
         <div class="verify-move-block"
              @touchstart="start"
              @mousedown="start"
-             :style="{width: barSize.height, height: barSize.height, 'background-color': moveBlockBackgroundColor, 'border-color': moveBlockBorderColor, 'border-radius': moveBlockBorderRadius, left: moveBlockLeft, transition: transitionLeft}">
+             :style="{width: subBlockWidth + 'px', height: barSize.height, 'background-color': moveBlockBackgroundColor, 'border-color': moveBlockBorderColor, 'border-radius': moveBlockBorderRadius, left: moveBlockLeft, transition: transitionLeft}">
           <i :class="['verify-icon iconfont', iconClass]"
              :style="{color: iconColor}"></i>
           <div v-if="type === '2'" class="verify-sub-block"
-               :style="{'width':Math.floor(parseInt(setSize.imgWidth)*47/310)+ 'px',
+               :style="{'width': subBlockWidth + 'px',
                                 'height': setSize.imgHeight,
                                 'top':'-' + (parseInt(setSize.imgHeight) + vSpace) + 'px',
                                 'background-size': setSize.imgWidth + ' ' + setSize.imgHeight,
@@ -117,10 +117,10 @@ export default {
         text = ref(''),
         finishText = ref(''),
         setSize = reactive({
-          imgHeight: 0,
-          imgWidth: 0,
-          barHeight: 0,
-          barWidth: 0
+          imgHeight: '155px',
+          imgWidth: '310px',
+          barHeight: '40px',
+          barWidth: '310px'
         }),
         top = ref(0),
         left = ref(0),
@@ -132,7 +132,7 @@ export default {
         moveBlockBorderRadius = ref(undefined),
         leftBarBackgroundColor = ref('transparent'),
         leftBarBorderColor = ref('transparent'),
-        leftBarBorderRadius = ref('8px 0 0 8px'),
+        leftBarBorderRadius = ref('8px'),
         iconColor = ref(undefined),
         iconClass = ref('icon-right'),
         status = ref(false),	    //鼠标状态
@@ -143,7 +143,17 @@ export default {
         startLeft = ref(0)
 
     const barArea = computed(() => {
-      return proxy.$el.querySelector('.verify-bar-area')
+      return proxy.$el ? proxy.$el.querySelector('.verify-bar-area') : null
+    })
+
+    const moveBlock = computed(() => {
+      return proxy.$el ? proxy.$el.querySelector('.verify-move-block') : null
+    })
+
+    // 缺口宽度（310px 图片对应 47px）
+    const subBlockWidth = computed(() => {
+      const imgWidth = parseInt(setSize.imgWidth)
+      return Math.floor(imgWidth * 47 / 310)
     })
 
     function init() {
@@ -208,17 +218,24 @@ export default {
       } else {           //兼容移动端
         var x = e.touches[0].pageX;
       }
-      console.log(barArea);
+      // 点击时鼠标相对于 barArea border box 左边缘的位置
+      // 后续计算时会减去边框宽度得到相对于 content box 的位置
       startLeft.value = Math.floor(x - barArea.value.getBoundingClientRect().left);
       startMoveTime.value = +new Date();    //开始滑动的时间
       if (isEnd.value == false) {
         text.value = ''
+        // 设置滑块初始位置为 0（视觉位置）
+        moveBlockLeft.value = '0px'
+        // leftBarWidth CSS width = 滑块宽度 - 2px 边框
+        leftBarWidth.value = (subBlockWidth.value - 2) + 'px'
         moveBlockBackgroundColor.value = 'var(--color-primary)'
         moveBlockBorderColor.value = 'var(--color-primary)'
-        moveBlockBorderRadius.value = '0 8px 8px 0'
+        // 滑块在最左边时四角圆角
+        moveBlockBorderRadius.value = '8px'
         leftBarBackgroundColor.value = 'var(--color-primary-lighter)'
         leftBarBorderColor.value = 'var(--color-primary)'
-        leftBarBorderRadius.value = '8px 0 0 8px'
+        // 滑轨背景在最左边时四角圆角
+        leftBarBorderRadius.value = '8px'
         iconColor.value = '#fff'
         e.stopPropagation();
         status.value = true;
@@ -234,17 +251,43 @@ export default {
         } else {           //兼容移动端
           var x = e.touches[0].pageX;
         }
-        var bar_area_left = barArea.value.getBoundingClientRect().left;
-        var move_block_left = x - bar_area_left //小方块相对于父元素的left值
-        if (move_block_left >= barArea.value.offsetWidth - parseInt(parseInt(blockSize.value.width) / 2) - 2) {
-          move_block_left = barArea.value.offsetWidth - parseInt(parseInt(blockSize.value.width) / 2) - 2;
+        var barAreaLeft = barArea.value.getBoundingClientRect().left;
+        // 使用图片宽度（与 barArea CSS width 一致，不含 border）
+        var barWidth = parseInt(setSize.imgWidth);
+        var blockWidth = subBlockWidth.value;
+
+        // 鼠标相对于 barArea content box 左边缘的位置
+        // getBoundingClientRect 返回 border box，需要减去边框
+        var barAreaBorder = 1;
+        var mouseLeft = x - barAreaLeft - barAreaBorder
+
+        // 滑块视觉位置 = 鼠标移动距离
+        // 初始时鼠标位置 = startLeft - barAreaBorder（相对于 content box）
+        var visualLeft = mouseLeft - (startLeft.value - barAreaBorder)
+
+        // 左边界
+        if (visualLeft < 0) {
+          visualLeft = 0
         }
-        if (move_block_left <= 0) {
-          move_block_left = parseInt(parseInt(blockSize.value.width) / 2);
+        // 右边界：滑块右边 <= barWidth
+        if (visualLeft > barWidth - blockWidth) {
+          visualLeft = barWidth - blockWidth
         }
-        //拖动后小方块的left值
-        moveBlockLeft.value = (move_block_left - startLeft.value) + "px"
-        leftBarWidth.value = (move_block_left - startLeft.value) + "px"
+
+        // 设置滑块 CSS left（直接使用视觉位置）
+        moveBlockLeft.value = visualLeft + "px"
+        // leftBarWidth CSS width = 视觉宽度 - 2px 边框
+        leftBarWidth.value = (visualLeft + blockWidth - 2) + "px"
+        // 圆角动态切换
+        if (visualLeft < 1) {
+          // 最左边：两者四角圆角
+          moveBlockBorderRadius.value = '8px'
+          leftBarBorderRadius.value = '8px'
+        } else {
+          // 移动中：两者右上右下圆角
+          moveBlockBorderRadius.value = '0 8px 8px 0'
+          leftBarBorderRadius.value = '0 8px 8px 0'
+        }
       }
     }
 
@@ -253,8 +296,10 @@ export default {
       endMovetime.value = +new Date();
       //判断是否重合
       if (status.value && isEnd.value == false) {
-        var moveLeftDistance = parseInt((moveBlockLeft.value || '').replace('px', ''));
-        moveLeftDistance = moveLeftDistance * 310 / parseInt(setSize.imgWidth)
+        // 滑块视觉位置（直接从 CSS left 获取）
+        var visualLeft = parseInt((moveBlockLeft.value || '0px').replace('px', ''))
+        // 转换为标准 310px 图片的坐标
+        var moveLeftDistance = visualLeft * 310 / parseInt(setSize.imgWidth)
         let data = {
           captchaType: captchaType.value,
           "pointJson": secretKey.value ? aesEncrypt(JSON.stringify({
@@ -270,7 +315,7 @@ export default {
             moveBlockBorderRadius.value = '0 8px 8px 0'
             leftBarBackgroundColor.value = 'var(--color-success-lighter)'
             leftBarBorderColor.value = 'var(--color-success)'
-            leftBarBorderRadius.value = '8px 0 0 8px'
+            leftBarBorderRadius.value = '0 8px 8px 0'
             iconColor.value = '#fff'
             iconClass.value = 'icon-check'
             showRefresh.value = false
@@ -292,7 +337,7 @@ export default {
             moveBlockBorderRadius.value = '0 8px 8px 0'
             leftBarBackgroundColor.value = 'var(--color-danger-lighter)'
             leftBarBorderColor.value = 'var(--color-danger)'
-            leftBarBorderRadius.value = '8px 0 0 8px'
+            leftBarBorderRadius.value = '0 8px 8px 0'
             iconColor.value = '#fff'
             iconClass.value = 'icon-close'
             passFlag.value = false
@@ -322,10 +367,11 @@ export default {
 
       leftBarBackgroundColor.value = 'transparent'
       leftBarBorderColor.value = 'transparent'
-      leftBarBorderRadius.value = '8px 0 0 8px'
+      // 刷新后滑块在最左边，四角圆角
+      leftBarBorderRadius.value = '8px'
       moveBlockBackgroundColor.value = 'var(--color-primary-lighter)'
       moveBlockBorderColor.value = 'transparent'
-      moveBlockBorderRadius.value = undefined
+      moveBlockBorderRadius.value = '8px'
       iconColor.value = 'var(--color-foreground)'
       iconClass.value = 'icon-right'
       isEnd.value = false
@@ -368,6 +414,7 @@ export default {
       text,
       finishText,
       setSize,
+      subBlockWidth,    //缺口宽度（滑块宽度）
       top,
       left,
       moveBlockLeft,
@@ -387,6 +434,7 @@ export default {
       transitionLeft,
       transitionWidth,
       barArea,
+      moveBlock,
       refresh,
       start
     }

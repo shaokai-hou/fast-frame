@@ -18,7 +18,7 @@ public class Knife4jConfig {
      * 创建 OpenAPI 文档配置
      */
     @Bean
-    public OpenAPI openAPI() {
+    public OpenAPI openApi() {
         return new OpenAPI()
             .info(new Info()
                 .title("Fast Frame API 文档")

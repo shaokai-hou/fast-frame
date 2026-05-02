@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { login, logout, getUserInfo, getRoutes } from '@/api/auth'
+import { login, loginByPhone, logout, getUserInfo, getRoutes } from '@/api/auth'
 import { getProfile } from '@/api/profile'
 import { setToken, removeToken, getToken, setUserInfo } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
@@ -16,6 +16,14 @@ export const useUserStore = defineStore('user', () => {
   // 登录
   async function loginAction(loginForm) {
     const res = await login(loginForm)
+    token.value = res.data.accessToken
+    setToken(res.data.accessToken)
+    return res
+  }
+
+  // 手机号登录
+  async function loginByPhoneAction(loginForm) {
+    const res = await loginByPhone(loginForm)
     token.value = res.data.accessToken
     setToken(res.data.accessToken)
     return res
@@ -91,6 +99,7 @@ export const useUserStore = defineStore('user', () => {
     userInfo,
     token,
     loginAction,
+    loginByPhoneAction,
     getUserInfoAction,
     getRoutesAction,
     updateUserInfo,

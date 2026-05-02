@@ -47,4 +47,14 @@ public class RedisConstants {
      * 系统配置缓存Key前缀
      */
     public static final String CONFIG_PREFIX = "sys:config:";
+
+    /**
+     * 短信验证码缓存Key前缀
+     */
+    public static final String SMS_CODE_PREFIX = "sms:code:";
+
+    /**
+     * 短信验证码发送频率限制Key前缀
+     */
+    public static final String SMS_LIMIT_PREFIX = "sms:limit:";
 }

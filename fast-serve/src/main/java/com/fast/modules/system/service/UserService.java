@@ -41,6 +41,14 @@ public interface UserService extends IService<User> {
     User getByUsername(String username);
 
     /**
+     * 根据手机号查询用户
+     *
+     * @param phone 手机号
+     * @return 用户实体
+     */
+    User getByPhone(String phone);
+
+    /**
      * 根据用户ID查询角色列表
      *
      * @param userId 用户ID

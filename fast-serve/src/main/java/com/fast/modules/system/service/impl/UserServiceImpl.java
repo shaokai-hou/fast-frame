@@ -106,6 +106,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     /**
+     * 根据手机号查询用户
+     *
+     * @param phone 手机号
+     * @return 用户实体
+     */
+    @Override
+    public User getByPhone(String phone) {
+        return lambdaQuery()
+            .eq(User::getPhone, phone)
+            .eq(User::getDelFlag, Constants.NORMAL)
+            .one();
+    }
+
+    /**
      * 根据用户 ID 查询角色列表
      *
      * @param userId 用户 ID

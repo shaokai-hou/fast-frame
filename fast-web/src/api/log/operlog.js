@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import request, { download } from '@/utils/request'
 
 // 获取操作日志列表
 export function listOperLog(params) {
@@ -7,6 +7,11 @@ export function listOperLog(params) {
     method: 'get',
     params
   })
+}
+
+// 导出操作日志
+export function exportOperLog(params) {
+  return download('/system/operlog/export', '操作日志.xlsx')
 }
 
 // 获取操作日志详情

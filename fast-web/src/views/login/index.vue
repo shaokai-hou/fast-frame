@@ -31,14 +31,47 @@
       </div>
     </div>
 
-    <!-- 右侧登录表单 -->
-    <LoginForm />
+    <!-- 右侧登录表单区域 -->
+    <div class="login-section">
+      <div class="login-card">
+        <h2 class="login-title">欢迎登录</h2>
+        <!-- 登录方式切换 -->
+        <div class="login-tabs">
+          <span
+            :class="['tab-item', { active: loginType === 'username' }]"
+            @click="loginType = 'username'"
+          >
+            账号登录
+          </span>
+          <span class="tab-divider">|</span>
+          <span
+            :class="['tab-item', { active: loginType === 'phone' }]"
+            @click="loginType = 'phone'"
+          >
+            手机号登录
+          </span>
+        </div>
+        <!-- 表单内容 -->
+        <div class="login-content">
+          <LoginForm v-if="loginType === 'username'" />
+          <PhoneLoginForm v-else />
+        </div>
+      </div>
+      <!-- 底部版权 -->
+      <div class="footer">
+        <p>© 2024 Fast Frame. All rights reserved.</p>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { Check } from '@element-plus/icons-vue'
 import LoginForm from './components/LoginForm.vue'
+import PhoneLoginForm from './components/PhoneLoginForm.vue'
+
+const loginType = ref('username')
 </script>
 
 <style scoped lang="scss">
@@ -151,6 +184,75 @@ import LoginForm from './components/LoginForm.vue'
     top: 50%;
     left: 20%;
     opacity: 0.5;
+  }
+}
+
+.login-section {
+  width: 55%;
+  min-height: 100vh;
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 60px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 20px;
+  }
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-foreground);
+  margin: 0 0 24px 0;
+  text-align: center;
+  letter-spacing: -0.02em;
+}
+
+.login-tabs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 32px;
+
+  .tab-item {
+    font-size: 15px;
+    color: var(--color-foreground-muted);
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--color-primary);
+    }
+
+    &.active {
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+  }
+
+  .tab-divider {
+    margin: 0 16px;
+    color: var(--color-border);
+  }
+}
+
+.footer {
+  margin-top: 48px;
+  text-align: center;
+
+  p {
+    font-size: 13px;
+    color: var(--color-foreground-subtle);
+    margin: 0;
   }
 }
 </style>

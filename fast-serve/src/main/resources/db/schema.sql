@@ -445,6 +445,7 @@ CREATE INDEX idx_dept_ancestors ON sys_dept(ancestors);
 CREATE INDEX idx_user_username ON sys_user(username);
 CREATE INDEX idx_user_status ON sys_user(status);
 CREATE INDEX idx_user_dept ON sys_user(dept_id);
+CREATE UNIQUE INDEX idx_user_phone ON sys_user(phone) WHERE del_flag = '0';
 CREATE INDEX idx_role_key ON sys_role(role_key);
 CREATE INDEX idx_menu_parent ON sys_menu(parent_id);
 CREATE INDEX idx_dict_type ON sys_dict_data(dict_type);
@@ -485,7 +486,7 @@ VALUES (109, 102, '销售部', 'SL', '郑经理', '13800138009', 3, '0', '0', '0
 -- admin 密码: admin123 (BCrypt哈希)
 -- 其他用户密码: 123456 (BCrypt哈希)
 INSERT INTO sys_user (id, dept_id, username, password, nickname, email, phone, gender, avatar, status, del_flag, create_by)
-VALUES (1, 100, 'admin', '$2a$10$FBX4UiUUE0mRcJQ3yaAvDuBw1P6cTVBCubLyyq.NDXgSmLOtnhzRK', '管理员', 'admin@fast.com', '13800000000', '1', '2026/04/12/5a3b4d4913884d2e8c7efbd204eb75e8.gif', '0', '0', 1);
+VALUES (1, 100, 'admin', '$2a$10$FBX4UiUUE0mRcJQ3yaAvDuBw1P6cTVBCubLyyq.NDXgSmLOtnhzRK', '管理员', 'admin@fast.com', '15802970412', '1', '2026/04/12/5a3b4d4913884d2e8c7efbd204eb75e8.gif', '0', '0', 1);
 INSERT INTO sys_user (id, dept_id, username, password, nickname, email, phone, gender, status, del_flag, create_by)
 VALUES (2, 101, 'liling', '$2a$10$u0.MCRF1WfbRvQTgGr9sWOJ2jhryl2xNnTCos.mj.n6KY5qhmWQXG', '李玲', 'liling@fast.com', '13800000001', '2', '0', '0', 1);
 INSERT INTO sys_user (id, dept_id, username, password, nickname, email, phone, gender, status, del_flag, create_by)
@@ -706,6 +707,14 @@ VALUES (57, 31, '日志分页', 'B', 'log:loginlog:page', 0, '0', '0', 1);
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
 VALUES (58, 34, '日志分页', 'B', 'log:operlog:page', 0, '0', '0', 1);
 
+-- 登录日志导出权限
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (344, 31, '日志导出', 'B', 'log:loginlog:export', 3, '0', '0', 1);
+
+-- 操作日志导出权限
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
+VALUES (345, 34, '日志导出', 'B', 'log:operlog:export', 3, '0', '0', 1);
+
 -- 角色列表权限
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, status, del_flag, create_by)
 VALUES (341, 8, '角色列表', 'B', 'system:role:list', 0, '0', '0', 1);
@@ -723,14 +732,20 @@ INSERT INTO sys_role_menu (role_id, menu_id) VALUES
 -- 流程管理菜单
 (2, 300), (2, 310), (2, 311), (2, 314),
 (2, 320), (2, 321), (2, 322), (2, 323), (2, 324), (2, 325), (2, 326),
-(2, 330), (2, 331);
+(2, 330), (2, 331),
+-- 日志管理菜单
+(2, 30), (2, 31), (2, 32), (2, 33), (2, 57), (2, 344),
+(2, 34), (2, 35), (2, 36), (2, 58), (2, 345);
 
 -- 部门经理角色菜单权限(用户管理、部门管理)
 -- 新增 list 权限按钮: 48(用户), 342(用户列表), 341(角色列表), 51(部门)
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES
 (3, 1), (3, 2), (3, 48), (3, 342), (3, 3), (3, 4), (3, 5), (3, 6), (3, 7), (3, 46), (3, 47),
 (3, 341),
-(3, 41), (3, 51), (3, 42), (3, 43), (3, 44), (3, 45);
+(3, 41), (3, 51), (3, 42), (3, 43), (3, 44), (3, 45),
+-- 日志管理菜单(仅查看权限)
+(3, 30), (3, 31), (3, 32), (3, 57),
+(3, 34), (3, 35), (3, 58);
 
 -- 普通员工角色菜单权限(查看用户、查看部门)
 -- 新增 list 权限按钮: 48(用户), 342(用户列表), 51(部门)

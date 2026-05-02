@@ -14,10 +14,12 @@ import com.fast.framework.helper.AdminHelper;
 import com.fast.framework.helper.ConfigHelper;
 import com.fast.framework.helper.RedisHelper;
 import com.fast.modules.auth.domain.dto.LoginDTO;
+import com.fast.modules.auth.domain.dto.PhoneLoginDTO;
 import com.fast.modules.auth.domain.vo.LoginVO;
 import com.fast.modules.auth.domain.vo.RoutesVO;
 import com.fast.modules.auth.domain.vo.UserInfoVO;
 import com.fast.modules.auth.service.AuthService;
+import com.fast.modules.auth.service.SmsService;
 import com.fast.modules.log.domain.entity.LoginLog;
 import com.fast.modules.log.service.LoginLogService;
 import com.fast.modules.system.domain.entity.Menu;
@@ -54,6 +56,7 @@ public class AuthServiceImpl implements AuthService {
     private final MenuMapper menuMapper;
     private final LoginLogService loginLogService;
     private final CaptchaService captchaService;
+    private final SmsService smsService;
 
     /**
      * 用户登录
@@ -125,6 +128,50 @@ public class AuthServiceImpl implements AuthService {
         recordLoginLog(username, ip, Constants.NORMAL, "登录成功");
 
         // 返回登录信息
+        return buildLoginVO(user);
+    }
+
+    /**
+     * 手机号登录
+     *
+     * @param dto     手机号登录参数
+     * @param request HTTP请求
+     * @return 登录信息 VO
+     */
+    @Override
+    public LoginVO loginByPhone(PhoneLoginDTO dto, HttpServletRequest request) {
+        String ip = IpUtils.getClientIp(request);
+        String phone = dto.getPhone();
+
+        // 1. 校验短信验证码
+        if (!smsService.verifyCode(phone, dto.getSmsCode())) {
+            recordLoginLog(phone, ip, Constants.DISABLE, "短信验证码错误");
+            throw new BusinessException("验证码错误或已过期");
+        }
+
+        // 2. 查询用户
+        User user = userService.getByPhone(phone);
+        if (user == null) {
+            recordLoginLog(phone, ip, Constants.DISABLE, "手机号未注册");
+            throw new BusinessException("手机号未注册");
+        }
+
+        // 3. 检查账号状态
+        if (Constants.DISABLE.equals(user.getStatus())) {
+            recordLoginLog(phone, ip, Constants.DISABLE, "账号已被禁用");
+            throw new BusinessException("账号已被禁用");
+        }
+
+        // 4. 登录
+        StpUtil.login(user.getId());
+        StpUtil.getTokenSession()
+            .set("ip", ip)
+            .set("username", user.getUsername());
+
+        // 5. 记录登录日志
+        recordLoginLog(user.getUsername(), ip, Constants.NORMAL, "手机号登录成功");
+
+        // 6. 返回登录信息
         return buildLoginVO(user);
     }
 

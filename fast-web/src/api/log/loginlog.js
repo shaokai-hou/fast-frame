@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import request, { download } from '@/utils/request'
 
 // 获取登录日志列表
 export function listLoginLog(params) {
@@ -7,6 +7,11 @@ export function listLoginLog(params) {
     method: 'get',
     params
   })
+}
+
+// 导出登录日志
+export function exportLoginLog(params) {
+  return download('/system/loginlog/export', '登录日志.xlsx')
 }
 
 // 删除登录日志

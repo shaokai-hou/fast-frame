@@ -1,61 +1,47 @@
 <template>
-  <div class="login-section">
-    <div class="login-card">
-      <!-- 标题 -->
-      <div class="login-header">
-        <h2 class="login-title">欢迎登录</h2>
-        <p class="login-subtitle">请输入您的账号信息</p>
-      </div>
-
-      <!-- 表单 -->
-      <el-form ref="formRef" :model="form" :rules="rules" class="login-form">
-        <el-form-item prop="username">
-          <el-input
-            v-model="form.username"
-            placeholder="请输入用户名"
-            prefix-icon="User"
-            size="large"
-          />
-        </el-form-item>
-        <el-form-item prop="password">
-          <el-input
-            v-model="form.password"
-            type="password"
-            placeholder="请输入密码"
-            prefix-icon="Lock"
-            size="large"
-            show-password
-            @keyup.enter="handleLogin"
-          />
-        </el-form-item>
-        <el-form-item>
-          <el-button
-            type="primary"
-            size="large"
-            :loading="loading"
-            class="login-btn"
-            @click="handleLogin"
-          >
-            {{ loading ? '登录中...' : '登 录' }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </div>
-
-    <!-- 滑块验证码弹窗 -->
-    <Verify
-      ref="verifyRef"
-      mode="pop"
-      captchaType="blockPuzzle"
-      @success="onVerifySuccess"
-      @error="onVerifyError"
-    />
-
-    <!-- 底部版权 -->
-    <div class="footer">
-      <p>© 2024 Fast Frame. All rights reserved.</p>
-    </div>
+  <div class="login-form-wrapper">
+    <el-form ref="formRef" :model="form" :rules="rules" class="login-form">
+      <el-form-item prop="username">
+        <el-input
+          v-model="form.username"
+          placeholder="请输入用户名"
+          prefix-icon="User"
+          size="large"
+        />
+      </el-form-item>
+      <el-form-item prop="password">
+        <el-input
+          v-model="form.password"
+          type="password"
+          placeholder="请输入密码"
+          prefix-icon="Lock"
+          size="large"
+          show-password
+          @keyup.enter="handleLogin"
+        />
+      </el-form-item>
+      <el-form-item>
+        <el-button
+          type="primary"
+          size="large"
+          :loading="loading"
+          class="login-btn"
+          @click="handleLogin"
+        >
+          {{ loading ? '登录中...' : '登 录' }}
+        </el-button>
+      </el-form-item>
+    </el-form>
   </div>
+
+  <!-- 滑块验证码弹窗 -->
+  <Verify
+    ref="verifyRef"
+    mode="pop"
+    captchaType="blockPuzzle"
+    @success="onVerifySuccess"
+    @error="onVerifyError"
+  />
 </template>
 
 <script setup>
@@ -129,45 +115,8 @@ async function submitLogin() {
 </script>
 
 <style scoped lang="scss">
-.login-section {
-  width: 55%;
-  min-height: 100vh;
-  background: #FFFFFF;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 60px;
-
-  @media (max-width: 768px) {
-    width: 100%;
-    padding: 20px;
-  }
-}
-
-.login-card {
-  width: 100%;
-  max-width: 400px;
-  animation: slideUp 0.5s ease-out;
-}
-
-.login-header {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.login-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--color-foreground);
-  margin: 0 0 8px 0;
-  letter-spacing: -0.02em;
-}
-
-.login-subtitle {
-  font-size: 14px;
-  color: var(--color-foreground-muted);
-  margin: 0;
+.login-form-wrapper {
+  animation: fadeIn 0.3s ease;
 }
 
 .login-form {
@@ -198,7 +147,7 @@ async function submitLogin() {
     border-radius: 10px;
     padding: 4px 12px;
     transition: all 0.2s ease;
-    box-shadow: 0 0 0 1px var(--color-border-light) inset;
+    box-shadow: 0 0 0 1px var(--color-border) inset;
 
     &:hover {
       box-shadow: 0 0 0 1px var(--color-primary-light) inset;
@@ -214,21 +163,10 @@ async function submitLogin() {
   }
 }
 
-.footer {
-  margin-top: 48px;
-  text-align: center;
-
-  p {
-    font-size: 13px;
-    color: var(--color-foreground-subtle);
-    margin: 0;
-  }
-}
-
-@keyframes slideUp {
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;

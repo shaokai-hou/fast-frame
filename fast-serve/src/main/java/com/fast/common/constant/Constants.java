@@ -22,6 +22,15 @@ public class Constants {
     public static final String DEL = "1";
 
     /**
+     * 成功状态
+     */
+    public static final String SUCCESS = "0";
+    /**
+     * 失败状态
+     */
+    public static final String FAIL = "1";
+
+    /**
      * 数据权限 全部数据
      */
     public static final String DATA_SCOPE_ALL = "1";

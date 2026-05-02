@@ -98,7 +98,6 @@ export default {
      * @description 刷新
      * */
     const refresh = () => {
-      console.log(instance.value);
       if (instance.value.refresh) {
         instance.value.refresh()
       }
@@ -316,7 +315,7 @@ export default {
   -moz-box-sizing: content-box;
   box-sizing: content-box;
   border: 1px solid transparent;
-  border-radius: 8px 0 0 8px;
+  border-radius: 8px;
   z-index: 1;
 }
 

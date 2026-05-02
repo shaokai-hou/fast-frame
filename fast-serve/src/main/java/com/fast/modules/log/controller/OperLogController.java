@@ -6,16 +6,20 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fast.common.enums.BusinessType;
 import com.fast.common.result.PageRequest;
 import com.fast.common.result.Result;
+import com.fast.common.util.ExcelUtil;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
 import com.fast.modules.log.domain.query.OperLogQuery;
+import com.fast.modules.log.domain.vo.OperLogExportVO;
 import com.fast.modules.log.domain.vo.OperLogVO;
 import com.fast.modules.log.domain.entity.OperLog;
 import com.fast.modules.log.service.OperLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * 操作日志Controller
@@ -40,6 +44,20 @@ public class OperLogController extends BaseController {
     @GetMapping("/page")
     public Result<IPage<OperLogVO>> page(OperLogQuery query, PageRequest pageRequest) {
         return success(operLogService.pageOperLogs(query, pageRequest));
+    }
+
+    /**
+     * 导出操作日志列表
+     *
+     * @param query    查询条件
+     * @param response HTTP 响应
+     */
+    @SaCheckPermission("log:operlog:export")
+    @Log(title = "操作日志", businessType = BusinessType.EXPORT)
+    @GetMapping("/export")
+    public void export(OperLogQuery query, HttpServletResponse response) {
+        List<OperLogExportVO> data = operLogService.listOperLogForExport(query);
+        ExcelUtil.exportExcel(data, OperLogExportVO.class, "操作日志", response);
     }
 
     /**

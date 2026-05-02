@@ -6,15 +6,19 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fast.common.enums.BusinessType;
 import com.fast.common.result.PageRequest;
 import com.fast.common.result.Result;
+import com.fast.common.util.ExcelUtil;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
 import com.fast.modules.log.domain.query.LoginLogQuery;
+import com.fast.modules.log.domain.vo.LoginLogExportVO;
 import com.fast.modules.log.domain.vo.LoginLogVO;
 import com.fast.modules.log.service.LoginLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * 登录日志Controller
@@ -39,6 +43,20 @@ public class LoginLogController extends BaseController {
     @GetMapping("/page")
     public Result<IPage<LoginLogVO>> page(LoginLogQuery query, PageRequest pageRequest) {
         return success(loginLogService.pageLoginLogs(query, pageRequest));
+    }
+
+    /**
+     * 导出登录日志列表
+     *
+     * @param query    查询条件
+     * @param response HTTP 响应
+     */
+    @SaCheckPermission("log:loginlog:export")
+    @Log(title = "登录日志", businessType = BusinessType.EXPORT)
+    @GetMapping("/export")
+    public void export(LoginLogQuery query, HttpServletResponse response) {
+        List<LoginLogExportVO> data = loginLogService.listLoginLogForExport(query);
+        ExcelUtil.exportExcel(data, LoginLogExportVO.class, "登录日志", response);
     }
 
     /**

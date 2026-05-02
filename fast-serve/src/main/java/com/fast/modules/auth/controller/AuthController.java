@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.fast.common.result.Result;
 import com.fast.framework.web.BaseController;
 import com.fast.modules.auth.domain.dto.LoginDTO;
+import com.fast.modules.auth.domain.dto.PhoneLoginDTO;
 import com.fast.modules.auth.domain.vo.LoginVO;
 import com.fast.modules.auth.domain.vo.RoutesVO;
 import com.fast.modules.auth.domain.vo.UserInfoVO;
@@ -35,6 +36,18 @@ public class AuthController extends BaseController {
     @PostMapping("/login")
     public Result<LoginVO> login(@RequestBody LoginDTO dto, HttpServletRequest request) {
         return success(authService.login(dto, request));
+    }
+
+    /**
+     * 手机号登录
+     *
+     * @param dto     手机号登录参数
+     * @param request HTTP请求
+     * @return 登录结果
+     */
+    @PostMapping("/loginByPhone")
+    public Result<LoginVO> loginByPhone(@RequestBody PhoneLoginDTO dto, HttpServletRequest request) {
+        return success(authService.loginByPhone(dto, request));
     }
 
     /**

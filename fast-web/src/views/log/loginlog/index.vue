@@ -19,6 +19,7 @@
       <div class="tool-bar">
         <el-button type="danger" plain :icon="Delete" @click="handleDelete" :disabled="multiple" v-hasPermi="['log:loginlog:delete']">删除</el-button>
         <el-button type="danger" plain :icon="Delete" @click="handleClear" v-hasPermi="['log:loginlog:delete']">清空</el-button>
+        <el-button type="success" plain :icon="Download" @click="handleExport" v-hasPermi="['log:loginlog:export']">导出</el-button>
       </div>
 
       <!-- 数据表格 -->
@@ -48,8 +49,8 @@
 <script setup>
 import { ref, reactive, getCurrentInstance, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Search, Refresh, Delete } from '@element-plus/icons-vue'
-import { listLoginLog, deleteLoginLog, clearLoginLog } from '@/api/log'
+import { Search, Refresh, Delete, Download } from '@element-plus/icons-vue'
+import { listLoginLog, deleteLoginLog, clearLoginLog, exportLoginLog } from '@/api/log'
 
 const { proxy } = getCurrentInstance()
 
@@ -98,6 +99,13 @@ const resetQuery = () => {
 const handleSelectionChange = (selection) => {
   ids.value = selection.map((item) => item.id)
   multiple.value = !selection.length
+}
+
+// 导出
+const handleExport = async () => {
+  await ElMessageBox.confirm('是否确认导出登录日志数据?', '提示', { type: 'warning' })
+  await exportLoginLog(queryParams)
+  ElMessage.success('导出成功')
 }
 
 // 删除

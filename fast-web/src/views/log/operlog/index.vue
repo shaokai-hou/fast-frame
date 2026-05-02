@@ -27,6 +27,7 @@
           v-hasPermi="['log:operlog:delete']">删除</el-button>
         <el-button type="danger" plain :icon="Delete" @click="handleClear"
           v-hasPermi="['log:operlog:delete']">清空</el-button>
+        <el-button type="success" plain :icon="Download" @click="handleExport" v-hasPermi="['log:operlog:export']">导出</el-button>
       </div>
 
       <!-- 数据表格 -->
@@ -63,7 +64,7 @@
         <el-table-column label="操作" align="center" width="100" fixed="right">
           <template #default="scope">
             <el-button link type="primary" @click="handleView(scope.row)"
-              v-hasPermi="['log:operlog:query']">详情</el-button>
+              v-hasPermi="['log:operlog:detail']">详情</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -119,8 +120,8 @@
 <script setup>
 import { ref, reactive, getCurrentInstance, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Search, Refresh, Delete } from '@element-plus/icons-vue'
-import { listOperLog, getOperLog, deleteOperLog, clearOperLog } from '@/api/log'
+import { Search, Refresh, Delete, Download } from '@element-plus/icons-vue'
+import { listOperLog, getOperLog, deleteOperLog, clearOperLog, exportOperLog } from '@/api/log'
 import { getDictData } from '@/api/system/dict'
 
 const { proxy } = getCurrentInstance()
@@ -219,6 +220,13 @@ const resetQuery = () => {
 const handleSelectionChange = (selection) => {
   ids.value = selection.map((item) => item.id)
   multiple.value = !selection.length
+}
+
+// 导出
+const handleExport = async () => {
+  await ElMessageBox.confirm('是否确认导出操作日志数据?', '提示', { type: 'warning' })
+  await exportOperLog(queryParams)
+  ElMessage.success('导出成功')
 }
 
 // 查看详情

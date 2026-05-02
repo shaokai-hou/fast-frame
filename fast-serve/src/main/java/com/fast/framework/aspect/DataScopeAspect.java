@@ -1,8 +1,7 @@
 package com.fast.framework.aspect;
 
 import cn.dev33.satoken.stp.StpUtil;
-import com.fast.common.constant.Constants;
-import com.fast.framework.annotation.DataScope;
+import com.fast.common.enums.DataScope;
 import com.fast.modules.system.domain.vo.RoleVO;
 import com.fast.modules.system.domain.entity.User;
 import com.fast.modules.system.service.DeptService;
@@ -51,7 +50,7 @@ public class DataScopeAspect {
      * @param dataScope 数据权限注解
      */
     @Before("@annotation(dataScope)")
-    public void doBefore(JoinPoint point, DataScope dataScope) {
+    public void doBefore(JoinPoint point, com.fast.framework.annotation.DataScope dataScope) {
         // 获取当前用户
         Long userId = StpUtil.getLoginIdAsLong();
         User user = userService.getById(userId);
@@ -76,49 +75,39 @@ public class DataScopeAspect {
         StringBuilder sqlString = new StringBuilder();
         for (RoleVO role : roles) {
             String dataScopeValue = role.getDataScope();
-            if (dataScopeValue == null) {
-                dataScopeValue = Constants.DATA_SCOPE_ALL;
-            }
+            DataScope scope = DataScope.fromCode(dataScopeValue);
 
-            switch (dataScopeValue) {
-                // 全部数据权限
-                case Constants.DATA_SCOPE_ALL:
-                    // 无需过滤
-                    return;
+            if (scope == DataScope.ALL) {
+                // 全部数据权限，无需过滤
+                return;
+            } else if (scope == DataScope.CUSTOM) {
                 // 自定义数据权限
-                case Constants.DATA_SCOPE_CUSTOM:
-                    List<Long> deptIds = deptService.getDeptIdsByRoleId(role.getId());
-                    if (!deptIds.isEmpty()) {
-                        sqlString.append(String.format(
-                                " OR %s.dept_id IN ('%s') ",
-                                userAlias,
-                                deptIds.stream().map(String::valueOf).collect(Collectors.joining("','"))
-                        ));
-                    }
-                    break;
+                List<Long> deptIds = deptService.getDeptIdsByRoleId(role.getId());
+                if (!deptIds.isEmpty()) {
+                    sqlString.append(String.format(
+                            " OR %s.dept_id IN ('%s') ",
+                            userAlias,
+                            deptIds.stream().map(String::valueOf).collect(Collectors.joining("','"))
+                    ));
+                }
+            } else if (scope == DataScope.DEPT) {
                 // 本部门数据权限
-                case Constants.DATA_SCOPE_DEPT:
-                    if (user.getDeptId() != null) {
-                        sqlString.append(String.format(" OR %s.dept_id = '%s' ", userAlias, user.getDeptId()));
-                    }
-                    break;
+                if (user.getDeptId() != null) {
+                    sqlString.append(String.format(" OR %s.dept_id = '%s' ", userAlias, user.getDeptId()));
+                }
+            } else if (scope == DataScope.DEPT_AND_CHILD) {
                 // 本部门及以下数据权限
-                case Constants.DATA_SCOPE_DEPT_AND_CHILD:
-                    List<Long> deptAndChildrenIds = deptService.getDeptAndChildrenIds(user.getDeptId());
-                    if (!deptAndChildrenIds.isEmpty()) {
-                        sqlString.append(String.format(
-                                " OR %s.dept_id IN ('%s') ",
-                                userAlias,
-                                deptAndChildrenIds.stream().map(String::valueOf).collect(Collectors.joining("','"))
-                        ));
-                    }
-                    break;
+                List<Long> deptAndChildrenIds = deptService.getDeptAndChildrenIds(user.getDeptId());
+                if (!deptAndChildrenIds.isEmpty()) {
+                    sqlString.append(String.format(
+                            " OR %s.dept_id IN ('%s') ",
+                            userAlias,
+                            deptAndChildrenIds.stream().map(String::valueOf).collect(Collectors.joining("','"))
+                    ));
+                }
+            } else if (scope == DataScope.SELF) {
                 // 仅本人数据权限
-                case Constants.DATA_SCOPE_SELF:
-                    sqlString.append(String.format(" OR %s.id = '%s' ", userAlias, userId));
-                    break;
-                default:
-                    break;
+                sqlString.append(String.format(" OR %s.id = '%s' ", userAlias, userId));
             }
         }
 

@@ -25,7 +25,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 .excludePathPatterns(
                         "/auth/login",
+                        "/auth/loginByPhone",
                         "/auth/register",
+                        "/sms/sendLoginCode",
                         "/captcha/get",
                         "/captcha/check",
                         "/error",

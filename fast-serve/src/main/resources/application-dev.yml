@@ -65,3 +65,17 @@ minio:
   buckets:
     avatar: fast-frame-avatar
     file: fast-frame-file
+
+# 短信配置
+sms:
+  enabled: true
+  provider: mock
+  sign-name: FastFrame
+  template-code: SMS_123456
+  # 阿里云短信配置
+  access-key-id: ${ALIYUN_ACCESS_KEY_ID:}
+  access-key-secret: ${ALIYUN_ACCESS_KEY_SECRET:}
+  # 腾讯云短信配置
+  secret-id: ${TENCENT_SECRET_ID:}
+  secret-key: ${TENCENT_SECRET_KEY:}
+  app-id: ${TENCENT_SMS_APP_ID:}
