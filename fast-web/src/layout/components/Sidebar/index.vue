@@ -9,7 +9,10 @@
       active-text-color="var(--color-primary)"
     >
       <!-- 首页菜单（静态） -->
-      <el-menu-item index="/home" @click="handleMenuClick('/home')">
+      <el-menu-item
+        index="/home"
+        @click="handleMenuClick('/home')"
+      >
         <el-icon><HomeFilled /></el-icon>
         <span>首页</span>
       </el-menu-item>

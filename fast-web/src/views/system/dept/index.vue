@@ -1,14 +1,39 @@
 <template>
   <PageContainer>
     <!-- 搜索栏 -->
-    <SearchBar :model="queryParams" @search="handleQuery" @reset="resetQuery">
-      <el-form-item label="部门名称" prop="deptName">
-        <el-input v-model="queryParams.deptName" placeholder="请输入部门名称" clearable @keyup.enter="handleQuery" />
+    <SearchBar
+      :model="queryParams"
+      @search="handleQuery"
+      @reset="resetQuery"
+    >
+      <el-form-item
+        label="部门名称"
+        prop="deptName"
+      >
+        <el-input
+          v-model="queryParams.deptName"
+          placeholder="请输入部门名称"
+          clearable
+          @keyup.enter="handleQuery"
+        />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="部门状态" clearable>
-          <el-option label="正常" value="0" />
-          <el-option label="禁用" value="1" />
+      <el-form-item
+        label="状态"
+        prop="status"
+      >
+        <el-select
+          v-model="queryParams.status"
+          placeholder="部门状态"
+          clearable
+        >
+          <el-option
+            label="正常"
+            value="0"
+          />
+          <el-option
+            label="禁用"
+            value="1"
+          />
         </el-select>
       </el-form-item>
     </SearchBar>
@@ -17,100 +42,243 @@
     <div class="content-card">
       <!-- 工具栏 -->
       <div class="tool-bar">
-        <el-button type="primary" plain :icon="Plus" @click="handleAdd" v-hasPermi="['system:dept:add']">新增</el-button>
-        <el-button type="info" plain :icon="Sort" @click="toggleExpandAll">{{ isExpandAll ? '折叠' : '展开' }}</el-button>
+        <el-button
+          v-hasPermi="['system:dept:add']"
+          type="primary"
+          plain
+          :icon="Plus"
+          @click="handleAdd"
+        >
+          新增
+        </el-button>
+        <el-button
+          type="info"
+          plain
+          :icon="Sort"
+          @click="toggleExpandAll"
+        >
+          {{ isExpandAll ? '折叠' : '展开' }}
+        </el-button>
       </div>
 
       <!-- 数据表格 -->
-      <el-table v-if="refreshTable" v-loading="loading" :data="deptList" row-key="id" :default-expand-all="isExpandAll"
-        :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
-        <el-table-column type="index" label="序号" width="60" align="center" />
-        <el-table-column label="部门名称" prop="deptName" show-overflow-tooltip />
-        <el-table-column label="负责人" prop="leader" width="120" />
-        <el-table-column label="联系电话" prop="phone" width="140" />
-        <el-table-column label="排序" prop="sort" width="80" />
-        <el-table-column label="状态" align="center" width="80">
+      <el-table
+        v-if="refreshTable"
+        v-loading="loading"
+        :data="deptList"
+        row-key="id"
+        :default-expand-all="isExpandAll"
+        :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+      >
+        <el-table-column
+          type="index"
+          label="序号"
+          width="60"
+          align="center"
+        />
+        <el-table-column
+          label="部门名称"
+          prop="deptName"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          label="负责人"
+          prop="leader"
+          width="120"
+        />
+        <el-table-column
+          label="联系电话"
+          prop="phone"
+          width="140"
+        />
+        <el-table-column
+          label="排序"
+          prop="sort"
+          width="80"
+        />
+        <el-table-column
+          label="状态"
+          align="center"
+          width="80"
+        >
           <template #default="scope">
             <el-tag :type="scope.row.status === '0' ? 'success' : 'danger'">
               {{ scope.row.status === '0' ? '正常' : '禁用' }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="创建时间" prop="createTime" width="180" />
-        <el-table-column label="操作" align="center" width="200" fixed="right">
+        <el-table-column
+          label="创建时间"
+          prop="createTime"
+          width="180"
+        />
+        <el-table-column
+          label="操作"
+          align="center"
+          width="200"
+          fixed="right"
+        >
           <template #default="scope">
-            <el-button link type="primary" @click="handleUpdate(scope.row)"
-              v-hasPermi="['system:dept:edit']">修改</el-button>
-            <el-button link type="success" @click="handleAdd(scope.row)" v-hasPermi="['system:dept:add']">新增</el-button>
-            <el-button link type="danger" @click="handleDelete(scope.row)"
-              v-hasPermi="['system:dept:delete']">删除</el-button>
+            <el-button
+              v-hasPermi="['system:dept:edit']"
+              link
+              type="primary"
+              @click="handleUpdate(scope.row)"
+            >
+              修改
+            </el-button>
+            <el-button
+              v-hasPermi="['system:dept:add']"
+              link
+              type="success"
+              @click="handleAdd(scope.row)"
+            >
+              新增
+            </el-button>
+            <el-button
+              v-hasPermi="['system:dept:delete']"
+              link
+              type="danger"
+              @click="handleDelete(scope.row)"
+            >
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
 
     <!-- 新增/修改对话框 -->
-    <el-dialog :title="title" v-model="open" width="600px" append-to-body>
-      <el-form ref="deptFormRef" :model="form" :rules="rules" label-width="100px">
+    <el-dialog
+      v-model="open"
+      :title="title"
+      width="600px"
+      append-to-body
+    >
+      <el-form
+        ref="deptFormRef"
+        :model="form"
+        :rules="rules"
+        label-width="100px"
+      >
         <el-row>
           <el-col :span="24">
-            <el-form-item label="上级部门" prop="parentId">
-              <tree-select v-model="form.parentId" :data="deptOptions"
-                :field-props="{ value: 'id', label: 'label', children: 'children' }" value-key="id" placeholder="选择上级部门"
-                check-strictly />
+            <el-form-item
+              label="上级部门"
+              prop="parentId"
+            >
+              <tree-select
+                v-model="form.parentId"
+                :data="deptOptions"
+                :field-props="{ value: 'id', label: 'label', children: 'children' }"
+                value-key="id"
+                placeholder="选择上级部门"
+                check-strictly
+              />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="部门名称" prop="deptName">
-              <el-input v-model="form.deptName" placeholder="请输入部门名称" />
+            <el-form-item
+              label="部门名称"
+              prop="deptName"
+            >
+              <el-input
+                v-model="form.deptName"
+                placeholder="请输入部门名称"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="部门标识" prop="deptKey">
-              <el-input v-model="form.deptKey" placeholder="请输入部门标识" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="负责人" prop="leader">
-              <el-input v-model="form.leader" placeholder="请输入负责人" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="联系电话" prop="phone">
-              <el-input v-model="form.phone" placeholder="请输入联系电话" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="邮箱" prop="email">
-              <el-input v-model="form.email" placeholder="请输入邮箱" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="显示顺序" prop="sort">
-              <el-input-number v-model="form.sort" :min="0" controls-position="right" />
+            <el-form-item
+              label="部门标识"
+              prop="deptKey"
+            >
+              <el-input
+                v-model="form.deptKey"
+                placeholder="请输入部门标识"
+              />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="状态" prop="status">
+            <el-form-item
+              label="负责人"
+              prop="leader"
+            >
+              <el-input
+                v-model="form.leader"
+                placeholder="请输入负责人"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item
+              label="联系电话"
+              prop="phone"
+            >
+              <el-input
+                v-model="form.phone"
+                placeholder="请输入联系电话"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item
+              label="邮箱"
+              prop="email"
+            >
+              <el-input
+                v-model="form.email"
+                placeholder="请输入邮箱"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item
+              label="显示顺序"
+              prop="sort"
+            >
+              <el-input-number
+                v-model="form.sort"
+                :min="0"
+                controls-position="right"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item
+              label="状态"
+              prop="status"
+            >
               <el-radio-group v-model="form.status">
-                <el-radio label="0">正常</el-radio>
-                <el-radio label="1">禁用</el-radio>
+                <el-radio label="0">
+                  正常
+                </el-radio>
+                <el-radio label="1">
+                  禁用
+                </el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <template #footer>
-        <el-button @click="open = false">取消</el-button>
-        <el-button type="primary" @click="submitForm">确定</el-button>
+        <el-button @click="open = false">
+          取消
+        </el-button>
+        <el-button
+          type="primary"
+          @click="submitForm"
+        >
+          确定
+        </el-button>
       </template>
     </el-dialog>
   </PageContainer>

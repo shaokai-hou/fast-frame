@@ -1,19 +1,34 @@
 <template>
   <div class="scroll-pane-container">
     <!-- 左滚动按钮 -->
-    <div class="scroll-btn left" @click="scrollLeft" v-show="showLeftBtn">
+    <div
+      v-show="showLeftBtn"
+      class="scroll-btn left"
+      @click="scrollLeft"
+    >
       <el-icon><ArrowLeft /></el-icon>
     </div>
 
     <!-- 标签容器 -->
-    <div class="scroll-wrapper" ref="scrollWrapperRef">
-      <div class="scroll-content" ref="scrollContentRef" :style="{ transform: `translateX(${offset}px)` }">
+    <div
+      ref="scrollWrapperRef"
+      class="scroll-wrapper"
+    >
+      <div
+        ref="scrollContentRef"
+        class="scroll-content"
+        :style="{ transform: `translateX(${offset}px)` }"
+      >
         <slot />
       </div>
     </div>
 
     <!-- 右滚动按钮 -->
-    <div class="scroll-btn right" @click="scrollRight" v-show="showRightBtn">
+    <div
+      v-show="showRightBtn"
+      class="scroll-btn right"
+      @click="scrollRight"
+    >
       <el-icon><ArrowRight /></el-icon>
     </div>
   </div>

@@ -1,42 +1,97 @@
 <template>
   <!-- 导入对话框 -->
-  <el-dialog title="导入用户" v-model="visible" width="480px" append-to-body @closed="resetImport">
-    <el-upload ref="uploadRef" :http-request="customUpload" :before-upload="beforeUpload" :auto-upload="false"
-      accept=".xlsx" :limit="1" :file-list="fileList" :on-change="handleFileChange" :on-remove="handleFileRemove"
-      drag>
-      <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+  <el-dialog
+    v-model="visible"
+    title="导入用户"
+    width="480px"
+    append-to-body
+    @closed="resetImport"
+  >
+    <el-upload
+      ref="uploadRef"
+      :http-request="customUpload"
+      :before-upload="beforeUpload"
+      :auto-upload="false"
+      accept=".xlsx"
+      :limit="1"
+      :file-list="fileList"
+      :on-change="handleFileChange"
+      :on-remove="handleFileRemove"
+      drag
+    >
+      <el-icon class="el-icon--upload">
+        <upload-filled />
+      </el-icon>
       <div class="el-upload__text">
         将文件拖到此处，或 <em>点击上传</em>
       </div>
       <template #tip>
         <div class="upload-tip">
-          <span class="link" @click="handleDownloadTemplate">下载模板</span>
+          <span
+            class="link"
+            @click="handleDownloadTemplate"
+          >下载模板</span>
           <span>仅允许 .xlsx 文件</span>
         </div>
       </template>
     </el-upload>
     <template #footer>
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="submitUpload" :loading="importLoading"
-        :disabled="fileList.length === 0">开始导入</el-button>
+      <el-button @click="visible = false">
+        取消
+      </el-button>
+      <el-button
+        type="primary"
+        :loading="importLoading"
+        :disabled="fileList.length === 0"
+        @click="submitUpload"
+      >
+        开始导入
+      </el-button>
     </template>
   </el-dialog>
 
   <!-- 导入结果对话框 -->
-  <el-dialog title="导入结果" v-model="resultVisible" width="480px" append-to-body class="result-dialog">
+  <el-dialog
+    v-model="resultVisible"
+    title="导入结果"
+    width="480px"
+    append-to-body
+    class="result-dialog"
+  >
     <div class="result-content">
       <div class="result-stats">
         <span class="stat-item success">成功 <strong>{{ resultData.successCount }}</strong> 条</span>
         <span class="stat-item error">失败 <strong>{{ resultData.errorCount }}</strong> 条</span>
       </div>
-      <el-table v-if="resultData.errorCount > 0" :data="parsedErrors" row-key="row" max-height="260"
-        style="width: 100%; margin-top: 12px" border size="small">
-        <el-table-column prop="row" label="行号" width="70" align="center" />
-        <el-table-column prop="message" label="错误原因" show-overflow-tooltip />
+      <el-table
+        v-if="resultData.errorCount > 0"
+        :data="parsedErrors"
+        row-key="row"
+        max-height="260"
+        style="width: 100%; margin-top: 12px"
+        border
+        size="small"
+      >
+        <el-table-column
+          prop="row"
+          label="行号"
+          width="70"
+          align="center"
+        />
+        <el-table-column
+          prop="message"
+          label="错误原因"
+          show-overflow-tooltip
+        />
       </el-table>
     </div>
     <template #footer>
-      <el-button type="primary" @click="resultVisible = false">确定</el-button>
+      <el-button
+        type="primary"
+        @click="resultVisible = false"
+      >
+        确定
+      </el-button>
     </template>
   </el-dialog>
 </template>

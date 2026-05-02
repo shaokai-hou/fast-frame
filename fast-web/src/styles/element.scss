@@ -1,4 +1,4 @@
-// Element Plus 样式覆盖 - 专业简约配色
+// Element Plus 样式覆盖 - Logo Blue 配色
 
 // 表格样式
 .el-table {
@@ -27,7 +27,7 @@
   }
 
   tr:hover > td.el-table__cell {
-    background-color: var(--gray-100) !important;
+    background-color: var(--color-primary-lightest) !important;
   }
 
   // 操作列按钮间距
@@ -44,7 +44,7 @@
 // 对话框样式
 .el-dialog {
   border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.15);
+  box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15);
   overflow: hidden;
 
   .el-dialog__header {
@@ -94,7 +94,7 @@
 
   // 输入框禁用状态 - is-disabled 类在 el-input 上
   .el-input.is-disabled .el-input__wrapper {
-    box-shadow: 0 0 0 1px var(--gray-300) inset !important;
+    box-shadow: 0 0 0 1px var(--color-primary-light) inset !important;
     background: var(--gray-100);
     cursor: not-allowed;
   }
@@ -121,7 +121,7 @@
 
   // 选择器禁用状态 - is-disabled 类在 el-select 上
   .el-select.is-disabled .el-select__wrapper {
-    box-shadow: 0 0 0 1px var(--gray-300) inset !important;
+    box-shadow: 0 0 0 1px var(--color-primary-light) inset !important;
     background: var(--gray-100);
     cursor: not-allowed;
   }
@@ -149,7 +149,7 @@
 
   // 数字输入框禁用状态
   .el-input-number.is-disabled .el-input__wrapper {
-    box-shadow: 0 0 0 1px var(--gray-300) inset !important;
+    box-shadow: 0 0 0 1px var(--color-primary-light) inset !important;
     background: var(--gray-100);
     cursor: not-allowed;
   }
@@ -342,7 +342,7 @@
   border-radius: 6px !important;
   transition: all 0.2s ease;
   font-weight: 500;
-  border: 1px solid var(--gray-200) !important;
+  border: 1px solid rgba(59, 130, 246, 0.25) !important;
   box-shadow: none !important;
   background: transparent !important;
   color: var(--color-primary) !important;
@@ -350,7 +350,7 @@
   &:hover,
   &:focus {
     background: var(--color-primary-lighter) !important;
-    border-color: var(--color-primary-light) !important;
+    border-color: rgba(59, 130, 246, 0.5) !important;
     color: var(--color-primary) !important;
     box-shadow: none !important;
   }
@@ -364,10 +364,10 @@
     outline-offset: 1px;
   }
 
-  // link 按钮禁用状态 - 保持中性灰边框
+  // link 按钮禁用状态 - 保持蓝色边框
   &.is-disabled,
   &:disabled {
-    border: 1px solid var(--gray-200) !important;
+    border: 1px solid rgba(59, 130, 246, 0.25) !important;
     background: transparent !important;
     color: var(--color-primary) !important;
     opacity: 0.5;
@@ -376,7 +376,7 @@
 
     &:hover,
     &:focus {
-      border: 1px solid var(--gray-200) !important;
+      border: 1px solid rgba(59, 130, 246, 0.25) !important;
       background: transparent !important;
       color: var(--color-primary) !important;
     }
@@ -386,12 +386,12 @@
 // Danger 类型的 link 按钮 - 用于删除等危险操作
 .el-button.is-link.el-button--danger {
   color: var(--color-danger) !important;
-  border-color: var(--gray-200) !important;
+  border-color: rgba(220, 38, 38, 0.2) !important;
 
   &:hover,
   &:focus {
     background: var(--color-danger-lighter) !important;
-    border-color: var(--color-danger-light) !important;
+    border-color: rgba(220, 38, 38, 0.5) !important;
     color: var(--color-danger) !important;
   }
 
@@ -402,7 +402,7 @@
   // danger link 按钮禁用状态
   &.is-disabled,
   &:disabled {
-    border-color: var(--gray-200) !important;
+    border-color: rgba(220, 38, 38, 0.2) !important;
     background: transparent !important;
     color: var(--color-danger) !important;
     opacity: 0.5;
@@ -410,7 +410,7 @@
 
     &:hover,
     &:focus {
-      border-color: var(--gray-200) !important;
+      border-color: rgba(220, 38, 38, 0.2) !important;
       background: transparent !important;
       color: var(--color-danger) !important;
     }
@@ -420,12 +420,12 @@
 // Success 类型的 link 按钮
 .el-button.is-link.el-button--success {
   color: var(--color-success) !important;
-  border-color: var(--gray-200) !important;
+  border-color: rgba(5, 150, 105, 0.2) !important;
 
   &:hover,
   &:focus {
     background: var(--color-success-lighter) !important;
-    border-color: var(--color-success-light) !important;
+    border-color: rgba(5, 150, 105, 0.5) !important;
     color: var(--color-success) !important;
   }
 
@@ -436,7 +436,7 @@
   // success link 按钮禁用状态
   &.is-disabled,
   &:disabled {
-    border-color: var(--gray-200) !important;
+    border-color: rgba(5, 150, 105, 0.2) !important;
     background: transparent !important;
     color: var(--color-success) !important;
     opacity: 0.5;
@@ -444,7 +444,7 @@
 
     &:hover,
     &:focus {
-      border-color: var(--gray-200) !important;
+      border-color: rgba(5, 150, 105, 0.2) !important;
       background: transparent !important;
       color: var(--color-success) !important;
     }
@@ -454,12 +454,12 @@
 // Warning 类型的 link 按钮
 .el-button.is-link.el-button--warning {
   color: var(--color-warning) !important;
-  border-color: var(--gray-200) !important;
+  border-color: rgba(217, 119, 6, 0.2) !important;
 
   &:hover,
   &:focus {
     background: var(--color-warning-lighter) !important;
-    border-color: var(--color-warning-light) !important;
+    border-color: rgba(217, 119, 6, 0.5) !important;
     color: var(--color-warning) !important;
   }
 
@@ -470,7 +470,7 @@
   // warning link 按钮禁用状态
   &.is-disabled,
   &:disabled {
-    border-color: var(--gray-200) !important;
+    border-color: rgba(217, 119, 6, 0.2) !important;
     background: transparent !important;
     color: var(--color-warning) !important;
     opacity: 0.5;
@@ -478,7 +478,7 @@
 
     &:hover,
     &:focus {
-      border-color: var(--gray-200) !important;
+      border-color: rgba(217, 119, 6, 0.2) !important;
       background: transparent !important;
       color: var(--color-warning) !important;
     }
@@ -497,7 +497,7 @@
     font-weight: 500;
 
     &:hover {
-      background: var(--gray-100);
+      background: var(--color-primary-lightest);
       color: var(--color-primary);
     }
 
@@ -513,7 +513,7 @@
     transition: all 0.2s ease;
 
     &:hover {
-      background: var(--gray-100);
+      background: var(--color-primary-lightest);
       color: var(--color-primary);
     }
   }
@@ -523,12 +523,12 @@
 .el-card {
   border-radius: 12px;
   border: none;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.04);
   transition: box-shadow 0.3s ease;
   background: var(--color-surface);
 
   &:hover {
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.08);
   }
 
   .el-card__header {
@@ -578,7 +578,7 @@
 // 下拉菜单样式
 .el-dropdown-menu {
   border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.12);
   border: 1px solid var(--color-border-light);
   padding: 8px;
 
@@ -589,8 +589,8 @@
     color: var(--color-foreground);
 
     &:hover {
-      background: var(--gray-100);
-      color: var(--color-foreground);
+      background: var(--color-primary-lightest);
+      color: var(--color-primary);
     }
   }
 }
@@ -647,7 +647,7 @@
     }
 
     &:hover {
-      background: var(--gray-100);
+      background: var(--color-primary-lightest);
     }
   }
 
@@ -686,7 +686,7 @@
 
 .el-select-dropdown {
   border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.12);
   border: 1px solid var(--color-border-light);
   background: var(--color-surface);
   padding: 8px;
@@ -700,7 +700,7 @@
     border-radius: 8px;
 
     &:hover {
-      background: var(--gray-100);
+      background: var(--color-primary-lightest);
     }
 
     &.selected {
@@ -714,7 +714,7 @@
 // 消息提示样式
 .el-message {
   border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.12);
   border: none;
   padding: 16px 20px;
 }
@@ -765,7 +765,7 @@
     height: 36px;
 
     &:hover {
-      background: var(--gray-100);
+      background: var(--color-primary-lightest);
     }
   }
 
@@ -876,7 +876,7 @@
 // 弹出框样式
 .el-popover {
   border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.12);
   border: 1px solid var(--color-border-light);
 }
 
@@ -958,7 +958,7 @@
 .el-menu--popup-container {
   .el-menu--popup {
     border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.12);
     border: 1px solid var(--color-border-light);
     background: var(--color-surface);
     padding: 8px;
@@ -974,8 +974,8 @@
       position: relative;
 
       &:hover {
-        background-color: var(--gray-100) !important;
-        color: var(--color-foreground);
+        background-color: var(--color-primary-lightest) !important;
+        color: var(--color-primary);
       }
 
       // 选中项 - 渐变背景 + 左侧指示条

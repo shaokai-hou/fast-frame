@@ -1,10 +1,29 @@
 <template>
-  <div class="search-bar" v-show="visible">
-    <el-form :model="model" ref="formRef" :inline="true" class="search-form">
-      <slot></slot>
+  <div
+    v-show="visible"
+    class="search-bar"
+  >
+    <el-form
+      ref="formRef"
+      :model="model"
+      :inline="true"
+      class="search-form"
+    >
+      <slot />
       <el-form-item>
-        <el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
-        <el-button :icon="Refresh" @click="handleReset">重置</el-button>
+        <el-button
+          type="primary"
+          :icon="Search"
+          @click="handleSearch"
+        >
+          搜索
+        </el-button>
+        <el-button
+          :icon="Refresh"
+          @click="handleReset"
+        >
+          重置
+        </el-button>
       </el-form-item>
     </el-form>
   </div>

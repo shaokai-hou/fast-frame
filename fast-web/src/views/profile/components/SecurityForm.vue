@@ -1,6 +1,8 @@
 <template>
   <div class="security-section">
-    <h3 class="section-title">修改密码</h3>
+    <h3 class="section-title">
+      修改密码
+    </h3>
     <el-form
       ref="formRef"
       :model="form"
@@ -8,7 +10,10 @@
       label-width="100px"
       class="password-form"
     >
-      <el-form-item label="当前密码" prop="oldPassword">
+      <el-form-item
+        label="当前密码"
+        prop="oldPassword"
+      >
         <el-input
           v-model="form.oldPassword"
           type="password"
@@ -16,7 +21,10 @@
           show-password
         />
       </el-form-item>
-      <el-form-item label="新密码" prop="newPassword">
+      <el-form-item
+        label="新密码"
+        prop="newPassword"
+      >
         <el-input
           v-model="form.newPassword"
           type="password"
@@ -24,7 +32,10 @@
           show-password
         />
       </el-form-item>
-      <el-form-item label="确认新密码" prop="confirmPassword">
+      <el-form-item
+        label="确认新密码"
+        prop="confirmPassword"
+      >
         <el-input
           v-model="form.confirmPassword"
           type="password"
@@ -33,10 +44,16 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" :loading="loading" @click="handleSubmit">
+        <el-button
+          type="primary"
+          :loading="loading"
+          @click="handleSubmit"
+        >
           修改密码
         </el-button>
-        <el-button @click="resetForm">重置</el-button>
+        <el-button @click="resetForm">
+          重置
+        </el-button>
       </el-form-item>
     </el-form>
   </div>

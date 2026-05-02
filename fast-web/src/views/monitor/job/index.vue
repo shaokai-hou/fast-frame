@@ -1,20 +1,59 @@
 <template>
   <PageContainer>
     <!-- 搜索栏 -->
-    <SearchBar :model="queryParams" :visible="showSearch" @search="handleQuery" @reset="resetQuery">
-      <el-form-item label="任务名称" prop="jobName">
-        <el-input v-model="queryParams.jobName" placeholder="请输入任务名称" clearable @keyup.enter="handleQuery" />
+    <SearchBar
+      :model="queryParams"
+      :visible="showSearch"
+      @search="handleQuery"
+      @reset="resetQuery"
+    >
+      <el-form-item
+        label="任务名称"
+        prop="jobName"
+      >
+        <el-input
+          v-model="queryParams.jobName"
+          placeholder="请输入任务名称"
+          clearable
+          @keyup.enter="handleQuery"
+        />
       </el-form-item>
-      <el-form-item label="任务分组" prop="jobGroup">
-        <el-select v-model="queryParams.jobGroup" placeholder="全部" clearable>
-          <el-option label="系统" value="SYSTEM" />
-          <el-option label="业务" value="BUSINESS" />
+      <el-form-item
+        label="任务分组"
+        prop="jobGroup"
+      >
+        <el-select
+          v-model="queryParams.jobGroup"
+          placeholder="全部"
+          clearable
+        >
+          <el-option
+            label="系统"
+            value="SYSTEM"
+          />
+          <el-option
+            label="业务"
+            value="BUSINESS"
+          />
         </el-select>
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="全部" clearable>
-          <el-option label="正常" value="0" />
-          <el-option label="暂停" value="1" />
+      <el-form-item
+        label="状态"
+        prop="status"
+      >
+        <el-select
+          v-model="queryParams.status"
+          placeholder="全部"
+          clearable
+        >
+          <el-option
+            label="正常"
+            value="0"
+          />
+          <el-option
+            label="暂停"
+            value="1"
+          />
         </el-select>
       </el-form-item>
     </SearchBar>
@@ -23,91 +62,270 @@
     <div class="content-card">
       <!-- 工具栏 -->
       <div class="tool-bar">
-        <el-button type="primary" plain :icon="Plus" @click="handleAdd" v-hasPermi="['monitor:job:add']">新增</el-button>
-        <el-button type="danger" plain :icon="Delete" @click="handleDelete" :disabled="multiple"
-          v-hasPermi="['monitor:job:delete']">删除</el-button>
+        <el-button
+          v-hasPermi="['monitor:job:add']"
+          type="primary"
+          plain
+          :icon="Plus"
+          @click="handleAdd"
+        >
+          新增
+        </el-button>
+        <el-button
+          v-hasPermi="['monitor:job:delete']"
+          type="danger"
+          plain
+          :icon="Delete"
+          :disabled="multiple"
+          @click="handleDelete"
+        >
+          删除
+        </el-button>
       </div>
 
       <!-- 数据表格 -->
-      <el-table v-loading="loading" :data="jobList" row-key="id" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" align="center" />
-        <el-table-column type="index" label="序号" width="60" align="center"
-          :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
-        <el-table-column label="任务名称" prop="jobName" show-overflow-tooltip />
-        <el-table-column label="任务分组" prop="jobGroup" width="100">
+      <el-table
+        v-loading="loading"
+        :data="jobList"
+        row-key="id"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column
+          type="selection"
+          width="55"
+          align="center"
+        />
+        <el-table-column
+          type="index"
+          label="序号"
+          width="60"
+          align="center"
+          :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1"
+        />
+        <el-table-column
+          label="任务名称"
+          prop="jobName"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          label="任务分组"
+          prop="jobGroup"
+          width="100"
+        >
           <template #default="scope">
-            <el-tag v-if="scope.row.jobGroup === 'SYSTEM'" type="danger">系统</el-tag>
-            <el-tag v-else type="info">业务</el-tag>
+            <el-tag
+              v-if="scope.row.jobGroup === 'SYSTEM'"
+              type="danger"
+            >
+              系统
+            </el-tag>
+            <el-tag
+              v-else
+              type="info"
+            >
+              业务
+            </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="调用目标" prop="invokeTarget" show-overflow-tooltip />
-        <el-table-column label="Cron表达式" prop="cronExpression" width="150" />
-        <el-table-column label="状态" align="center" width="80">
+        <el-table-column
+          label="调用目标"
+          prop="invokeTarget"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          label="Cron表达式"
+          prop="cronExpression"
+          width="150"
+        />
+        <el-table-column
+          label="状态"
+          align="center"
+          width="80"
+        >
           <template #default="scope">
-            <el-switch v-model="scope.row.status" active-value="0" inactive-value="1"
-              @change="handleStatusChange(scope.row)" v-hasPermi="['monitor:job:edit']" />
+            <el-switch
+              v-model="scope.row.status"
+              v-hasPermi="['monitor:job:edit']"
+              active-value="0"
+              inactive-value="1"
+              @change="handleStatusChange(scope.row)"
+            />
           </template>
         </el-table-column>
-        <el-table-column label="创建时间" prop="createTime" width="180" />
-        <el-table-column label="操作" align="center" width="200" fixed="right">
+        <el-table-column
+          label="创建时间"
+          prop="createTime"
+          width="180"
+        />
+        <el-table-column
+          label="操作"
+          align="center"
+          width="200"
+          fixed="right"
+        >
           <template #default="scope">
-            <el-button link type="primary" @click="handleUpdate(scope.row)"
-              v-hasPermi="['monitor:job:edit']">修改</el-button>
-            <el-button link type="primary" @click="handleRun(scope.row)"
-              v-hasPermi="['monitor:job:edit']">执行</el-button>
-            <el-button link type="danger" @click="handleDelete(scope.row)"
-              v-hasPermi="['monitor:job:delete']">删除</el-button>
+            <el-button
+              v-hasPermi="['monitor:job:edit']"
+              link
+              type="primary"
+              @click="handleUpdate(scope.row)"
+            >
+              修改
+            </el-button>
+            <el-button
+              v-hasPermi="['monitor:job:edit']"
+              link
+              type="primary"
+              @click="handleRun(scope.row)"
+            >
+              执行
+            </el-button>
+            <el-button
+              v-hasPermi="['monitor:job:delete']"
+              link
+              type="danger"
+              @click="handleDelete(scope.row)"
+            >
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
 
       <!-- 分页 -->
-      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
-        v-model:limit="queryParams.pageSize" @pagination="getList" />
+      <pagination
+        v-show="total > 0"
+        v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize"
+        :total="total"
+        @pagination="getList"
+      />
     </div>
 
     <!-- 新增/修改对话框 -->
-    <el-dialog :title="title" v-model="open" width="600px" append-to-body>
-      <el-form ref="jobFormRef" :model="form" :rules="rules" label-width="100px">
-        <el-form-item label="任务名称" prop="jobName">
-          <el-input v-model="form.jobName" placeholder="请输入任务名称" />
+    <el-dialog
+      v-model="open"
+      :title="title"
+      width="600px"
+      append-to-body
+    >
+      <el-form
+        ref="jobFormRef"
+        :model="form"
+        :rules="rules"
+        label-width="100px"
+      >
+        <el-form-item
+          label="任务名称"
+          prop="jobName"
+        >
+          <el-input
+            v-model="form.jobName"
+            placeholder="请输入任务名称"
+          />
         </el-form-item>
-        <el-form-item label="任务分组" prop="jobGroup">
-          <el-select v-model="form.jobGroup" placeholder="请选择任务分组">
-            <el-option label="系统" value="SYSTEM" />
-            <el-option label="业务" value="BUSINESS" />
+        <el-form-item
+          label="任务分组"
+          prop="jobGroup"
+        >
+          <el-select
+            v-model="form.jobGroup"
+            placeholder="请选择任务分组"
+          >
+            <el-option
+              label="系统"
+              value="SYSTEM"
+            />
+            <el-option
+              label="业务"
+              value="BUSINESS"
+            />
           </el-select>
         </el-form-item>
-        <el-form-item label="调用目标" prop="invokeTarget">
-          <el-input v-model="form.invokeTarget" placeholder="请输入调用目标字符串" />
-          <div class="form-tip">格式：beanName.methodName 或 beanName.methodName(params)</div>
+        <el-form-item
+          label="调用目标"
+          prop="invokeTarget"
+        >
+          <el-input
+            v-model="form.invokeTarget"
+            placeholder="请输入调用目标字符串"
+          />
+          <div class="form-tip">
+            格式：beanName.methodName 或 beanName.methodName(params)
+          </div>
         </el-form-item>
-        <el-form-item label="Cron表达式" prop="cronExpression">
-          <el-input v-model="form.cronExpression" placeholder="请输入Cron表达式" @blur="handleCronValidate" />
-          <div class="form-tip" :class="{ 'is-valid': cronValid }">
+        <el-form-item
+          label="Cron表达式"
+          prop="cronExpression"
+        >
+          <el-input
+            v-model="form.cronExpression"
+            placeholder="请输入Cron表达式"
+            @blur="handleCronValidate"
+          />
+          <div
+            class="form-tip"
+            :class="{ 'is-valid': cronValid }"
+          >
             {{ cronTip }}
           </div>
         </el-form-item>
-        <el-form-item label="错过策略" prop="misfirePolicy">
-          <el-select v-model="form.misfirePolicy" placeholder="请选择错过执行策略">
-            <el-option label="立即执行" value="1" />
-            <el-option label="执行一次" value="2" />
-            <el-option label="放弃执行" value="3" />
+        <el-form-item
+          label="错过策略"
+          prop="misfirePolicy"
+        >
+          <el-select
+            v-model="form.misfirePolicy"
+            placeholder="请选择错过执行策略"
+          >
+            <el-option
+              label="立即执行"
+              value="1"
+            />
+            <el-option
+              label="执行一次"
+              value="2"
+            />
+            <el-option
+              label="放弃执行"
+              value="3"
+            />
           </el-select>
         </el-form-item>
-        <el-form-item label="并发执行" prop="concurrent">
+        <el-form-item
+          label="并发执行"
+          prop="concurrent"
+        >
           <el-radio-group v-model="form.concurrent">
-            <el-radio value="0">允许</el-radio>
-            <el-radio value="1">禁止</el-radio>
+            <el-radio value="0">
+              允许
+            </el-radio>
+            <el-radio value="1">
+              禁止
+            </el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入备注" />
+        <el-form-item
+          label="备注"
+          prop="remark"
+        >
+          <el-input
+            v-model="form.remark"
+            type="textarea"
+            placeholder="请输入备注"
+          />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="open = false">取消</el-button>
-        <el-button type="primary" @click="submitForm">确定</el-button>
+        <el-button @click="open = false">
+          取消
+        </el-button>
+        <el-button
+          type="primary"
+          @click="submitForm"
+        >
+          确定
+        </el-button>
       </template>
     </el-dialog>
   </PageContainer>

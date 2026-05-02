@@ -1,26 +1,45 @@
 <template>
-  <el-dropdown class="user-dropdown" trigger="click" popper-class="user-dropdown-popper">
+  <el-dropdown
+    class="user-dropdown"
+    trigger="click"
+    popper-class="user-dropdown-popper"
+  >
     <div class="user-info">
-      <el-avatar :size="32" :src="userStore.userInfo.avatar">
+      <el-avatar
+        :size="32"
+        :src="userStore.userInfo.avatar"
+      >
         <el-icon><UserFilled /></el-icon>
       </el-avatar>
       <span class="username">{{ userStore.userInfo.nickname || userStore.userInfo.username }}</span>
-      <el-icon class="arrow"><ArrowDown /></el-icon>
+      <el-icon class="arrow">
+        <ArrowDown />
+      </el-icon>
     </div>
     <template #dropdown>
       <el-dropdown-menu>
         <!-- 用户信息卡片 -->
         <div class="user-card-header">
-          <el-avatar :size="48" :src="userStore.userInfo.avatar">
+          <el-avatar
+            :size="48"
+            :src="userStore.userInfo.avatar"
+          >
             <el-icon><UserFilled /></el-icon>
           </el-avatar>
           <div class="user-info-text">
-            <div class="user-name">{{ userStore.userInfo.nickname || userStore.userInfo.username }}</div>
-            <div class="user-role">{{ roleText }}</div>
+            <div class="user-name">
+              {{ userStore.userInfo.nickname || userStore.userInfo.username }}
+            </div>
+            <div class="user-role">
+              {{ roleText }}
+            </div>
           </div>
         </div>
 
-        <el-dropdown-item divided @click="goProfile">
+        <el-dropdown-item
+          divided
+          @click="goProfile"
+        >
           <el-icon><User /></el-icon>
           <span>个人中心</span>
         </el-dropdown-item>
@@ -30,8 +49,13 @@
           <span>修改密码</span>
         </el-dropdown-item>
 
-        <el-dropdown-item divided @click="handleLogout">
-          <el-icon class="logout-icon"><SwitchButton /></el-icon>
+        <el-dropdown-item
+          divided
+          @click="handleLogout"
+        >
+          <el-icon class="logout-icon">
+            <SwitchButton />
+          </el-icon>
           <span class="logout-text">退出登录</span>
         </el-dropdown-item>
       </el-dropdown-menu>

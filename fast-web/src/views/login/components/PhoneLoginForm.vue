@@ -1,6 +1,11 @@
 <template>
   <div class="login-form-wrapper">
-    <el-form ref="formRef" :model="form" :rules="rules" class="login-form">
+    <el-form
+      ref="formRef"
+      :model="form"
+      :rules="rules"
+      class="login-form"
+    >
       <el-form-item prop="phone">
         <el-input
           v-model="form.phone"

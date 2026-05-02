@@ -1,17 +1,51 @@
 <template>
   <PageContainer>
     <!-- 搜索栏 -->
-    <SearchBar :model="queryParams" :visible="showSearch" @search="handleQuery" @reset="resetQuery">
-      <el-form-item label="角色名称" prop="roleName">
-        <el-input v-model="queryParams.roleName" placeholder="请输入角色名称" clearable @keyup.enter="handleQuery" />
+    <SearchBar
+      :model="queryParams"
+      :visible="showSearch"
+      @search="handleQuery"
+      @reset="resetQuery"
+    >
+      <el-form-item
+        label="角色名称"
+        prop="roleName"
+      >
+        <el-input
+          v-model="queryParams.roleName"
+          placeholder="请输入角色名称"
+          clearable
+          @keyup.enter="handleQuery"
+        />
       </el-form-item>
-      <el-form-item label="权限字符" prop="roleKey">
-        <el-input v-model="queryParams.roleKey" placeholder="请输入权限字符" clearable @keyup.enter="handleQuery" />
+      <el-form-item
+        label="权限字符"
+        prop="roleKey"
+      >
+        <el-input
+          v-model="queryParams.roleKey"
+          placeholder="请输入权限字符"
+          clearable
+          @keyup.enter="handleQuery"
+        />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="角色状态" clearable>
-          <el-option label="正常" value="0" />
-          <el-option label="禁用" value="1" />
+      <el-form-item
+        label="状态"
+        prop="status"
+      >
+        <el-select
+          v-model="queryParams.status"
+          placeholder="角色状态"
+          clearable
+        >
+          <el-option
+            label="正常"
+            value="0"
+          />
+          <el-option
+            label="禁用"
+            value="1"
+          />
         </el-select>
       </el-form-item>
     </SearchBar>
@@ -20,87 +54,241 @@
     <div class="content-card">
       <!-- 工具栏 -->
       <div class="tool-bar">
-        <el-button type="primary" plain :icon="Plus" @click="handleAdd" v-hasPermi="['system:role:add']">新增</el-button>
-        <el-button type="danger" plain :icon="Delete" @click="handleDelete" :disabled="multiple" v-hasPermi="['system:role:delete']">删除</el-button>
+        <el-button
+          v-hasPermi="['system:role:add']"
+          type="primary"
+          plain
+          :icon="Plus"
+          @click="handleAdd"
+        >
+          新增
+        </el-button>
+        <el-button
+          v-hasPermi="['system:role:delete']"
+          type="danger"
+          plain
+          :icon="Delete"
+          :disabled="multiple"
+          @click="handleDelete"
+        >
+          删除
+        </el-button>
       </div>
 
       <!-- 数据表格 -->
-      <el-table v-loading="loading" :data="roleList" row-key="id" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" align="center" :selectable="row => row.id !== '1'" />
-        <el-table-column type="index" label="序号" width="60" align="center" :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
-        <el-table-column label="角色名称" prop="roleName" min-width="120" />
-        <el-table-column label="权限字符" prop="roleKey" min-width="120" show-overflow-tooltip />
-        <el-table-column label="数据权限" align="center" width="120">
+      <el-table
+        v-loading="loading"
+        :data="roleList"
+        row-key="id"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column
+          type="selection"
+          width="55"
+          align="center"
+          :selectable="row => row.id !== '1'"
+        />
+        <el-table-column
+          type="index"
+          label="序号"
+          width="60"
+          align="center"
+          :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1"
+        />
+        <el-table-column
+          label="角色名称"
+          prop="roleName"
+          min-width="120"
+        />
+        <el-table-column
+          label="权限字符"
+          prop="roleKey"
+          min-width="120"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          label="数据权限"
+          align="center"
+          width="120"
+        >
           <template #default="scope">
             <el-tag effect="plain">
               {{ scope.row.dataScope === '1' ? '全部数据' : scope.row.dataScope === '2' ? '自定义' : scope.row.dataScope === '3' ? '本部门' : scope.row.dataScope === '4' ? '本部门及以下' : '仅本人' }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="显示顺序" prop="roleSort" width="100" />
-        <el-table-column label="状态" align="center" width="80">
+        <el-table-column
+          label="显示顺序"
+          prop="roleSort"
+          width="100"
+        />
+        <el-table-column
+          label="状态"
+          align="center"
+          width="80"
+        >
           <template #default="scope">
-            <el-switch v-model="scope.row.status" active-value="0" inactive-value="1"
-              @change="handleStatusChange(scope.row)" :disabled="scope.row.id === '1'" />
+            <el-switch
+              v-model="scope.row.status"
+              active-value="0"
+              inactive-value="1"
+              :disabled="scope.row.id === '1'"
+              @change="handleStatusChange(scope.row)"
+            />
           </template>
         </el-table-column>
-        <el-table-column label="创建时间" prop="createTime" width="180" />
-        <el-table-column label="操作" align="center" width="150" fixed="right">
+        <el-table-column
+          label="创建时间"
+          prop="createTime"
+          width="180"
+        />
+        <el-table-column
+          label="操作"
+          align="center"
+          width="150"
+          fixed="right"
+        >
           <template #default="scope">
-            <el-button link type="primary" @click="handleUpdate(scope.row)" :disabled="scope.row.id === '1'" v-hasPermi="['system:role:edit']">修改</el-button>
-            <el-button link type="danger" @click="handleDelete(scope.row)" :disabled="scope.row.id === '1'" v-hasPermi="['system:role:delete']">删除</el-button>
+            <el-button
+              v-hasPermi="['system:role:edit']"
+              link
+              type="primary"
+              :disabled="scope.row.id === '1'"
+              @click="handleUpdate(scope.row)"
+            >
+              修改
+            </el-button>
+            <el-button
+              v-hasPermi="['system:role:delete']"
+              link
+              type="danger"
+              :disabled="scope.row.id === '1'"
+              @click="handleDelete(scope.row)"
+            >
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
 
       <!-- 分页 -->
-      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
+      <pagination
+        v-show="total > 0"
+        v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize"
+        :total="total"
+        @pagination="getList"
+      />
     </div>
 
     <!-- 新增/修改对话框 -->
-    <el-dialog :title="title" v-model="open" width="680px" append-to-body class="form-dialog">
-      <el-form ref="roleFormRef" :model="form" :rules="rules" label-width="100px">
+    <el-dialog
+      v-model="open"
+      :title="title"
+      width="680px"
+      append-to-body
+      class="form-dialog"
+    >
+      <el-form
+        ref="roleFormRef"
+        :model="form"
+        :rules="rules"
+        label-width="100px"
+      >
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="角色名称" prop="roleName">
-              <el-input v-model="form.roleName" placeholder="请输入角色名称" />
+            <el-form-item
+              label="角色名称"
+              prop="roleName"
+            >
+              <el-input
+                v-model="form.roleName"
+                placeholder="请输入角色名称"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="权限字符" prop="roleKey">
-              <el-input v-model="form.roleKey" placeholder="请输入权限字符" />
+            <el-form-item
+              label="权限字符"
+              prop="roleKey"
+            >
+              <el-input
+                v-model="form.roleKey"
+                placeholder="请输入权限字符"
+              />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="显示顺序" prop="roleSort">
-              <el-input-number v-model="form.roleSort" :min="0" controls-position="right" style="width: 100%" />
+            <el-form-item
+              label="显示顺序"
+              prop="roleSort"
+            >
+              <el-input-number
+                v-model="form.roleSort"
+                :min="0"
+                controls-position="right"
+                style="width: 100%"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="状态" prop="status">
+            <el-form-item
+              label="状态"
+              prop="status"
+            >
               <el-radio-group v-model="form.status">
-                <el-radio label="0">正常</el-radio>
-                <el-radio label="1">禁用</el-radio>
+                <el-radio label="0">
+                  正常
+                </el-radio>
+                <el-radio label="1">
+                  禁用
+                </el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="数据权限" prop="dataScope">
-              <el-select v-model="form.dataScope" placeholder="请选择数据权限" style="width: 100%">
-                <el-option label="全部数据" value="1" />
-                <el-option label="自定义数据" value="2" />
-                <el-option label="本部门数据" value="3" />
-                <el-option label="本部门及以下" value="4" />
-                <el-option label="仅本人数据" value="5" />
+            <el-form-item
+              label="数据权限"
+              prop="dataScope"
+            >
+              <el-select
+                v-model="form.dataScope"
+                placeholder="请选择数据权限"
+                style="width: 100%"
+              >
+                <el-option
+                  label="全部数据"
+                  value="1"
+                />
+                <el-option
+                  label="自定义数据"
+                  value="2"
+                />
+                <el-option
+                  label="本部门数据"
+                  value="3"
+                />
+                <el-option
+                  label="本部门及以下"
+                  value="4"
+                />
+                <el-option
+                  label="仅本人数据"
+                  value="5"
+                />
               </el-select>
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="数据部门" prop="deptIds" v-if="form.dataScope === '2'">
+        <el-form-item
+          v-if="form.dataScope === '2'"
+          label="数据部门"
+          prop="deptIds"
+        >
           <TreeSelect
             v-model="form.deptIds"
             :data="deptOptions"
@@ -113,7 +301,10 @@
             placeholder="请选择数据部门"
           />
         </el-form-item>
-        <el-form-item label="菜单权限" prop="menuIds">
+        <el-form-item
+          label="菜单权限"
+          prop="menuIds"
+        >
           <TreeSelect
             v-model="form.menuIds"
             :data="menuOptions"
@@ -126,13 +317,28 @@
             placeholder="请选择菜单权限"
           />
         </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入备注" :rows="3" />
+        <el-form-item
+          label="备注"
+          prop="remark"
+        >
+          <el-input
+            v-model="form.remark"
+            type="textarea"
+            placeholder="请输入备注"
+            :rows="3"
+          />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="open = false">取消</el-button>
-        <el-button type="primary" @click="submitForm">确定</el-button>
+        <el-button @click="open = false">
+          取消
+        </el-button>
+        <el-button
+          type="primary"
+          @click="submitForm"
+        >
+          确定
+        </el-button>
       </template>
     </el-dialog>
   </PageContainer>

@@ -1,15 +1,26 @@
 <template>
   <div class="not-found">
     <div class="bg-decoration">
-      <div class="circle circle-1"></div>
-      <div class="circle circle-2"></div>
+      <div class="circle circle-1" />
+      <div class="circle circle-2" />
     </div>
     <div class="not-found-content">
-      <div class="error-code">404</div>
-      <h2 class="error-title">页面不存在</h2>
-      <p class="error-desc">抱歉，您访问的页面不存在或已被移除</p>
+      <div class="error-code">
+        404
+      </div>
+      <h2 class="error-title">
+        页面不存在
+      </h2>
+      <p class="error-desc">
+        抱歉，您访问的页面不存在或已被移除
+      </p>
       <div class="action-buttons">
-        <el-button type="primary" size="large" @click="goHome" class="action-btn">
+        <el-button
+          type="primary"
+          size="large"
+          class="action-btn"
+          @click="goHome"
+        >
           <el-icon><HomeFilled /></el-icon>
           <span>返回首页</span>
         </el-button>

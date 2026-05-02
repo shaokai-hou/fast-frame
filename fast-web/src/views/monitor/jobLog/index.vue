@@ -1,20 +1,59 @@
 <template>
   <PageContainer>
     <!-- 搜索栏 -->
-    <SearchBar :model="queryParams" :visible="showSearch" @search="handleQuery" @reset="resetQuery">
-      <el-form-item label="任务名称" prop="jobName">
-        <el-input v-model="queryParams.jobName" placeholder="请输入任务名称" clearable @keyup.enter="handleQuery" />
+    <SearchBar
+      :model="queryParams"
+      :visible="showSearch"
+      @search="handleQuery"
+      @reset="resetQuery"
+    >
+      <el-form-item
+        label="任务名称"
+        prop="jobName"
+      >
+        <el-input
+          v-model="queryParams.jobName"
+          placeholder="请输入任务名称"
+          clearable
+          @keyup.enter="handleQuery"
+        />
       </el-form-item>
-      <el-form-item label="任务分组" prop="jobGroup">
-        <el-select v-model="queryParams.jobGroup" placeholder="全部" clearable>
-          <el-option label="系统" value="SYSTEM" />
-          <el-option label="业务" value="BUSINESS" />
+      <el-form-item
+        label="任务分组"
+        prop="jobGroup"
+      >
+        <el-select
+          v-model="queryParams.jobGroup"
+          placeholder="全部"
+          clearable
+        >
+          <el-option
+            label="系统"
+            value="SYSTEM"
+          />
+          <el-option
+            label="业务"
+            value="BUSINESS"
+          />
         </el-select>
       </el-form-item>
-      <el-form-item label="执行状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="全部" clearable>
-          <el-option label="成功" value="0" />
-          <el-option label="失败" value="1" />
+      <el-form-item
+        label="执行状态"
+        prop="status"
+      >
+        <el-select
+          v-model="queryParams.status"
+          placeholder="全部"
+          clearable
+        >
+          <el-option
+            label="成功"
+            value="0"
+          />
+          <el-option
+            label="失败"
+            value="1"
+          />
         </el-select>
       </el-form-item>
     </SearchBar>
@@ -23,71 +62,228 @@
     <div class="content-card">
       <!-- 工具栏 -->
       <div class="tool-bar">
-        <el-button type="danger" plain :icon="Delete" @click="handleDelete" :disabled="multiple">删除</el-button>
-        <el-button type="danger" plain :icon="Delete" @click="handleClear">清空</el-button>
+        <el-button
+          type="danger"
+          plain
+          :icon="Delete"
+          :disabled="multiple"
+          @click="handleDelete"
+        >
+          删除
+        </el-button>
+        <el-button
+          type="danger"
+          plain
+          :icon="Delete"
+          @click="handleClear"
+        >
+          清空
+        </el-button>
       </div>
 
       <!-- 数据表格 -->
-      <el-table v-loading="loading" :data="logList" row-key="id" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" align="center" />
-        <el-table-column type="index" label="序号" width="60" align="center"
-          :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
-        <el-table-column label="任务名称" prop="jobName" show-overflow-tooltip />
-        <el-table-column label="任务分组" prop="jobGroup" width="100">
+      <el-table
+        v-loading="loading"
+        :data="logList"
+        row-key="id"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column
+          type="selection"
+          width="55"
+          align="center"
+        />
+        <el-table-column
+          type="index"
+          label="序号"
+          width="60"
+          align="center"
+          :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1"
+        />
+        <el-table-column
+          label="任务名称"
+          prop="jobName"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          label="任务分组"
+          prop="jobGroup"
+          width="100"
+        >
           <template #default="scope">
-            <el-tag v-if="scope.row.jobGroup === 'SYSTEM'" type="danger">系统</el-tag>
-            <el-tag v-else type="info">业务</el-tag>
+            <el-tag
+              v-if="scope.row.jobGroup === 'SYSTEM'"
+              type="danger"
+            >
+              系统
+            </el-tag>
+            <el-tag
+              v-else
+              type="info"
+            >
+              业务
+            </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="调用目标" prop="invokeTarget" show-overflow-tooltip />
-        <el-table-column label="日志信息" prop="jobMessage" show-overflow-tooltip />
-        <el-table-column label="执行状态" prop="status" width="80">
+        <el-table-column
+          label="调用目标"
+          prop="invokeTarget"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          label="日志信息"
+          prop="jobMessage"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          label="执行状态"
+          prop="status"
+          width="80"
+        >
           <template #default="scope">
-            <el-tag v-if="scope.row.status === '0'" type="success">成功</el-tag>
-            <el-tag v-else type="danger">失败</el-tag>
+            <el-tag
+              v-if="scope.row.status === '0'"
+              type="success"
+            >
+              成功
+            </el-tag>
+            <el-tag
+              v-else
+              type="danger"
+            >
+              失败
+            </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="执行耗时" prop="duration" width="100">
+        <el-table-column
+          label="执行耗时"
+          prop="duration"
+          width="100"
+        >
           <template #default="scope">
             {{ scope.row.duration ? scope.row.duration + 'ms' : '-' }}
           </template>
         </el-table-column>
-        <el-table-column label="开始时间" prop="startTime" width="180" />
-        <el-table-column label="操作" align="center" width="140" fixed="right">
+        <el-table-column
+          label="开始时间"
+          prop="startTime"
+          width="180"
+        />
+        <el-table-column
+          label="操作"
+          align="center"
+          width="140"
+          fixed="right"
+        >
           <template #default="scope">
-            <el-button link type="primary" @click="handleView(scope.row)">详情</el-button>
-            <el-button link type="danger" @click="handleDelete(scope.row)">删除</el-button>
+            <el-button
+              link
+              type="primary"
+              @click="handleView(scope.row)"
+            >
+              详情
+            </el-button>
+            <el-button
+              link
+              type="danger"
+              @click="handleDelete(scope.row)"
+            >
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
 
       <!-- 分页 -->
-      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
-        v-model:limit="queryParams.pageSize" @pagination="getList" />
+      <pagination
+        v-show="total > 0"
+        v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize"
+        :total="total"
+        @pagination="getList"
+      />
     </div>
 
     <!-- 详情对话框 -->
-    <el-dialog title="日志详情" v-model="detailOpen" width="700px" append-to-body>
-      <el-descriptions :column="2" border>
-        <el-descriptions-item label="日志ID">{{ detailData.id }}</el-descriptions-item>
-        <el-descriptions-item label="任务ID">{{ detailData.jobId }}</el-descriptions-item>
-        <el-descriptions-item label="任务名称">{{ detailData.jobName }}</el-descriptions-item>
+    <el-dialog
+      v-model="detailOpen"
+      title="日志详情"
+      width="700px"
+      append-to-body
+    >
+      <el-descriptions
+        :column="2"
+        border
+      >
+        <el-descriptions-item label="日志ID">
+          {{ detailData.id }}
+        </el-descriptions-item>
+        <el-descriptions-item label="任务ID">
+          {{ detailData.jobId }}
+        </el-descriptions-item>
+        <el-descriptions-item label="任务名称">
+          {{ detailData.jobName }}
+        </el-descriptions-item>
         <el-descriptions-item label="任务分组">
-          <el-tag v-if="detailData.jobGroup === 'SYSTEM'" type="danger">系统</el-tag>
-          <el-tag v-else type="info">业务</el-tag>
+          <el-tag
+            v-if="detailData.jobGroup === 'SYSTEM'"
+            type="danger"
+          >
+            系统
+          </el-tag>
+          <el-tag
+            v-else
+            type="info"
+          >
+            业务
+          </el-tag>
         </el-descriptions-item>
-        <el-descriptions-item label="调用目标" :span="2">{{ detailData.invokeTarget }}</el-descriptions-item>
-        <el-descriptions-item label="日志信息" :span="2">{{ detailData.jobMessage }}</el-descriptions-item>
+        <el-descriptions-item
+          label="调用目标"
+          :span="2"
+        >
+          {{ detailData.invokeTarget }}
+        </el-descriptions-item>
+        <el-descriptions-item
+          label="日志信息"
+          :span="2"
+        >
+          {{ detailData.jobMessage }}
+        </el-descriptions-item>
         <el-descriptions-item label="执行状态">
-          <el-tag v-if="detailData.status === '0'" type="success">成功</el-tag>
-          <el-tag v-else type="danger">失败</el-tag>
+          <el-tag
+            v-if="detailData.status === '0'"
+            type="success"
+          >
+            成功
+          </el-tag>
+          <el-tag
+            v-else
+            type="danger"
+          >
+            失败
+          </el-tag>
         </el-descriptions-item>
-        <el-descriptions-item label="执行耗时">{{ detailData.duration ? detailData.duration + 'ms' : '-'
-        }}</el-descriptions-item>
-        <el-descriptions-item label="开始时间">{{ detailData.startTime }}</el-descriptions-item>
-        <el-descriptions-item label="结束时间">{{ detailData.endTime }}</el-descriptions-item>
-        <el-descriptions-item label="异常信息" :span="2">
-          <div class="exception-info" v-if="detailData.exceptionInfo">{{ detailData.exceptionInfo }}</div>
+        <el-descriptions-item label="执行耗时">
+          {{ detailData.duration ? detailData.duration + 'ms' : '-'
+          }}
+        </el-descriptions-item>
+        <el-descriptions-item label="开始时间">
+          {{ detailData.startTime }}
+        </el-descriptions-item>
+        <el-descriptions-item label="结束时间">
+          {{ detailData.endTime }}
+        </el-descriptions-item>
+        <el-descriptions-item
+          label="异常信息"
+          :span="2"
+        >
+          <div
+            v-if="detailData.exceptionInfo"
+            class="exception-info"
+          >
+            {{ detailData.exceptionInfo }}
+          </div>
           <span v-else>-</span>
         </el-descriptions-item>
       </el-descriptions>

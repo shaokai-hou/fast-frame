@@ -9,34 +9,71 @@
     @close="handleClose"
   >
     <!-- 加载状态 -->
-    <div v-if="loading" class="preview-loading">
-      <el-icon class="is-loading" :size="32">
+    <div
+      v-if="loading"
+      class="preview-loading"
+    >
+      <el-icon
+        class="is-loading"
+        :size="32"
+      >
         <Loading />
       </el-icon>
       <span>正在加载文件...</span>
     </div>
 
     <!-- 错误状态 -->
-    <div v-else-if="error" class="preview-error">
-      <el-icon :size="48" color="#f56c6c">
+    <div
+      v-else-if="error"
+      class="preview-error"
+    >
+      <el-icon
+        :size="48"
+        color="#f56c6c"
+      >
         <WarningFilled />
       </el-icon>
-      <p class="error-text">{{ error }}</p>
-      <el-button type="primary" @click="handleDownload">下载文件</el-button>
+      <p class="error-text">
+        {{ error }}
+      </p>
+      <el-button
+        type="primary"
+        @click="handleDownload"
+      >
+        下载文件
+      </el-button>
     </div>
 
     <!-- 不支持预览 -->
-    <div v-else-if="!canPreview" class="preview-unsupported">
-      <el-icon :size="48" color="#909399">
+    <div
+      v-else-if="!canPreview"
+      class="preview-unsupported"
+    >
+      <el-icon
+        :size="48"
+        color="#909399"
+      >
         <Document />
       </el-icon>
-      <p class="unsupported-text">该文件类型不支持在线预览</p>
-      <p class="file-type">{{ getFileTypeHint() }}</p>
-      <el-button type="primary" @click="handleDownload">下载文件</el-button>
+      <p class="unsupported-text">
+        该文件类型不支持在线预览
+      </p>
+      <p class="file-type">
+        {{ getFileTypeHint() }}
+      </p>
+      <el-button
+        type="primary"
+        @click="handleDownload"
+      >
+        下载文件
+      </el-button>
     </div>
 
     <!-- 图片预览 -->
-    <div v-else-if="previewType === 'image'" class="preview-image">
+    <div
+      v-else-if="previewType === 'image'"
+      class="preview-image"
+    >
       <el-image
         :src="previewSrc"
         fit="contain"
@@ -57,23 +94,51 @@
     </div>
 
     <!-- PDF 预览 -->
-    <div v-else-if="previewType === 'pdf'" class="preview-pdf">
-      <VueOfficePdf :src="previewSrc" @rendered="handleRendered" @error="handlePreviewError" />
+    <div
+      v-else-if="previewType === 'pdf'"
+      class="preview-pdf"
+    >
+      <VueOfficePdf
+        :src="previewSrc"
+        @rendered="handleRendered"
+        @error="handlePreviewError"
+      />
     </div>
 
     <!-- Word 预览 -->
-    <div v-else-if="previewType === 'docx'" class="preview-docx">
-      <VueOfficeDocx :src="previewSrc" @rendered="handleRendered" @error="handlePreviewError" />
+    <div
+      v-else-if="previewType === 'docx'"
+      class="preview-docx"
+    >
+      <VueOfficeDocx
+        :src="previewSrc"
+        @rendered="handleRendered"
+        @error="handlePreviewError"
+      />
     </div>
 
     <!-- Excel 预览 -->
-    <div v-else-if="previewType === 'xlsx'" class="preview-xlsx">
-      <VueOfficeExcel :src="previewSrc" @rendered="handleRendered" @error="handlePreviewError" />
+    <div
+      v-else-if="previewType === 'xlsx'"
+      class="preview-xlsx"
+    >
+      <VueOfficeExcel
+        :src="previewSrc"
+        @rendered="handleRendered"
+        @error="handlePreviewError"
+      />
     </div>
 
     <!-- PowerPoint 预览 -->
-    <div v-else-if="previewType === 'pptx'" class="preview-pptx">
-      <VueOfficePptx :src="previewSrc" @rendered="handleRendered" @error="handlePreviewError" />
+    <div
+      v-else-if="previewType === 'pptx'"
+      class="preview-pptx"
+    >
+      <VueOfficePptx
+        :src="previewSrc"
+        @rendered="handleRendered"
+        @error="handlePreviewError"
+      />
     </div>
   </el-dialog>
 </template>

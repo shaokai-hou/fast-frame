@@ -1,44 +1,59 @@
 <template>
-  <div style="position: relative"
-  >
+  <div style="position: relative">
     <div class="verify-img-out">
-      <div class="verify-img-panel" :style="{'width': setSize.imgWidth,
-                                                   'height': setSize.imgHeight,
-                                                   'background-size' : setSize.imgWidth + ' '+ setSize.imgHeight,
-                                                   'margin-bottom': vSpace + 'px'}"
+      <div
+        class="verify-img-panel"
+        :style="{'width': setSize.imgWidth,
+                 'height': setSize.imgHeight,
+                 'background-size' : setSize.imgWidth + ' '+ setSize.imgHeight,
+                 'margin-bottom': vSpace + 'px'}"
       >
-        <div class="verify-refresh" style="z-index:3" @click="refresh" v-show="showRefresh">
-          <i class="iconfont icon-refresh"></i>
+        <div
+          v-show="showRefresh"
+          class="verify-refresh"
+          style="z-index:3"
+          @click="refresh"
+        >
+          <i class="iconfont icon-refresh" />
         </div>
-        <img :src="'data:image/png;base64,'+pointBackImgBase"
-             ref="canvas"
-             alt="" style="width:100%;height:100%;display:block"
-             @click="bindingClick?canvasClick($event):undefined">
+        <img
+          ref="canvas"
+          :src="'data:image/png;base64,'+pointBackImgBase"
+          alt=""
+          style="width:100%;height:100%;display:block"
+          @click="bindingClick?canvasClick($event):undefined"
+        >
 
-        <div v-for="(tempPoint, index) in tempPoints" :key="index" class="point-area"
-             :style="{
-                        'background-color':'#1abd6c',
-                        color:'#fff',
-                        'z-index':9999,
-                        width:'20px',
-                        height:'20px',
-                        'text-align':'center',
-                        'line-height':'20px',
-                        'border-radius': '50%',
-                        position:'absolute',
-                        top:parseInt(tempPoint.y-10) + 'px',
-                        left:parseInt(tempPoint.x-10) + 'px'
-                     }">
+        <div
+          v-for="(tempPoint, index) in tempPoints"
+          :key="index"
+          class="point-area"
+          :style="{
+            'background-color':'#1abd6c',
+            color:'#fff',
+            'z-index':9999,
+            width:'20px',
+            height:'20px',
+            'text-align':'center',
+            'line-height':'20px',
+            'border-radius': '50%',
+            position:'absolute',
+            top:parseInt(tempPoint.y-10) + 'px',
+            left:parseInt(tempPoint.x-10) + 'px'
+          }"
+        >
           {{ index + 1 }}
         </div>
       </div>
     </div>
     <!-- 'height': this.barSize.height, -->
-    <div class="verify-bar-area"
-         :style="{'width': setSize.imgWidth,
-                      'color': this.barAreaColor,
-                      'border-color': this.barAreaBorderColor,
-                      'line-height':this.barSize.height}">
+    <div
+      class="verify-bar-area"
+      :style="{'width': setSize.imgWidth,
+               'color': barAreaColor,
+               'border-color': barAreaBorderColor,
+               'line-height':barSize.height}"
+    >
       <span class="verify-msg">{{ text }}</span>
     </div>
   </div>
@@ -91,7 +106,7 @@ export default {
   setup(props, context) {
     const {mode, captchaType, vSpace, imgSize, barSize} = toRefs(props)
     const {proxy} = getCurrentInstance();
-    let secretKey = ref(''),           //后端返回的ase加密秘钥
+    const secretKey = ref(''),           //后端返回的ase加密秘钥
         checkNum = ref(3),             //默认需要点击的字数
         fontPos = reactive([]),            //选中的坐标信息
         checkPosArr = reactive([]),        //用户点击的坐标
@@ -120,7 +135,7 @@ export default {
       num.value = 1
       getPictrue();
       nextTick(() => {
-        let {imgHeight, imgWidth, barHeight, barWidth} = resetSize(proxy)
+        const {imgHeight, imgWidth, barHeight, barWidth} = resetSize(proxy)
         setSize.imgHeight = imgHeight
         setSize.imgWidth = imgWidth
         setSize.barHeight = barHeight
@@ -141,15 +156,15 @@ export default {
       if (num.value == checkNum.value) {
         num.value = createPoint(getMousePos(canvas, e));
         //按比例转换坐标值
-        let arr = pointTransfrom(checkPosArr, setSize)
+        const arr = pointTransfrom(checkPosArr, setSize)
         checkPosArr.length = 0
         checkPosArr.push(...arr);
         //等创建坐标执行完
         setTimeout(() => {
           // var flag = this.comparePos(this.fontPos, this.checkPosArr);
           //发送后端请求
-          var captchaVerification = secretKey.value ? aesEncrypt(backToken.value + '---' + JSON.stringify(checkPosArr), secretKey.value) : backToken.value + '---' + JSON.stringify(checkPosArr)
-          let data = {
+          const captchaVerification = secretKey.value ? aesEncrypt(backToken.value + '---' + JSON.stringify(checkPosArr), secretKey.value) : backToken.value + '---' + JSON.stringify(checkPosArr)
+          const data = {
             captchaType: captchaType.value,
             "pointJson": secretKey.value ? aesEncrypt(JSON.stringify(checkPosArr), secretKey.value) : JSON.stringify(checkPosArr),
             "token": backToken.value
@@ -185,8 +200,8 @@ export default {
     }
     //获取坐标
     const getMousePos = function (obj, e) {
-      var x = e.offsetX
-      var y = e.offsetY
+      const x = e.offsetX
+      const y = e.offsetY
       return {x, y}
     }
     //创建坐标点
@@ -209,7 +224,7 @@ export default {
 
     // 请求背景图片和验证图片
     function getPictrue() {
-      let data = {
+      const data = {
         captchaType: captchaType.value
       }
       reqGet(data).then(res => {
@@ -227,9 +242,9 @@ export default {
 
     //坐标转换函数
     const pointTransfrom = function (pointArr, imgSize) {
-      var newPointArr = pointArr.map(p => {
-        let x = Math.round(310 * p.x / parseInt(imgSize.imgWidth))
-        let y = Math.round(155 * p.y / parseInt(imgSize.imgHeight))
+      const newPointArr = pointArr.map(p => {
+        const x = Math.round(310 * p.x / parseInt(imgSize.imgWidth))
+        const y = Math.round(155 * p.y / parseInt(imgSize.imgHeight))
         return {x, y}
       })
       return newPointArr

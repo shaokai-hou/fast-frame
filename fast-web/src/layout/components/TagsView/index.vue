@@ -1,6 +1,9 @@
 <template>
   <div class="tags-view-container">
-    <ScrollPane ref="scrollPaneRef" class="tags-scroll">
+    <ScrollPane
+      ref="scrollPaneRef"
+      class="tags-scroll"
+    >
       <AppLink
         v-for="tag in tagsViewStore.visitedRoutes"
         :key="tag.path"
@@ -28,27 +31,46 @@
       class="context-menu"
       :style="{ left: contextMenuLeft + 'px', top: contextMenuTop + 'px' }"
     >
-      <div class="menu-item" @click="refreshSelectedTag">
+      <div
+        class="menu-item"
+        @click="refreshSelectedTag"
+      >
         <el-icon><Refresh /></el-icon>
         <span>刷新页面</span>
       </div>
-      <div class="menu-item" v-if="selectedTag?.path !== '/home'" @click="closeSelectedTag">
+      <div
+        v-if="selectedTag?.path !== '/home'"
+        class="menu-item"
+        @click="closeSelectedTag"
+      >
         <el-icon><Close /></el-icon>
         <span>关闭当前</span>
       </div>
-      <div class="menu-item" @click="closeOtherTags">
+      <div
+        class="menu-item"
+        @click="closeOtherTags"
+      >
         <el-icon><FolderRemove /></el-icon>
         <span>关闭其他</span>
       </div>
-      <div class="menu-item" @click="closeLeftTags">
+      <div
+        class="menu-item"
+        @click="closeLeftTags"
+      >
         <el-icon><Back /></el-icon>
         <span>关闭左侧</span>
       </div>
-      <div class="menu-item" @click="closeRightTags">
+      <div
+        class="menu-item"
+        @click="closeRightTags"
+      >
         <el-icon><Right /></el-icon>
         <span>关闭右侧</span>
       </div>
-      <div class="menu-item" @click="closeAllTags">
+      <div
+        class="menu-item"
+        @click="closeAllTags"
+      >
         <el-icon><CircleClose /></el-icon>
         <span>关闭全部</span>
       </div>

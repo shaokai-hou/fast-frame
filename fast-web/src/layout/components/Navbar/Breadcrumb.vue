@@ -1,16 +1,32 @@
 <template>
-  <el-breadcrumb class="breadcrumb" separator="/">
-    <el-breadcrumb-item v-for="(item, index) in breadcrumbs" :key="item.path">
+  <el-breadcrumb
+    class="breadcrumb"
+    separator="/"
+  >
+    <el-breadcrumb-item
+      v-for="(item, index) in breadcrumbs"
+      :key="item.path"
+    >
       <!-- 目录类型：不可点击，灰色显示 -->
-      <span v-if="isDirectory(item)" class="directory-item">
+      <span
+        v-if="isDirectory(item)"
+        class="directory-item"
+      >
         {{ item.meta?.title }}
       </span>
       <!-- 当前页面：不可点击，加重显示 -->
-      <span v-else-if="index === breadcrumbs.length - 1" class="current-page">
+      <span
+        v-else-if="index === breadcrumbs.length - 1"
+        class="current-page"
+      >
         {{ item.meta?.title }}
       </span>
       <!-- 叶子节点：可点击 -->
-      <router-link v-else :to="item.path" class="redirect-link">
+      <router-link
+        v-else
+        :to="item.path"
+        class="redirect-link"
+      >
         {{ item.meta?.title }}
       </router-link>
     </el-breadcrumb-item>

@@ -1,14 +1,39 @@
 <template>
   <PageContainer>
     <!-- 搜索栏 -->
-    <SearchBar :model="queryParams" @search="handleQuery" @reset="resetQuery">
-      <el-form-item label="菜单名称" prop="menuName">
-        <el-input v-model="queryParams.menuName" placeholder="请输入菜单名称" clearable @keyup.enter="handleQuery" />
+    <SearchBar
+      :model="queryParams"
+      @search="handleQuery"
+      @reset="resetQuery"
+    >
+      <el-form-item
+        label="菜单名称"
+        prop="menuName"
+      >
+        <el-input
+          v-model="queryParams.menuName"
+          placeholder="请输入菜单名称"
+          clearable
+          @keyup.enter="handleQuery"
+        />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="菜单状态" clearable>
-          <el-option label="正常" value="0" />
-          <el-option label="禁用" value="1" />
+      <el-form-item
+        label="状态"
+        prop="status"
+      >
+        <el-select
+          v-model="queryParams.status"
+          placeholder="菜单状态"
+          clearable
+        >
+          <el-option
+            label="正常"
+            value="0"
+          />
+          <el-option
+            label="禁用"
+            value="1"
+          />
         </el-select>
       </el-form-item>
     </SearchBar>
@@ -25,7 +50,12 @@
     />
 
     <!-- 菜单表单 -->
-    <MenuForm v-model="formVisible" :menu-id="currentMenuId" :parent-id="currentParentId" @success="getList" />
+    <MenuForm
+      v-model="formVisible"
+      :menu-id="currentMenuId"
+      :parent-id="currentParentId"
+      @success="getList"
+    />
   </PageContainer>
 </template>
 

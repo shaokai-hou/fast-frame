@@ -1,40 +1,79 @@
 <template>
   <div style="position: relative;">
-    <div v-if="type === '2'" class="verify-img-out"
-         :style="{height: (parseInt(setSize.imgHeight) + vSpace) + 'px'}"
+    <div
+      v-if="type === '2'"
+      class="verify-img-out"
+      :style="{height: (parseInt(setSize.imgHeight) + vSpace) + 'px'}"
     >
-      <div class="verify-img-panel" :style="{width: setSize.imgWidth,
-                                                   height: setSize.imgHeight,}">
-        <img :src="'data:image/png;base64,'+backImgBase" alt="" style="width:100%;height:100%;display:block">
-        <div class="verify-refresh" @click="refresh" v-show="showRefresh"><i class="iconfont icon-refresh"></i>
+      <div
+        class="verify-img-panel"
+        :style="{width: setSize.imgWidth,
+                 height: setSize.imgHeight,}"
+      >
+        <img
+          :src="'data:image/png;base64,'+backImgBase"
+          alt=""
+          style="width:100%;height:100%;display:block"
+        >
+        <div
+          v-show="showRefresh"
+          class="verify-refresh"
+          @click="refresh"
+        >
+          <i class="iconfont icon-refresh" />
         </div>
         <transition name="tips">
-          <span class="verify-tips" v-if="tipWords" :class="passFlag ?'suc-bg':'err-bg'">{{ tipWords }}</span>
+          <span
+            v-if="tipWords"
+            class="verify-tips"
+            :class="passFlag ?'suc-bg':'err-bg'"
+          >{{ tipWords }}</span>
         </transition>
       </div>
     </div>
     <!-- 公共部分 -->
-    <div class="verify-bar-area" :style="{width: setSize.imgWidth,
-                                              height: barSize.height,
-                                              'line-height':barSize.height}">
-      <span class="verify-msg" v-text="text"></span>
-      <div class="verify-left-bar"
-           :style="{width: (leftBarWidth!==undefined)?leftBarWidth: (subBlockWidth - 2) + 'px', height: barSize.height, 'border-color': leftBarBorderColor, 'background-color': leftBarBackgroundColor, 'border-radius': leftBarBorderRadius, transaction: transitionWidth}">
-        <span class="verify-msg" v-text="finishText"></span>
-        <div class="verify-move-block"
-             @touchstart="start"
-             @mousedown="start"
-             :style="{width: subBlockWidth + 'px', height: barSize.height, 'background-color': moveBlockBackgroundColor, 'border-color': moveBlockBorderColor, 'border-radius': moveBlockBorderRadius, left: moveBlockLeft, transition: transitionLeft}">
-          <i :class="['verify-icon iconfont', iconClass]"
-             :style="{color: iconColor}"></i>
-          <div v-if="type === '2'" class="verify-sub-block"
-               :style="{'width': subBlockWidth + 'px',
-                                'height': setSize.imgHeight,
-                                'top':'-' + (parseInt(setSize.imgHeight) + vSpace) + 'px',
-                                'background-size': setSize.imgWidth + ' ' + setSize.imgHeight,
-                                }">
-            <img :src="'data:image/png;base64,'+blockBackImgBase" alt=""
-                 style="width:100%;height:100%;display:block;-webkit-user-drag:none;">
+    <div
+      class="verify-bar-area"
+      :style="{width: setSize.imgWidth,
+               height: barSize.height,
+               'line-height':barSize.height}"
+    >
+      <span
+        class="verify-msg"
+        v-text="text"
+      />
+      <div
+        class="verify-left-bar"
+        :style="{width: (leftBarWidth!==undefined)?leftBarWidth: (subBlockWidth - 2) + 'px', height: barSize.height, 'border-color': leftBarBorderColor, 'background-color': leftBarBackgroundColor, 'border-radius': leftBarBorderRadius, transaction: transitionWidth}"
+      >
+        <span
+          class="verify-msg"
+          v-text="finishText"
+        />
+        <div
+          class="verify-move-block"
+          :style="{width: subBlockWidth + 'px', height: barSize.height, 'background-color': moveBlockBackgroundColor, 'border-color': moveBlockBorderColor, 'border-radius': moveBlockBorderRadius, left: moveBlockLeft, transition: transitionLeft}"
+          @touchstart="start"
+          @mousedown="start"
+        >
+          <i
+            :class="['verify-icon iconfont', iconClass]"
+            :style="{color: iconColor}"
+          />
+          <div
+            v-if="type === '2'"
+            class="verify-sub-block"
+            :style="{'width': subBlockWidth + 'px',
+                     'height': setSize.imgHeight,
+                     'top':'-' + (parseInt(setSize.imgHeight) + vSpace) + 'px',
+                     'background-size': setSize.imgWidth + ' ' + setSize.imgHeight,
+            }"
+          >
+            <img
+              :src="'data:image/png;base64,'+blockBackImgBase"
+              alt=""
+              style="width:100%;height:100%;display:block;-webkit-user-drag:none;"
+            >
           </div>
         </div>
       </div>
@@ -105,7 +144,7 @@ export default {
   setup(props, context) {
     const {mode, captchaType, vSpace, imgSize, barSize, type, blockSize, explain} = toRefs(props)
     const {proxy} = getCurrentInstance();
-    let secretKey = ref(''),           //后端返回的ase加密秘钥
+    const secretKey = ref(''),           //后端返回的ase加密秘钥
         passFlag = ref(''),         //是否通过的标识
         backImgBase = ref(''),      //验证码背景图片
         blockBackImgBase = ref(''), //验证滑块的背景图片
@@ -160,7 +199,7 @@ export default {
       text.value = explain.value
       getPictrue();
       nextTick(() => {
-        let {imgHeight, imgWidth, barHeight, barWidth} = resetSize(proxy)
+        const {imgHeight, imgWidth, barHeight, barWidth} = resetSize(proxy)
         setSize.imgHeight = imgHeight
         setSize.imgWidth = imgWidth
         setSize.barHeight = barHeight
@@ -213,10 +252,11 @@ export default {
     //鼠标按下
     function start(e) {
       e = e || window.event
+      let x;
       if (!e.touches) {  //兼容PC端
-        var x = e.clientX;
+        x = e.clientX;
       } else {           //兼容移动端
-        var x = e.touches[0].pageX;
+        x = e.touches[0].pageX;
       }
       // 点击时鼠标相对于 barArea border box 左边缘的位置
       // 后续计算时会减去边框宽度得到相对于 content box 的位置
@@ -246,24 +286,25 @@ export default {
     function move(e) {
       e = e || window.event
       if (status.value && isEnd.value == false) {
+        let x;
         if (!e.touches) {  //兼容PC端
-          var x = e.clientX;
+          x = e.clientX;
         } else {           //兼容移动端
-          var x = e.touches[0].pageX;
+          x = e.touches[0].pageX;
         }
-        var barAreaLeft = barArea.value.getBoundingClientRect().left;
+        const barAreaLeft = barArea.value.getBoundingClientRect().left;
         // 使用图片宽度（与 barArea CSS width 一致，不含 border）
-        var barWidth = parseInt(setSize.imgWidth);
-        var blockWidth = subBlockWidth.value;
+        const barWidth = parseInt(setSize.imgWidth);
+        const blockWidth = subBlockWidth.value;
 
         // 鼠标相对于 barArea content box 左边缘的位置
         // getBoundingClientRect 返回 border box，需要减去边框
-        var barAreaBorder = 1;
-        var mouseLeft = x - barAreaLeft - barAreaBorder
+        const barAreaBorder = 1;
+        const mouseLeft = x - barAreaLeft - barAreaBorder
 
         // 滑块视觉位置 = 鼠标移动距离
         // 初始时鼠标位置 = startLeft - barAreaBorder（相对于 content box）
-        var visualLeft = mouseLeft - (startLeft.value - barAreaBorder)
+        let visualLeft = mouseLeft - (startLeft.value - barAreaBorder)
 
         // 左边界
         if (visualLeft < 0) {
@@ -297,10 +338,10 @@ export default {
       //判断是否重合
       if (status.value && isEnd.value == false) {
         // 滑块视觉位置（直接从 CSS left 获取）
-        var visualLeft = parseInt((moveBlockLeft.value || '0px').replace('px', ''))
+        const visualLeft = parseInt((moveBlockLeft.value || '0px').replace('px', ''))
         // 转换为标准 310px 图片的坐标
-        var moveLeftDistance = visualLeft * 310 / parseInt(setSize.imgWidth)
-        let data = {
+        const moveLeftDistance = visualLeft * 310 / parseInt(setSize.imgWidth)
+        const data = {
           captchaType: captchaType.value,
           "pointJson": secretKey.value ? aesEncrypt(JSON.stringify({
             x: moveLeftDistance,
@@ -322,7 +363,7 @@ export default {
             isEnd.value = true;
             passFlag.value = true
             tipWords.value = `${((endMovetime.value - startMoveTime.value) / 1000).toFixed(2)}s验证成功`
-            var captchaVerification = secretKey.value ? aesEncrypt(backToken.value + '---' + JSON.stringify({
+            const captchaVerification = secretKey.value ? aesEncrypt(backToken.value + '---' + JSON.stringify({
               x: moveLeftDistance,
               y: 5.0
             }), secretKey.value) : backToken.value + '---' + JSON.stringify({x: moveLeftDistance, y: 5.0})
@@ -386,7 +427,7 @@ export default {
 
     // 请求背景图片和验证图片
     function getPictrue() {
-      let data = {
+      const data = {
         captchaType: captchaType.value
       }
       reqGet(data).then(res => {

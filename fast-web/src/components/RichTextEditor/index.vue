@@ -1,18 +1,21 @@
 <template>
-  <div class="rich-text-editor" :class="{ 'is-disabled': disabled }">
+  <div
+    class="rich-text-editor"
+    :class="{ 'is-disabled': disabled }"
+  >
     <Toolbar
       :editor="editorRef"
-      :defaultConfig="toolbarConfig"
+      :default-config="toolbarConfig"
       :mode="mode"
       class="toolbar"
     />
     <Editor
       v-model="valueHtml"
-      :defaultConfig="editorConfig"
+      :default-config="editorConfig"
       :mode="mode"
       class="editor"
-      @onCreated="handleCreated"
-      @onChange="handleChange"
+      @on-created="handleCreated"
+      @on-change="handleChange"
     />
   </div>
 </template>

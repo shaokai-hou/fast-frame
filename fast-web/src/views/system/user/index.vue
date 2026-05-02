@@ -1,8 +1,16 @@
 <template>
   <PageContainer>
     <!-- 搜索栏 -->
-    <SearchBar :model="queryParams" :visible="showSearch" @search="handleQuery" @reset="resetQuery">
-      <el-form-item label="部门" prop="deptId">
+    <SearchBar
+      :model="queryParams"
+      :visible="showSearch"
+      @search="handleQuery"
+      @reset="resetQuery"
+    >
+      <el-form-item
+        label="部门"
+        prop="deptId"
+      >
         <TreeSelect
           v-model="queryParams.deptId"
           :data="deptOptions"
@@ -12,15 +20,43 @@
           placeholder="请选择部门"
         />
       </el-form-item>
-      <el-form-item label="用户名" prop="username">
-        <el-input v-model="queryParams.username" placeholder="请输入用户名" clearable @keyup.enter="handleQuery" />
+      <el-form-item
+        label="用户名"
+        prop="username"
+      >
+        <el-input
+          v-model="queryParams.username"
+          placeholder="请输入用户名"
+          clearable
+          @keyup.enter="handleQuery"
+        />
       </el-form-item>
-      <el-form-item label="手机号" prop="phone">
-        <el-input v-model="queryParams.phone" placeholder="请输入手机号" clearable @keyup.enter="handleQuery" />
+      <el-form-item
+        label="手机号"
+        prop="phone"
+      >
+        <el-input
+          v-model="queryParams.phone"
+          placeholder="请输入手机号"
+          clearable
+          @keyup.enter="handleQuery"
+        />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="用户状态" clearable>
-          <el-option v-for="item in statusDict" :key="item.dictValue" :label="item.dictLabel" :value="item.dictValue" />
+      <el-form-item
+        label="状态"
+        prop="status"
+      >
+        <el-select
+          v-model="queryParams.status"
+          placeholder="用户状态"
+          clearable
+        >
+          <el-option
+            v-for="item in statusDict"
+            :key="item.dictValue"
+            :label="item.dictLabel"
+            :value="item.dictValue"
+          />
         </el-select>
       </el-form-item>
     </SearchBar>
@@ -32,12 +68,12 @@
       :total="total"
       :page-num="queryParams.pageNum"
       :page-size="queryParams.pageSize"
-      @update:pageNum="queryParams.pageNum = $event"
-      @update:pageSize="queryParams.pageSize = $event"
+      @update:page-num="queryParams.pageNum = $event"
+      @update:page-size="queryParams.pageSize = $event"
       @add="handleAdd"
       @edit="handleEdit"
       @delete="handleDelete"
-      @resetPwd="handleResetPwd"
+      @reset-pwd="handleResetPwd"
       @unlock="handleUnlock"
       @export="handleExport"
       @import="handleImport"
@@ -45,10 +81,17 @@
     />
 
     <!-- 用户表单 -->
-    <UserForm v-model="formVisible" :user-id="currentUserId" @success="getList" />
+    <UserForm
+      v-model="formVisible"
+      :user-id="currentUserId"
+      @success="getList"
+    />
 
     <!-- 用户导入 -->
-    <UserImport v-model="importVisible" @success="getList" />
+    <UserImport
+      v-model="importVisible"
+      @success="getList"
+    />
   </PageContainer>
 </template>
 

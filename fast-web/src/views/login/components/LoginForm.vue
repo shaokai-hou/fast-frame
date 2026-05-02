@@ -1,6 +1,11 @@
 <template>
   <div class="login-form-wrapper">
-    <el-form ref="formRef" :model="form" :rules="rules" class="login-form">
+    <el-form
+      ref="formRef"
+      :model="form"
+      :rules="rules"
+      class="login-form"
+    >
       <el-form-item prop="username">
         <el-input
           v-model="form.username"
@@ -38,7 +43,7 @@
   <Verify
     ref="verifyRef"
     mode="pop"
-    captchaType="blockPuzzle"
+    captcha-type="blockPuzzle"
     @success="onVerifySuccess"
     @error="onVerifyError"
   />

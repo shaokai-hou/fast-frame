@@ -2,16 +2,24 @@
   <div v-if="!item.meta?.hidden">
     <!-- 没有子菜单 -->
     <template v-if="!hasChildren">
-      <el-menu-item :index="resolvePath(item.path)" @click="handleMenuClick(resolvePath(item.path))">
+      <el-menu-item
+        :index="resolvePath(item.path)"
+        @click="handleMenuClick(resolvePath(item.path))"
+      >
         <el-icon v-if="item.meta?.icon">
           <component :is="item.meta.icon" />
         </el-icon>
-        <template #title>{{ item.meta?.title }}</template>
+        <template #title>
+          {{ item.meta?.title }}
+        </template>
       </el-menu-item>
     </template>
 
     <!-- 有子菜单 -->
-    <el-sub-menu v-else :index="resolvePath(item.path)">
+    <el-sub-menu
+      v-else
+      :index="resolvePath(item.path)"
+    >
       <template #title>
         <el-icon v-if="item.meta?.icon">
           <component :is="item.meta.icon" />

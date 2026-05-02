@@ -9,7 +9,9 @@
     <div class="settings-container">
       <!-- 界面设置 -->
       <div class="settings-section">
-        <div class="section-title">界面设置</div>
+        <div class="section-title">
+          界面设置
+        </div>
 
         <div class="settings-item">
           <span>显示标签页</span>
@@ -30,7 +32,9 @@
 
       <!-- 说明 -->
       <div class="settings-section">
-        <div class="section-title">说明</div>
+        <div class="section-title">
+          说明
+        </div>
         <div class="description">
           <p>配置会自动保存到浏览器本地存储，刷新页面后仍然生效。</p>
         </div>

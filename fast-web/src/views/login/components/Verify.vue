@@ -1,27 +1,44 @@
 <template>
-  <div :class="mode=='pop'?'mask':''" v-show="showBox">
-    <div :class="mode=='pop'?'verifybox':''" :style="{'max-width':parseInt(imgSize.width)+30+'px'}">
-      <div class="verifybox-top" v-if="mode=='pop'">
+  <div
+    v-show="showBox"
+    :class="mode=='pop'?'mask':''"
+  >
+    <div
+      :class="mode=='pop'?'verifybox':''"
+      :style="{'max-width':parseInt(imgSize.width)+30+'px'}"
+    >
+      <div
+        v-if="mode=='pop'"
+        class="verifybox-top"
+      >
         请完成安全验证
-        <span class="verifybox-close" @click="closeBox">
-                <i class="iconfont icon-close"></i>
-            </span>
+        <span
+          class="verifybox-close"
+          @click="closeBox"
+        >
+          <i class="iconfont icon-close" />
+        </span>
       </div>
-      <div class="verifybox-bottom" :style="{padding:mode=='pop'?'15px':'0'}">
+      <div
+        class="verifybox-bottom"
+        :style="{padding:mode=='pop'?'15px':'0'}"
+      >
         <!-- 验证码容器 -->
-        <component v-if="componentType"
-                   :is="componentType"
-                   :captchaType="captchaType"
-                   :type="verifyType"
-                   :figure="figure"
-                   :arith="arith"
-                   :mode="mode"
-                   :vSpace="vSpace"
-                   :explain="explain"
-                   :imgSize="imgSize"
-                   :blockSize="blockSize"
-                   :barSize="barSize"
-                   ref="instance"></component>
+        <component
+          :is="componentType"
+          v-if="componentType"
+          ref="instance"
+          :captcha-type="captchaType"
+          :type="verifyType"
+          :figure="figure"
+          :arith="arith"
+          :mode="mode"
+          :v-space="vSpace"
+          :explain="explain"
+          :img-size="imgSize"
+          :block-size="blockSize"
+          :bar-size="barSize"
+        />
       </div>
     </div>
   </div>

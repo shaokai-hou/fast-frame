@@ -6,24 +6,61 @@
     label-width="80px"
     class="profile-form"
   >
-    <el-form-item label="昵称" prop="nickname">
-      <el-input v-model="form.nickname" placeholder="请输入昵称" />
+    <el-form-item
+      label="昵称"
+      prop="nickname"
+    >
+      <el-input
+        v-model="form.nickname"
+        placeholder="请输入昵称"
+      />
     </el-form-item>
-    <el-form-item label="手机号" prop="phone">
-      <el-input v-model="form.phone" placeholder="请输入手机号" />
+    <el-form-item
+      label="手机号"
+      prop="phone"
+    >
+      <el-input
+        v-model="form.phone"
+        placeholder="请输入手机号"
+      />
     </el-form-item>
-    <el-form-item label="邮箱" prop="email">
-      <el-input v-model="form.email" placeholder="请输入邮箱" />
+    <el-form-item
+      label="邮箱"
+      prop="email"
+    >
+      <el-input
+        v-model="form.email"
+        placeholder="请输入邮箱"
+      />
     </el-form-item>
-    <el-form-item label="性别" prop="gender">
-      <el-select v-model="form.gender" placeholder="请选择性别">
-        <el-option label="未知" value="0" />
-        <el-option label="男" value="1" />
-        <el-option label="女" value="2" />
+    <el-form-item
+      label="性别"
+      prop="gender"
+    >
+      <el-select
+        v-model="form.gender"
+        placeholder="请选择性别"
+      >
+        <el-option
+          label="未知"
+          value="0"
+        />
+        <el-option
+          label="男"
+          value="1"
+        />
+        <el-option
+          label="女"
+          value="2"
+        />
       </el-select>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" :loading="loading" @click="handleSubmit">
+      <el-button
+        type="primary"
+        :loading="loading"
+        @click="handleSubmit"
+      >
         保存修改
       </el-button>
     </el-form-item>

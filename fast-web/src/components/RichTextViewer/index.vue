@@ -1,5 +1,8 @@
 <template>
-  <div class="rich-text-viewer" v-html="sanitizedHtml"></div>
+  <div
+    class="rich-text-viewer"
+    v-html="sanitizedHtml"
+  />
 </template>
 
 <script setup>

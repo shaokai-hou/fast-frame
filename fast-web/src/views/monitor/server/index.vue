@@ -2,7 +2,13 @@
   <PageContainer>
     <!-- 工具栏 -->
     <div class="tool-bar">
-      <el-button type="primary" :icon="Refresh" @click="getInfo">刷新</el-button>
+      <el-button
+        type="primary"
+        :icon="Refresh"
+        @click="getInfo"
+      >
+        刷新
+      </el-button>
     </div>
 
     <!-- 服务器信息 -->
@@ -11,12 +17,17 @@
       <div class="info-card">
         <div class="card-header">
           <span class="title">CPU</span>
-          <el-tag type="success">{{ server.cpu?.core }} 核心</el-tag>
+          <el-tag type="success">
+            {{ server.cpu?.core }} 核心
+          </el-tag>
         </div>
         <div class="card-body">
           <div class="progress-item">
             <span class="label">使用率</span>
-            <el-progress :percentage="server.cpu?.used || 0" :color="getProgressColor(server.cpu?.used)" />
+            <el-progress
+              :percentage="server.cpu?.used || 0"
+              :color="getProgressColor(server.cpu?.used)"
+            />
           </div>
           <div class="stat-row">
             <span>已用: {{ server.cpu?.used }}%</span>
@@ -29,12 +40,17 @@
       <div class="info-card">
         <div class="card-header">
           <span class="title">内存</span>
-          <el-tag type="warning">{{ server.mem?.total }} GB</el-tag>
+          <el-tag type="warning">
+            {{ server.mem?.total }} GB
+          </el-tag>
         </div>
         <div class="card-body">
           <div class="progress-item">
             <span class="label">使用率</span>
-            <el-progress :percentage="server.mem?.usage || 0" :color="getProgressColor(server.mem?.usage)" />
+            <el-progress
+              :percentage="server.mem?.usage || 0"
+              :color="getProgressColor(server.mem?.usage)"
+            />
           </div>
           <div class="stat-row">
             <span>已用: {{ server.mem?.used }} GB</span>
@@ -47,12 +63,17 @@
       <div class="info-card">
         <div class="card-header">
           <span class="title">JVM</span>
-          <el-tag type="info">{{ server.jvm?.max }} MB</el-tag>
+          <el-tag type="info">
+            {{ server.jvm?.max }} MB
+          </el-tag>
         </div>
         <div class="card-body">
           <div class="progress-item">
             <span class="label">使用率</span>
-            <el-progress :percentage="server.jvm?.usage || 0" :color="getProgressColor(server.jvm?.usage)" />
+            <el-progress
+              :percentage="server.jvm?.usage || 0"
+              :color="getProgressColor(server.jvm?.usage)"
+            />
           </div>
           <div class="stat-row">
             <span>已用: {{ server.jvm?.used }} MB</span>
@@ -91,18 +112,59 @@
     </div>
 
     <!-- 磁盘信息 -->
-    <div class="content-card" style="margin-top: 16px">
-      <div class="card-title">磁盘信息</div>
-      <el-table v-loading="loading" :data="server.sysFiles" row-key="dirName">
-        <el-table-column type="index" label="序号" width="60" align="center" />
-        <el-table-column label="磁盘名称" prop="dirName" show-overflow-tooltip />
-        <el-table-column label="磁盘类型" prop="sysTypeName" width="120" />
-        <el-table-column label="总大小(GB)" prop="total" width="120" />
-        <el-table-column label="已用(GB)" prop="used" width="120" />
-        <el-table-column label="剩余(GB)" prop="free" width="120" />
-        <el-table-column label="使用率" prop="usage" width="150">
+    <div
+      class="content-card"
+      style="margin-top: 16px"
+    >
+      <div class="card-title">
+        磁盘信息
+      </div>
+      <el-table
+        v-loading="loading"
+        :data="server.sysFiles"
+        row-key="dirName"
+      >
+        <el-table-column
+          type="index"
+          label="序号"
+          width="60"
+          align="center"
+        />
+        <el-table-column
+          label="磁盘名称"
+          prop="dirName"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          label="磁盘类型"
+          prop="sysTypeName"
+          width="120"
+        />
+        <el-table-column
+          label="总大小(GB)"
+          prop="total"
+          width="120"
+        />
+        <el-table-column
+          label="已用(GB)"
+          prop="used"
+          width="120"
+        />
+        <el-table-column
+          label="剩余(GB)"
+          prop="free"
+          width="120"
+        />
+        <el-table-column
+          label="使用率"
+          prop="usage"
+          width="150"
+        >
           <template #default="scope">
-            <el-progress :percentage="scope.row.usage" :color="getProgressColor(scope.row.usage)" />
+            <el-progress
+              :percentage="scope.row.usage"
+              :color="getProgressColor(scope.row.usage)"
+            />
           </template>
         </el-table-column>
       </el-table>

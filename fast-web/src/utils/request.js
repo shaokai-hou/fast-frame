@@ -138,11 +138,6 @@ export async function getBlob(url) {
  * @returns {Promise}
  */
 export async function download(url, filename) {
-  try {
-    const blob = await getBlob(url)
-    saveAs(blob, filename)
-  } catch (error) {
-    // getBlob 已经处理了错误消息，这里只需要继续抛出
-    throw error
-  }
+  const blob = await getBlob(url)
+  saveAs(blob, filename)
 }

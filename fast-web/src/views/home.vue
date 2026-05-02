@@ -3,8 +3,12 @@
     <!-- 欢迎区域 -->
     <div class="welcome-section fade-in">
       <div class="welcome-text">
-        <h1 class="welcome-title">{{ greeting }}，{{ userStore.userInfo.nickname || userStore.userInfo.username }}</h1>
-        <p class="welcome-subtitle">欢迎使用 Fast Frame 后台管理系统</p>
+        <h1 class="welcome-title">
+          {{ greeting }}，{{ userStore.userInfo.nickname || userStore.userInfo.username }}
+        </h1>
+        <p class="welcome-subtitle">
+          欢迎使用 Fast Frame 后台管理系统
+        </p>
       </div>
       <div class="welcome-date">
         <span class="date-text">{{ currentDate }}</span>
@@ -13,17 +17,35 @@
     </div>
 
     <!-- 快捷入口 -->
-    <el-card class="quick-links-card fade-in" style="animation-delay: 0.2s">
+    <el-card
+      class="quick-links-card fade-in"
+      style="animation-delay: 0.2s"
+    >
       <template #header>
         <span class="card-title">快捷入口</span>
       </template>
-      <div v-if="loading" class="loading-state">
-        <el-skeleton :rows="2" animated />
+      <div
+        v-if="loading"
+        class="loading-state"
+      >
+        <el-skeleton
+          :rows="2"
+          animated
+        />
       </div>
-      <div v-else-if="quickLinks.length === 0" class="empty-state">
-        <el-empty description="暂无快捷入口" :image-size="80" />
+      <div
+        v-else-if="quickLinks.length === 0"
+        class="empty-state"
+      >
+        <el-empty
+          description="暂无快捷入口"
+          :image-size="80"
+        />
       </div>
-      <div v-else class="quick-links-grid">
+      <div
+        v-else
+        class="quick-links-grid"
+      >
         <div
           v-for="(link, index) in quickLinks"
           :key="link.id"
@@ -31,8 +53,13 @@
           :style="{ animationDelay: index * 0.05 + 's' }"
           @click="handleClick(link)"
         >
-          <div class="quick-link-icon" :style="{ background: getGradient(index) }">
-            <el-icon :size="24"><component :is="link.icon || 'Document'" /></el-icon>
+          <div
+            class="quick-link-icon"
+            :style="{ background: getGradient(index) }"
+          >
+            <el-icon :size="24">
+              <component :is="link.icon || 'Document'" />
+            </el-icon>
           </div>
           <span class="quick-link-text">{{ link.name }}</span>
         </div>

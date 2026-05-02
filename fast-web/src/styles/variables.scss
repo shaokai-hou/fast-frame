@@ -11,11 +11,11 @@
   --color-primary-lighter: #BFDBFE;
   --color-primary-lightest: #EFF6FF;
 
-  // Element Plus 禁用状态边框颜色覆盖 - 使用中性灰边框
-  --el-input-disabled-border-color: #CBD5E1;
-  --el-select-disabled-border-color: #CBD5E1;
-  --el-input-number-disabled-border-color: #CBD5E1;
-  --el-disabled-border-color: #CBD5E1;
+  // Element Plus 禁用状态边框颜色覆盖 - 使用蓝色边框
+  --el-input-disabled-border-color: #60A5FA;
+  --el-select-disabled-border-color: #60A5FA;
+  --el-input-number-disabled-border-color: #60A5FA;
+  --el-disabled-border-color: #60A5FA;
 
   // 渐变色
   --gradient-primary: linear-gradient(135deg, #3B82F6 0%, #60A5FA 50%, #93C5FD 100%);
@@ -48,8 +48,8 @@
   --color-info-light: #E5E7EB;
   --color-info-lighter: #F3F4F6;
 
-  // 背景色 - 灰白背景
-  --color-background: #F8FAFC;
+  // 背景色 - 浅蓝背景
+  --color-background: #EFF6FF;
   --color-surface: #FFFFFF;
   --color-surface-elevated: #FFFFFF;
 
@@ -59,10 +59,10 @@
   --color-foreground-subtle: #94A3B8;
   --color-foreground-inverse: #FFFFFF;
 
-  // 边框色 - 中性灰系列
-  --color-border: #E2E8F0;
-  --color-border-light: #F3F4F6;
-  --color-border-dark: #CBD5E1;
+  // 边框色
+  --color-border: #BFDBFE;
+  --color-border-light: #DBEAFE;
+  --color-border-dark: #60A5FA;
 
   // 中性灰系列
   --gray-50: #F8FAFC;
@@ -123,13 +123,13 @@ $text-regular: #334155;
 $text-secondary: #64748B;
 $text-placeholder: #94A3B8;
 
-// 边框颜色 - 中性灰系列
-$border-color: #E2E8F0;
-$border-color-light: #F3F4F6;
-$border-color-lighter: #F8FAFC;
+// 边框颜色
+$border-color: #BFDBFE;
+$border-color-light: #DBEAFE;
+$border-color-lighter: #EFF6FF;
 
-// 背景颜色 - 灰白背景
-$bg-color: #F8FAFC;
+// 背景颜色
+$bg-color: #EFF6FF;
 $bg-white: #FFFFFF;
 
 // 间距系统
@@ -140,12 +140,12 @@ $spacing-lg: 24px;
 $spacing-xl: 32px;
 $spacing-2xl: 48px;
 
-// 阴影系统 - 中性灰阴影
-$shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
-$shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.06);
-$shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
-$shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.05);
-$shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+// 阴影系统 - Logo Blue 阴影
+$shadow-xs: 0 1px 2px 0 rgba(59, 130, 246, 0.04);
+$shadow-sm: 0 1px 3px 0 rgba(59, 130, 246, 0.06), 0 1px 2px -1px rgba(59, 130, 246, 0.06);
+$shadow-md: 0 4px 6px -1px rgba(59, 130, 246, 0.08), 0 2px 4px -2px rgba(59, 130, 246, 0.05);
+$shadow-lg: 0 10px 15px -3px rgba(59, 130, 246, 0.08), 0 4px 6px -4px rgba(59, 130, 246, 0.05);
+$shadow-xl: 0 20px 25px -5px rgba(59, 130, 246, 0.08), 0 8px 10px -6px rgba(59, 130, 246, 0.04);
 
 // 主题色阴影 - 蓝色强调阴影（仅用于强调元素）
 $shadow-primary: 0 4px 14px 0 rgba(59, 130, 246, 0.25);
@@ -170,22 +170,22 @@ $ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
 // 布局尺寸
 
-// 侧边栏（专业简约配色方案）
+// 侧边栏（Logo Blue 配色方案）
 $sidebar-width: 240px;
 $sidebar-collapsed-width: 64px;
 $sidebar-bg: #FFFFFF;
-$sidebar-border: #E2E8F0;
+$sidebar-border: #DBEAFE;
 $sidebar-text: #64748B;
 $sidebar-text-hover: #1E3A8A;
-$sidebar-active-bg: #F1F5F9;
+$sidebar-active-bg: #EFF6FF;
 $sidebar-active-text: #3B82F6;
 $sidebar-hover-bg: #F1F5F9;
 
 // 导航栏
 $navbar-height: 60px;
-$navbar-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+$navbar-shadow: 0 1px 3px rgba(59, 130, 246, 0.06);
 $navbar-bg: #FFFFFF;
-$navbar-border: #E2E8F0;
+$navbar-border: #DBEAFE;
 
 // Z-Index 层级系统
 $z-dropdown: 1000;

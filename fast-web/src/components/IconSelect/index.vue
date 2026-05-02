@@ -1,8 +1,8 @@
 <template>
   <el-popover
+    v-model:visible="popoverVisible"
     trigger="click"
     :width="450"
-    v-model:visible="popoverVisible"
     popper-class="icon-select-popover"
   >
     <!-- 触发器：显示已选图标或占位符 -->
@@ -15,7 +15,10 @@
           style="cursor: pointer"
         >
           <template #prefix>
-            <el-icon v-if="modelValue" style="vertical-align: middle">
+            <el-icon
+              v-if="modelValue"
+              style="vertical-align: middle"
+            >
               <component :is="modelValue" />
             </el-icon>
           </template>
@@ -59,7 +62,11 @@
       </div>
 
       <!-- 无结果提示 -->
-      <el-empty v-if="filteredIcons.length === 0" description="未找到匹配的图标" :image-size="60" />
+      <el-empty
+        v-if="filteredIcons.length === 0"
+        description="未找到匹配的图标"
+        :image-size="60"
+      />
     </div>
   </el-popover>
 </template>

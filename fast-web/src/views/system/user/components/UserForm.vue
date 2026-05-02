@@ -1,77 +1,196 @@
 <template>
-  <el-dialog :title="title" v-model="visible" width="600px" append-to-body @closed="resetForm">
-    <el-form ref="formRef" :model="form" :rules="rules" label-width="80px">
+  <el-dialog
+    v-model="visible"
+    :title="title"
+    width="600px"
+    append-to-body
+    @closed="resetForm"
+  >
+    <el-form
+      ref="formRef"
+      :model="form"
+      :rules="rules"
+      label-width="80px"
+    >
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="用户名" prop="username">
-            <el-input v-model="form.username" placeholder="请输入用户名" :disabled="form.id" />
+          <el-form-item
+            label="用户名"
+            prop="username"
+          >
+            <el-input
+              v-model="form.username"
+              placeholder="请输入用户名"
+              :disabled="form.id"
+            />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="密码" prop="password" v-if="!form.id">
-            <el-input v-model="form.password" type="password" placeholder="不填则使用初始密码" show-password />
+          <el-form-item
+            v-if="!form.id"
+            label="密码"
+            prop="password"
+          >
+            <el-input
+              v-model="form.password"
+              type="password"
+              placeholder="不填则使用初始密码"
+              show-password
+            />
           </el-form-item>
-          <el-form-item label="昵称" prop="nickname" v-else>
-            <el-input v-model="form.nickname" placeholder="请输入昵称" />
+          <el-form-item
+            v-else
+            label="昵称"
+            prop="nickname"
+          >
+            <el-input
+              v-model="form.nickname"
+              placeholder="请输入昵称"
+            />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="昵称" prop="nickname" v-if="!form.id">
-            <el-input v-model="form.nickname" placeholder="请输入昵称" />
+          <el-form-item
+            v-if="!form.id"
+            label="昵称"
+            prop="nickname"
+          >
+            <el-input
+              v-model="form.nickname"
+              placeholder="请输入昵称"
+            />
           </el-form-item>
-          <el-form-item label="手机号" prop="phone" v-else>
-            <el-input v-model="form.phone" placeholder="请输入手机号" />
+          <el-form-item
+            v-else
+            label="手机号"
+            prop="phone"
+          >
+            <el-input
+              v-model="form.phone"
+              placeholder="请输入手机号"
+            />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="手机号" prop="phone" v-if="!form.id">
-            <el-input v-model="form.phone" placeholder="请输入手机号" />
+          <el-form-item
+            v-if="!form.id"
+            label="手机号"
+            prop="phone"
+          >
+            <el-input
+              v-model="form.phone"
+              placeholder="请输入手机号"
+            />
           </el-form-item>
-          <el-form-item label="邮箱" prop="email" v-else>
-            <el-input v-model="form.email" placeholder="请输入邮箱" />
+          <el-form-item
+            v-else
+            label="邮箱"
+            prop="email"
+          >
+            <el-input
+              v-model="form.email"
+              placeholder="请输入邮箱"
+            />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="部门" prop="deptId">
-            <tree-select v-model="form.deptId" :data="deptOptions"
-              :field-props="{ value: 'id', label: 'label', children: 'children' }" value-key="id" placeholder="请选择部门"
-              check-strictly style="width: 100%" />
+          <el-form-item
+            label="部门"
+            prop="deptId"
+          >
+            <tree-select
+              v-model="form.deptId"
+              :data="deptOptions"
+              :field-props="{ value: 'id', label: 'label', children: 'children' }"
+              value-key="id"
+              placeholder="请选择部门"
+              check-strictly
+              style="width: 100%"
+            />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="性别" prop="gender">
-            <el-select v-model="form.gender" placeholder="请选择性别">
-              <el-option v-for="item in genderDict" :key="item.dictValue" :label="item.dictLabel"
-                :value="item.dictValue" />
+          <el-form-item
+            label="性别"
+            prop="gender"
+          >
+            <el-select
+              v-model="form.gender"
+              placeholder="请选择性别"
+            >
+              <el-option
+                v-for="item in genderDict"
+                :key="item.dictValue"
+                :label="item.dictLabel"
+                :value="item.dictValue"
+              />
             </el-select>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="状态" prop="status">
+          <el-form-item
+            label="状态"
+            prop="status"
+          >
             <el-radio-group v-model="form.status">
-              <el-radio v-for="item in statusDict" :key="item.dictValue" :label="item.dictValue">{{ item.dictLabel }}</el-radio>
+              <el-radio
+                v-for="item in statusDict"
+                :key="item.dictValue"
+                :label="item.dictValue"
+              >
+                {{ item.dictLabel }}
+              </el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item label="角色" prop="roleIds">
-        <el-select v-model="form.roleIds" multiple placeholder="请选择角色" style="width: 100%">
-          <el-option v-for="role in filteredRoleOptions" :key="role.id" :label="role.roleName" :value="role.id" />
+      <el-form-item
+        label="角色"
+        prop="roleIds"
+      >
+        <el-select
+          v-model="form.roleIds"
+          multiple
+          placeholder="请选择角色"
+          style="width: 100%"
+        >
+          <el-option
+            v-for="role in filteredRoleOptions"
+            :key="role.id"
+            :label="role.roleName"
+            :value="role.id"
+          />
         </el-select>
       </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input v-model="form.remark" type="textarea" placeholder="请输入备注" :rows="3" />
+      <el-form-item
+        label="备注"
+        prop="remark"
+      >
+        <el-input
+          v-model="form.remark"
+          type="textarea"
+          placeholder="请输入备注"
+          :rows="3"
+        />
       </el-form-item>
     </el-form>
     <template #footer>
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" :loading="loading" @click="handleSubmit">确定</el-button>
+      <el-button @click="visible = false">
+        取消
+      </el-button>
+      <el-button
+        type="primary"
+        :loading="loading"
+        @click="handleSubmit"
+      >
+        确定
+      </el-button>
     </template>
   </el-dialog>
 </template>

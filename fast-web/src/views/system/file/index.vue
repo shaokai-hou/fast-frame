@@ -1,9 +1,21 @@
 <template>
   <PageContainer>
     <!-- 搜索栏 -->
-    <SearchBar :model="queryParams" @search="handleQuery" @reset="resetQuery">
-      <el-form-item label="文件名" prop="fileName">
-        <el-input v-model="queryParams.fileName" placeholder="请输入文件名" clearable @keyup.enter="handleQuery" />
+    <SearchBar
+      :model="queryParams"
+      @search="handleQuery"
+      @reset="resetQuery"
+    >
+      <el-form-item
+        label="文件名"
+        prop="fileName"
+      >
+        <el-input
+          v-model="queryParams.fileName"
+          placeholder="请输入文件名"
+          clearable
+          @keyup.enter="handleQuery"
+        />
       </el-form-item>
     </SearchBar>
 
@@ -18,43 +30,103 @@
           :show-file-list="false"
           multiple
         >
-          <el-button type="primary" plain :icon="Upload">上传文件</el-button>
+          <el-button
+            type="primary"
+            plain
+            :icon="Upload"
+          >
+            上传文件
+          </el-button>
         </el-upload>
       </div>
 
       <!-- 数据表格 -->
-      <el-table v-loading="loading" :data="fileList" row-key="id">
-        <el-table-column type="index" label="序号" width="60" align="center" />
-        <el-table-column label="文件名" prop="originalFilename" min-width="200">
+      <el-table
+        v-loading="loading"
+        :data="fileList"
+        row-key="id"
+      >
+        <el-table-column
+          type="index"
+          label="序号"
+          width="60"
+          align="center"
+        />
+        <el-table-column
+          label="文件名"
+          prop="originalFilename"
+          min-width="200"
+        >
           <template #default="scope">
             {{ scope.row.originalFilename || scope.row.fileName }}
           </template>
         </el-table-column>
-        <el-table-column label="文件类型" prop="contentType" width="120">
+        <el-table-column
+          label="文件类型"
+          prop="contentType"
+          width="120"
+        >
           <template #default="scope">
             <el-tag :type="getFileTypeTag(scope.row.contentType)">
               {{ getFileTypeName(scope.row.contentType) }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="文件大小" prop="size" width="120">
+        <el-table-column
+          label="文件大小"
+          prop="size"
+          width="120"
+        >
           <template #default="scope">
             {{ formatFileSize(scope.row.size) }}
           </template>
         </el-table-column>
-        <el-table-column label="上传时间" prop="uploadTime" width="180" />
-        <el-table-column label="操作" align="center" width="200" fixed="right">
+        <el-table-column
+          label="上传时间"
+          prop="uploadTime"
+          width="180"
+        />
+        <el-table-column
+          label="操作"
+          align="center"
+          width="200"
+          fixed="right"
+        >
           <template #default="scope">
-            <el-button link type="primary" @click="handlePreview(scope.row)">预览</el-button>
-            <el-button link type="success" @click="handleDownload(scope.row)">下载</el-button>
-            <el-button link type="danger" @click="handleDelete(scope.row)" v-hasPermi="['system:file:delete']">删除</el-button>
+            <el-button
+              link
+              type="primary"
+              @click="handlePreview(scope.row)"
+            >
+              预览
+            </el-button>
+            <el-button
+              link
+              type="success"
+              @click="handleDownload(scope.row)"
+            >
+              下载
+            </el-button>
+            <el-button
+              v-hasPermi="['system:file:delete']"
+              link
+              type="danger"
+              @click="handleDelete(scope.row)"
+            >
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
 
       <!-- 分页 -->
-      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
-        v-model:limit="queryParams.pageSize" @pagination="getFileList" />
+      <pagination
+        v-show="total > 0"
+        v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize"
+        :total="total"
+        @pagination="getFileList"
+      />
     </div>
 
     <!-- 文件预览组件 -->

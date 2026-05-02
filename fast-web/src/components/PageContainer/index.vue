@@ -1,5 +1,8 @@
 <template>
-  <div class="page-container" :style="containerStyle">
+  <div
+    class="page-container"
+    :style="containerStyle"
+  >
     <slot />
   </div>
 </template>

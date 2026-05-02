@@ -1,10 +1,27 @@
 <template>
   <PageContainer>
     <!-- 搜索栏 -->
-    <SearchBar :model="queryParams" @search="handleQuery" @reset="resetQuery">
-      <el-form-item label="缓存前缀" prop="prefix">
-        <el-select v-model="queryParams.prefix" placeholder="全部" clearable style="width: 200px">
-          <el-option v-for="item in prefixOptions" :key="item.value" :label="item.name" :value="item.value" />
+    <SearchBar
+      :model="queryParams"
+      @search="handleQuery"
+      @reset="resetQuery"
+    >
+      <el-form-item
+        label="缓存前缀"
+        prop="prefix"
+      >
+        <el-select
+          v-model="queryParams.prefix"
+          placeholder="全部"
+          clearable
+          style="width: 200px"
+        >
+          <el-option
+            v-for="item in prefixOptions"
+            :key="item.value"
+            :label="item.name"
+            :value="item.value"
+          />
         </el-select>
       </el-form-item>
     </SearchBar>
@@ -13,57 +30,143 @@
     <div class="content-card">
       <!-- 工具栏 -->
       <div class="tool-bar">
-        <el-button type="danger" plain :icon="Delete" @click="handleClear"
-          v-hasPermi="['monitor:cache:delete']">清空缓存</el-button>
-        <el-button :icon="Refresh" @click="getList">刷新</el-button>
+        <el-button
+          v-hasPermi="['monitor:cache:delete']"
+          type="danger"
+          plain
+          :icon="Delete"
+          @click="handleClear"
+        >
+          清空缓存
+        </el-button>
+        <el-button
+          :icon="Refresh"
+          @click="getList"
+        >
+          刷新
+        </el-button>
       </div>
 
       <!-- 数据表格 -->
-      <el-table v-loading="loading" :data="cacheList" row-key="key">
-        <el-table-column type="index" label="序号" width="60" align="center"
-          :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
-        <el-table-column label="缓存键名" prop="key" show-overflow-tooltip />
-        <el-table-column label="缓存前缀" prop="prefix" width="150">
+      <el-table
+        v-loading="loading"
+        :data="cacheList"
+        row-key="key"
+      >
+        <el-table-column
+          type="index"
+          label="序号"
+          width="60"
+          align="center"
+          :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1"
+        />
+        <el-table-column
+          label="缓存键名"
+          prop="key"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          label="缓存前缀"
+          prop="prefix"
+          width="150"
+        >
           <template #default="scope">
-            <el-tag type="info">{{ scope.row.prefix }}</el-tag>
+            <el-tag type="info">
+              {{ scope.row.prefix }}
+            </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="缓存类型" prop="type" width="100">
+        <el-table-column
+          label="缓存类型"
+          prop="type"
+          width="100"
+        >
           <template #default="scope">
-            <el-tag :type="getTypeTagType(scope.row.type)">{{ scope.row.type }}</el-tag>
+            <el-tag :type="getTypeTagType(scope.row.type)">
+              {{ scope.row.type }}
+            </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="过期时间(秒)" prop="ttl" width="120">
+        <el-table-column
+          label="过期时间(秒)"
+          prop="ttl"
+          width="120"
+        >
           <template #default="scope">
             <span v-if="scope.row.ttl === -1">永不过期</span>
             <span v-else-if="scope.row.ttl === -2">已过期</span>
             <span v-else>{{ scope.row.ttl }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="150">
+        <el-table-column
+          label="操作"
+          align="center"
+          width="150"
+        >
           <template #default="scope">
-            <el-button link type="primary" @click="handleView(scope.row)"
-              v-hasPermi="['monitor:cache:query']">查看</el-button>
-            <el-button link type="danger" @click="handleDelete(scope.row)"
-              v-hasPermi="['monitor:cache:delete']">删除</el-button>
+            <el-button
+              v-hasPermi="['monitor:cache:query']"
+              link
+              type="primary"
+              @click="handleView(scope.row)"
+            >
+              查看
+            </el-button>
+            <el-button
+              v-hasPermi="['monitor:cache:delete']"
+              link
+              type="danger"
+              @click="handleDelete(scope.row)"
+            >
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
 
       <!-- 分页 -->
-      <Pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
-        v-model:limit="queryParams.pageSize" @pagination="getList" />
+      <Pagination
+        v-show="total > 0"
+        v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize"
+        :total="total"
+        @pagination="getList"
+      />
     </div>
 
     <!-- 查看缓存内容对话框 -->
-    <el-dialog title="缓存详情" v-model="viewOpen" width="600px" append-to-body>
-      <el-descriptions :column="2" border>
-        <el-descriptions-item label="缓存键名">{{ cacheInfo.key }}</el-descriptions-item>
-        <el-descriptions-item label="缓存类型">{{ cacheInfo.type }}</el-descriptions-item>
-        <el-descriptions-item label="过期时间">{{ formatTtl(cacheInfo.ttl) }}</el-descriptions-item>
-        <el-descriptions-item label="缓存大小">{{ cacheInfo.size }} 字节</el-descriptions-item>
-        <el-descriptions-item label="缓存值" :span="2">
-          <el-input v-model="cacheInfo.value" type="textarea" :rows="6" readonly />
+    <el-dialog
+      v-model="viewOpen"
+      title="缓存详情"
+      width="600px"
+      append-to-body
+    >
+      <el-descriptions
+        :column="2"
+        border
+      >
+        <el-descriptions-item label="缓存键名">
+          {{ cacheInfo.key }}
+        </el-descriptions-item>
+        <el-descriptions-item label="缓存类型">
+          {{ cacheInfo.type }}
+        </el-descriptions-item>
+        <el-descriptions-item label="过期时间">
+          {{ formatTtl(cacheInfo.ttl) }}
+        </el-descriptions-item>
+        <el-descriptions-item label="缓存大小">
+          {{ cacheInfo.size }} 字节
+        </el-descriptions-item>
+        <el-descriptions-item
+          label="缓存值"
+          :span="2"
+        >
+          <el-input
+            v-model="cacheInfo.value"
+            type="textarea"
+            :rows="6"
+            readonly
+          />
         </el-descriptions-item>
       </el-descriptions>
     </el-dialog>

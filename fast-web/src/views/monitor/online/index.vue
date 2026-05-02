@@ -1,31 +1,85 @@
 <template>
   <PageContainer>
     <!-- 搜索栏 -->
-    <SearchBar :model="queryParams" :visible="showSearch" @search="handleQuery" @reset="resetQuery">
-      <el-form-item label="用户名" prop="username">
-        <el-input v-model="queryParams.username" placeholder="请输入用户名" clearable @keyup.enter="handleQuery" />
+    <SearchBar
+      :model="queryParams"
+      :visible="showSearch"
+      @search="handleQuery"
+      @reset="resetQuery"
+    >
+      <el-form-item
+        label="用户名"
+        prop="username"
+      >
+        <el-input
+          v-model="queryParams.username"
+          placeholder="请输入用户名"
+          clearable
+          @keyup.enter="handleQuery"
+        />
       </el-form-item>
     </SearchBar>
 
     <!-- 内容卡片 -->
     <div class="content-card">
       <!-- 数据表格 -->
-    <el-table v-loading="loading" :data="onlineList" row-key="tokenId">
-      <el-table-column type="index" label="序号" width="60" align="center" :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
-      <el-table-column label="会话ID" prop="tokenId" width="400" />
-      <el-table-column label="用户名" prop="username" />
-      <el-table-column label="IP地址" prop="ip" />
-      <el-table-column label="登录时间" prop="loginTime" width="180" />
-      <el-table-column label="操作" align="center" width="120" fixed="right">
-        <template #default="scope">
-          <el-button link type="danger" @click="handleForceLogout(scope.row)"
-                     v-hasPermi="['monitor:online:forceLogout']">强制退出</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+      <el-table
+        v-loading="loading"
+        :data="onlineList"
+        row-key="tokenId"
+      >
+        <el-table-column
+          type="index"
+          label="序号"
+          width="60"
+          align="center"
+          :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1"
+        />
+        <el-table-column
+          label="会话ID"
+          prop="tokenId"
+          width="400"
+        />
+        <el-table-column
+          label="用户名"
+          prop="username"
+        />
+        <el-table-column
+          label="IP地址"
+          prop="ip"
+        />
+        <el-table-column
+          label="登录时间"
+          prop="loginTime"
+          width="180"
+        />
+        <el-table-column
+          label="操作"
+          align="center"
+          width="120"
+          fixed="right"
+        >
+          <template #default="scope">
+            <el-button
+              v-hasPermi="['monitor:online:forceLogout']"
+              link
+              type="danger"
+              @click="handleForceLogout(scope.row)"
+            >
+              强制退出
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
 
-    <!-- 分页 -->
-    <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
+      <!-- 分页 -->
+      <pagination
+        v-show="total > 0"
+        v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize"
+        :total="total"
+        @pagination="getList"
+      />
     </div>
   </PageContainer>
 </template>

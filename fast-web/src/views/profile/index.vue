@@ -2,7 +2,10 @@
   <PageContainer>
     <!-- 顶部返回按钮 -->
     <div class="back-bar">
-      <div class="back-button" @click="goBack">
+      <div
+        class="back-button"
+        @click="goBack"
+      >
         <el-icon><ArrowLeft /></el-icon>
         <span class="back-text">返回</span>
       </div>
@@ -12,21 +15,36 @@
     <div class="profile-content">
       <!-- 左侧：用户信息卡片 -->
       <div class="profile-aside">
-        <ProfileCard :user-info="userStore.userInfo" @avatar-updated="handleAvatarUpdated" />
+        <ProfileCard
+          :user-info="userStore.userInfo"
+          @avatar-updated="handleAvatarUpdated"
+        />
       </div>
 
       <!-- 右侧：内容区域 -->
       <div class="profile-main">
-        <el-tabs v-model="activeTab" class="profile-tabs">
+        <el-tabs
+          v-model="activeTab"
+          class="profile-tabs"
+        >
           <!-- 基本信息 -->
-          <el-tab-pane label="基本信息" name="basic">
+          <el-tab-pane
+            label="基本信息"
+            name="basic"
+          >
             <div class="tab-content">
-              <ProfileForm :initial-data="profileData" @updated="handleProfileUpdated" />
+              <ProfileForm
+                :initial-data="profileData"
+                @updated="handleProfileUpdated"
+              />
             </div>
           </el-tab-pane>
 
           <!-- 安全设置 -->
-          <el-tab-pane label="安全设置" name="security">
+          <el-tab-pane
+            label="安全设置"
+            name="security"
+          >
             <div class="tab-content">
               <SecurityForm @password-changed="handlePasswordChanged" />
             </div>

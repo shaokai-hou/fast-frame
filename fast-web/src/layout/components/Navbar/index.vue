@@ -2,7 +2,10 @@
   <div class="navbar">
     <div class="left-menu">
       <!-- 折叠按钮 -->
-      <div class="action-btn" @click="toggleSidebar">
+      <div
+        class="action-btn"
+        @click="toggleSidebar"
+      >
         <el-icon :size="20">
           <Fold v-if="!appStore.sidebarCollapsed" />
           <Expand v-else />
@@ -21,8 +24,13 @@
       <Screenfull />
 
       <!-- 设置按钮 -->
-      <div class="action-btn" @click="openSettings">
-        <el-icon :size="18"><Setting /></el-icon>
+      <div
+        class="action-btn"
+        @click="openSettings"
+      >
+        <el-icon :size="18">
+          <Setting />
+        </el-icon>
       </div>
 
       <!-- 用户下拉菜单 -->

@@ -1,22 +1,38 @@
 <template>
   <div class="approval-timeline">
     <el-timeline>
-      <el-timeline-item v-for="item in history" :key="item.id" :timestamp="formatTime(item.updateTime)" placement="top" :type="getTimelineType(item.skipType)" :icon="getTimelineIcon(item.skipType)">
+      <el-timeline-item
+        v-for="item in history"
+        :key="item.id"
+        :timestamp="formatTime(item.updateTime)"
+        placement="top"
+        :type="getTimelineType(item.skipType)"
+        :icon="getTimelineIcon(item.skipType)"
+      >
         <div class="timeline-card">
           <div class="timeline-header">
             <span class="node-name">{{ item.nodeName }}</span>
-            <span v-if="item.targetNodeName" class="target-node"> → {{ item.targetNodeName }}</span>
+            <span
+              v-if="item.targetNodeName"
+              class="target-node"
+            > → {{ item.targetNodeName }}</span>
           </div>
           <div class="timeline-body">
             <div class="approver">
               <span class="label">审批人:</span>
               <span class="value">{{ formatApprover(item.approver) }}</span>
             </div>
-            <div class="result" :class="getResultClass(item.skipType)">
+            <div
+              class="result"
+              :class="getResultClass(item.skipType)"
+            >
               <span class="label">审批结果:</span>
               <span class="value">{{ item.skipTypeText }}</span>
             </div>
-            <div class="message" v-if="item.message">
+            <div
+              v-if="item.message"
+              class="message"
+            >
               <span class="label">审批意见:</span>
               <span class="value">{{ item.message }}</span>
             </div>
@@ -24,8 +40,14 @@
         </div>
       </el-timeline-item>
     </el-timeline>
-    <div v-if="!history || history.length === 0" class="empty-tip">
-      <el-empty description="暂无审批记录" :image-size="60" />
+    <div
+      v-if="!history || history.length === 0"
+      class="empty-tip"
+    >
+      <el-empty
+        description="暂无审批记录"
+        :image-size="60"
+      />
     </div>
   </div>
 </template>

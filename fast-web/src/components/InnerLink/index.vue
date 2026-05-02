@@ -1,10 +1,10 @@
 <template>
   <div
     v-for="item in appStore.iframeViews"
-    :key="item.path"
     v-show="route.path === item.path"
-    class="iframe-wrapper"
+    :key="item.path"
     v-loading="loadingMap[item.path]"
+    class="iframe-wrapper"
     element-loading-text="正在加载页面，请稍候..."
   >
     <iframe

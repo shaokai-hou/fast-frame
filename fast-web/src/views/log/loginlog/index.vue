@@ -1,14 +1,40 @@
 <template>
   <PageContainer>
     <!-- 搜索栏 -->
-    <SearchBar :model="queryParams" :visible="showSearch" @search="handleQuery" @reset="resetQuery">
-      <el-form-item label="用户名" prop="username">
-        <el-input v-model="queryParams.username" placeholder="请输入用户名" clearable @keyup.enter="handleQuery" />
+    <SearchBar
+      :model="queryParams"
+      :visible="showSearch"
+      @search="handleQuery"
+      @reset="resetQuery"
+    >
+      <el-form-item
+        label="用户名"
+        prop="username"
+      >
+        <el-input
+          v-model="queryParams.username"
+          placeholder="请输入用户名"
+          clearable
+          @keyup.enter="handleQuery"
+        />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="登录状态" clearable>
-          <el-option label="成功" value="0" />
-          <el-option label="失败" value="1" />
+      <el-form-item
+        label="状态"
+        prop="status"
+      >
+        <el-select
+          v-model="queryParams.status"
+          placeholder="登录状态"
+          clearable
+        >
+          <el-option
+            label="成功"
+            value="0"
+          />
+          <el-option
+            label="失败"
+            value="1"
+          />
         </el-select>
       </el-form-item>
     </SearchBar>
@@ -17,31 +43,97 @@
     <div class="content-card">
       <!-- 工具栏 -->
       <div class="tool-bar">
-        <el-button type="danger" plain :icon="Delete" @click="handleDelete" :disabled="multiple" v-hasPermi="['log:loginlog:delete']">删除</el-button>
-        <el-button type="danger" plain :icon="Delete" @click="handleClear" v-hasPermi="['log:loginlog:delete']">清空</el-button>
-        <el-button type="success" plain :icon="Download" @click="handleExport" v-hasPermi="['log:loginlog:export']">导出</el-button>
+        <el-button
+          v-hasPermi="['log:loginlog:delete']"
+          type="danger"
+          plain
+          :icon="Delete"
+          :disabled="multiple"
+          @click="handleDelete"
+        >
+          删除
+        </el-button>
+        <el-button
+          v-hasPermi="['log:loginlog:delete']"
+          type="danger"
+          plain
+          :icon="Delete"
+          @click="handleClear"
+        >
+          清空
+        </el-button>
+        <el-button
+          v-hasPermi="['log:loginlog:export']"
+          type="success"
+          plain
+          :icon="Download"
+          @click="handleExport"
+        >
+          导出
+        </el-button>
       </div>
 
       <!-- 数据表格 -->
-    <el-table v-loading="loading" :data="logList" row-key="id" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column type="index" label="序号" width="60" align="center" :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
-      <el-table-column label="访问ID" prop="id" width="200" />
-      <el-table-column label="用户名" prop="username" />
-      <el-table-column label="IP地址" prop="ipAddress" />
-      <el-table-column label="状态" align="center">
-        <template #default="scope">
-          <el-tag :type="scope.row.status === '0' ? 'success' : 'danger'">
-            {{ scope.row.status === '0' ? '成功' : '失败' }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="提示消息" prop="msg" />
-      <el-table-column label="登录时间" prop="loginTime" width="180" />
-    </el-table>
+      <el-table
+        v-loading="loading"
+        :data="logList"
+        row-key="id"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column
+          type="selection"
+          width="55"
+          align="center"
+        />
+        <el-table-column
+          type="index"
+          label="序号"
+          width="60"
+          align="center"
+          :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1"
+        />
+        <el-table-column
+          label="访问ID"
+          prop="id"
+          width="200"
+        />
+        <el-table-column
+          label="用户名"
+          prop="username"
+        />
+        <el-table-column
+          label="IP地址"
+          prop="ipAddress"
+        />
+        <el-table-column
+          label="状态"
+          align="center"
+        >
+          <template #default="scope">
+            <el-tag :type="scope.row.status === '0' ? 'success' : 'danger'">
+              {{ scope.row.status === '0' ? '成功' : '失败' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="提示消息"
+          prop="msg"
+        />
+        <el-table-column
+          label="登录时间"
+          prop="loginTime"
+          width="180"
+        />
+      </el-table>
 
-    <!-- 分页 -->
-    <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
+      <!-- 分页 -->
+      <pagination
+        v-show="total > 0"
+        v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize"
+        :total="total"
+        @pagination="getList"
+      />
     </div>
   </PageContainer>
 </template>

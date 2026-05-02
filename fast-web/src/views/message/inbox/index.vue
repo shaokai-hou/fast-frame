@@ -1,21 +1,63 @@
 <template>
   <PageContainer>
     <!-- 搜索栏 -->
-    <SearchBar :model="queryParams" :visible="showSearch" @search="handleQuery" @reset="resetQuery">
-      <el-form-item label="消息标题" prop="messageTitle">
-        <el-input v-model="queryParams.messageTitle" placeholder="请输入消息标题" clearable @keyup.enter="handleQuery" />
+    <SearchBar
+      :model="queryParams"
+      :visible="showSearch"
+      @search="handleQuery"
+      @reset="resetQuery"
+    >
+      <el-form-item
+        label="消息标题"
+        prop="messageTitle"
+      >
+        <el-input
+          v-model="queryParams.messageTitle"
+          placeholder="请输入消息标题"
+          clearable
+          @keyup.enter="handleQuery"
+        />
       </el-form-item>
-      <el-form-item label="消息类型" prop="messageType">
-        <el-select v-model="queryParams.messageType" placeholder="全部" clearable>
-          <el-option label="系统消息" value="1" />
-          <el-option label="私人消息" value="2" />
-          <el-option label="通知" value="3" />
+      <el-form-item
+        label="消息类型"
+        prop="messageType"
+      >
+        <el-select
+          v-model="queryParams.messageType"
+          placeholder="全部"
+          clearable
+        >
+          <el-option
+            label="系统消息"
+            value="1"
+          />
+          <el-option
+            label="私人消息"
+            value="2"
+          />
+          <el-option
+            label="通知"
+            value="3"
+          />
         </el-select>
       </el-form-item>
-      <el-form-item label="已读状态" prop="readStatus">
-        <el-select v-model="queryParams.readStatus" placeholder="全部" clearable>
-          <el-option label="未读" value="0" />
-          <el-option label="已读" value="1" />
+      <el-form-item
+        label="已读状态"
+        prop="readStatus"
+      >
+        <el-select
+          v-model="queryParams.readStatus"
+          placeholder="全部"
+          clearable
+        >
+          <el-option
+            label="未读"
+            value="0"
+          />
+          <el-option
+            label="已读"
+            value="1"
+          />
         </el-select>
       </el-form-item>
     </SearchBar>
@@ -24,80 +66,253 @@
     <div class="content-card">
       <!-- 工具栏 -->
       <div class="tool-bar">
-        <el-button type="primary" plain :icon="Plus" @click="handleSend" v-hasPermi="['message:send']">发送消息</el-button>
-        <el-button type="success" plain :icon="Check" @click="handleReadAll"
-          v-hasPermi="['message:read']">全部已读</el-button>
-        <el-button type="danger" plain :icon="Delete" @click="handleDelete" :disabled="multiple"
-          v-hasPermi="['message:delete']">删除</el-button>
+        <el-button
+          v-hasPermi="['message:send']"
+          type="primary"
+          plain
+          :icon="Plus"
+          @click="handleSend"
+        >
+          发送消息
+        </el-button>
+        <el-button
+          v-hasPermi="['message:read']"
+          type="success"
+          plain
+          :icon="Check"
+          @click="handleReadAll"
+        >
+          全部已读
+        </el-button>
+        <el-button
+          v-hasPermi="['message:delete']"
+          type="danger"
+          plain
+          :icon="Delete"
+          :disabled="multiple"
+          @click="handleDelete"
+        >
+          删除
+        </el-button>
       </div>
 
       <!-- 数据表格 -->
-      <el-table v-loading="loading" :data="messageList" row-key="id" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" align="center" />
-        <el-table-column type="index" label="序号" width="60" align="center"
-          :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
-        <el-table-column label="消息标题" prop="messageTitle" show-overflow-tooltip>
+      <el-table
+        v-loading="loading"
+        :data="messageList"
+        row-key="id"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column
+          type="selection"
+          width="55"
+          align="center"
+        />
+        <el-table-column
+          type="index"
+          label="序号"
+          width="60"
+          align="center"
+          :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1"
+        />
+        <el-table-column
+          label="消息标题"
+          prop="messageTitle"
+          show-overflow-tooltip
+        >
           <template #default="scope">
             <span :class="{ 'unread-title': scope.row.readStatus === '0' }">{{ scope.row.messageTitle }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="消息类型" prop="messageType" width="100">
+        <el-table-column
+          label="消息类型"
+          prop="messageType"
+          width="100"
+        >
           <template #default="scope">
-            <el-tag v-if="scope.row.messageType === '1'" type="danger">系统消息</el-tag>
-            <el-tag v-else-if="scope.row.messageType === '2'" type="success">私人消息</el-tag>
-            <el-tag v-else type="info">通知</el-tag>
+            <el-tag
+              v-if="scope.row.messageType === '1'"
+              type="danger"
+            >
+              系统消息
+            </el-tag>
+            <el-tag
+              v-else-if="scope.row.messageType === '2'"
+              type="success"
+            >
+              私人消息
+            </el-tag>
+            <el-tag
+              v-else
+              type="info"
+            >
+              通知
+            </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="发送人" prop="senderName" width="120" />
-        <el-table-column label="优先级" prop="priority" width="80">
+        <el-table-column
+          label="发送人"
+          prop="senderName"
+          width="120"
+        />
+        <el-table-column
+          label="优先级"
+          prop="priority"
+          width="80"
+        >
           <template #default="scope">
-            <el-tag v-if="scope.row.priority === '2'" type="danger">紧急</el-tag>
-            <el-tag v-else-if="scope.row.priority === '1'" type="warning">重要</el-tag>
-            <el-tag v-else>普通</el-tag>
+            <el-tag
+              v-if="scope.row.priority === '2'"
+              type="danger"
+            >
+              紧急
+            </el-tag>
+            <el-tag
+              v-else-if="scope.row.priority === '1'"
+              type="warning"
+            >
+              重要
+            </el-tag>
+            <el-tag v-else>
+              普通
+            </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="状态" prop="readStatus" width="80">
+        <el-table-column
+          label="状态"
+          prop="readStatus"
+          width="80"
+        >
           <template #default="scope">
-            <el-tag v-if="scope.row.readStatus === '0'" type="warning">未读</el-tag>
-            <el-tag v-else type="success">已读</el-tag>
+            <el-tag
+              v-if="scope.row.readStatus === '0'"
+              type="warning"
+            >
+              未读
+            </el-tag>
+            <el-tag
+              v-else
+              type="success"
+            >
+              已读
+            </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="发送时间" prop="createTime" width="180" />
-        <el-table-column label="操作" align="center" width="230" fixed="right">
+        <el-table-column
+          label="发送时间"
+          prop="createTime"
+          width="180"
+        />
+        <el-table-column
+          label="操作"
+          align="center"
+          width="230"
+          fixed="right"
+        >
           <template #default="scope">
-            <el-button link type="primary" @click="handleView(scope.row)">查看</el-button>
-            <el-button link type="primary" @click="handleMarkRead(scope.row)" v-if="scope.row.readStatus === '0'"
-              v-hasPermi="['message:read']">标记已读</el-button>
-            <el-button link type="danger" @click="handleDelete(scope.row)"
-              v-hasPermi="['message:delete']">删除</el-button>
+            <el-button
+              link
+              type="primary"
+              @click="handleView(scope.row)"
+            >
+              查看
+            </el-button>
+            <el-button
+              v-if="scope.row.readStatus === '0'"
+              v-hasPermi="['message:read']"
+              link
+              type="primary"
+              @click="handleMarkRead(scope.row)"
+            >
+              标记已读
+            </el-button>
+            <el-button
+              v-hasPermi="['message:delete']"
+              link
+              type="danger"
+              @click="handleDelete(scope.row)"
+            >
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
 
       <!-- 分页 -->
-      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
-        v-model:limit="queryParams.pageSize" @pagination="getList" />
+      <pagination
+        v-show="total > 0"
+        v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize"
+        :total="total"
+        @pagination="getList"
+      />
     </div>
 
     <!-- 查看消息对话框 -->
-    <el-dialog title="消息详情" v-model="viewOpen" width="750px" append-to-body>
-      <el-descriptions :column="2" border>
-        <el-descriptions-item label="消息标题" :span="2">{{ viewData.messageTitle }}</el-descriptions-item>
+    <el-dialog
+      v-model="viewOpen"
+      title="消息详情"
+      width="750px"
+      append-to-body
+    >
+      <el-descriptions
+        :column="2"
+        border
+      >
+        <el-descriptions-item
+          label="消息标题"
+          :span="2"
+        >
+          {{ viewData.messageTitle }}
+        </el-descriptions-item>
         <el-descriptions-item label="消息类型">
-          <el-tag v-if="viewData.messageType === '1'" type="danger">系统消息</el-tag>
-          <el-tag v-else-if="viewData.messageType === '2'" type="success">私人消息</el-tag>
-          <el-tag v-else type="info">通知</el-tag>
+          <el-tag
+            v-if="viewData.messageType === '1'"
+            type="danger"
+          >
+            系统消息
+          </el-tag>
+          <el-tag
+            v-else-if="viewData.messageType === '2'"
+            type="success"
+          >
+            私人消息
+          </el-tag>
+          <el-tag
+            v-else
+            type="info"
+          >
+            通知
+          </el-tag>
         </el-descriptions-item>
         <el-descriptions-item label="优先级">
-          <el-tag v-if="viewData.priority === '2'" type="danger">紧急</el-tag>
-          <el-tag v-else-if="viewData.priority === '1'" type="warning">重要</el-tag>
-          <el-tag v-else>普通</el-tag>
+          <el-tag
+            v-if="viewData.priority === '2'"
+            type="danger"
+          >
+            紧急
+          </el-tag>
+          <el-tag
+            v-else-if="viewData.priority === '1'"
+            type="warning"
+          >
+            重要
+          </el-tag>
+          <el-tag v-else>
+            普通
+          </el-tag>
         </el-descriptions-item>
-        <el-descriptions-item label="发送人">{{ viewData.senderName }}</el-descriptions-item>
-        <el-descriptions-item label="发送时间">{{ viewData.createTime }}</el-descriptions-item>
+        <el-descriptions-item label="发送人">
+          {{ viewData.senderName }}
+        </el-descriptions-item>
+        <el-descriptions-item label="发送时间">
+          {{ viewData.createTime }}
+        </el-descriptions-item>
       </el-descriptions>
       <div class="message-content-wrapper">
-        <div class="content-label">消息内容</div>
+        <div class="content-label">
+          消息内容
+        </div>
         <div class="content-body">
           <RichTextViewer :content="viewData.messageContent" />
         </div>

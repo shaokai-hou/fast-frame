@@ -1,7 +1,10 @@
 <template>
   <PageContainer>
     <div class="content-card">
-      <iframe :src="druidUrl" style="width: 100%; height: 800px"></iframe>
+      <iframe
+        :src="druidUrl"
+        style="width: 100%; height: 800px"
+      />
     </div>
   </PageContainer>
 </template>

@@ -1,5 +1,8 @@
 <template>
-  <div class="screenfull" @click="toggle">
+  <div
+    class="screenfull"
+    @click="toggle"
+  >
     <el-icon :size="18">
       <FullScreen v-if="!isFullscreen" />
       <Aim v-else />

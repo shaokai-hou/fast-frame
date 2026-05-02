@@ -1,95 +1,282 @@
 <template>
   <PageContainer>
     <!-- 搜索栏 -->
-    <SearchBar :model="queryParams" :visible="showSearch" @search="handleQuery" @reset="resetQuery">
-      <el-form-item label="业务ID" prop="businessId">
-        <el-input v-model="queryParams.businessId" placeholder="请输入业务ID" clearable @keyup.enter="handleQuery" />
+    <SearchBar
+      :model="queryParams"
+      :visible="showSearch"
+      @search="handleQuery"
+      @reset="resetQuery"
+    >
+      <el-form-item
+        label="业务ID"
+        prop="businessId"
+      >
+        <el-input
+          v-model="queryParams.businessId"
+          placeholder="请输入业务ID"
+          clearable
+          @keyup.enter="handleQuery"
+        />
       </el-form-item>
-      <el-form-item label="流程名称" prop="flowName">
-        <el-input v-model="queryParams.flowName" placeholder="请输入流程名称" clearable @keyup.enter="handleQuery" />
+      <el-form-item
+        label="流程名称"
+        prop="flowName"
+      >
+        <el-input
+          v-model="queryParams.flowName"
+          placeholder="请输入流程名称"
+          clearable
+          @keyup.enter="handleQuery"
+        />
       </el-form-item>
     </SearchBar>
 
     <!-- 内容卡片 -->
     <div class="content-card">
       <!-- 数据表格 -->
-      <el-table v-loading="loading" :data="taskList" row-key="id">
-        <el-table-column type="index" label="序号" width="60" align="center"
-          :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
-        <el-table-column label="业务ID" prop="businessId" min-width="120" />
-        <el-table-column label="当前节点" prop="nodeName" min-width="150" />
-        <el-table-column label="流程名称" prop="flowName" min-width="150" />
-        <el-table-column label="创建时间" prop="createTime" width="180" />
-        <el-table-column label="操作" align="center" width="250" fixed="right">
+      <el-table
+        v-loading="loading"
+        :data="taskList"
+        row-key="id"
+      >
+        <el-table-column
+          type="index"
+          label="序号"
+          width="60"
+          align="center"
+          :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1"
+        />
+        <el-table-column
+          label="业务ID"
+          prop="businessId"
+          min-width="120"
+        />
+        <el-table-column
+          label="当前节点"
+          prop="nodeName"
+          min-width="150"
+        />
+        <el-table-column
+          label="流程名称"
+          prop="flowName"
+          min-width="150"
+        />
+        <el-table-column
+          label="创建时间"
+          prop="createTime"
+          width="180"
+        />
+        <el-table-column
+          label="操作"
+          align="center"
+          width="250"
+          fixed="right"
+        >
           <template #default="scope">
-            <el-button link type="primary" @click="handleApprove(scope.row)"
-              v-hasPermi="['flow:task:approve']">审批</el-button>
-            <el-button link type="danger" @click="handleReject(scope.row)"
-              v-hasPermi="['flow:task:reject']">驳回</el-button>
-            <el-button link type="warning" @click="handleBack(scope.row)" v-hasPermi="['flow:task:back']">退回</el-button>
-            <el-button link type="info" @click="handleDelegate(scope.row)"
-              v-hasPermi="['flow:task:delegate']">委派</el-button>
+            <el-button
+              v-hasPermi="['flow:task:approve']"
+              link
+              type="primary"
+              @click="handleApprove(scope.row)"
+            >
+              审批
+            </el-button>
+            <el-button
+              v-hasPermi="['flow:task:reject']"
+              link
+              type="danger"
+              @click="handleReject(scope.row)"
+            >
+              驳回
+            </el-button>
+            <el-button
+              v-hasPermi="['flow:task:back']"
+              link
+              type="warning"
+              @click="handleBack(scope.row)"
+            >
+              退回
+            </el-button>
+            <el-button
+              v-hasPermi="['flow:task:delegate']"
+              link
+              type="info"
+              @click="handleDelegate(scope.row)"
+            >
+              委派
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
 
       <!-- 分页 -->
-      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
-        v-model:limit="queryParams.pageSize" @pagination="getList" />
+      <pagination
+        v-show="total > 0"
+        v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize"
+        :total="total"
+        @pagination="getList"
+      />
     </div>
 
     <!-- 审批对话框 -->
-    <el-dialog title="审批通过" v-model="approveOpen" width="500px" append-to-body>
-      <el-form ref="approveFormRef" :model="approveForm" :rules="approveRules" label-width="80px">
-        <el-form-item label="审批意见" prop="message">
-          <el-input v-model="approveForm.message" type="textarea" :rows="3" placeholder="请输入审批意见" />
+    <el-dialog
+      v-model="approveOpen"
+      title="审批通过"
+      width="500px"
+      append-to-body
+    >
+      <el-form
+        ref="approveFormRef"
+        :model="approveForm"
+        :rules="approveRules"
+        label-width="80px"
+      >
+        <el-form-item
+          label="审批意见"
+          prop="message"
+        >
+          <el-input
+            v-model="approveForm.message"
+            type="textarea"
+            :rows="3"
+            placeholder="请输入审批意见"
+          />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="approveOpen = false">取消</el-button>
-        <el-button type="primary" @click="submitApprove">确定</el-button>
+        <el-button @click="approveOpen = false">
+          取消
+        </el-button>
+        <el-button
+          type="primary"
+          @click="submitApprove"
+        >
+          确定
+        </el-button>
       </template>
     </el-dialog>
 
     <!-- 驳回对话框 -->
-    <el-dialog title="审批驳回" v-model="rejectOpen" width="500px" append-to-body>
-      <el-form ref="rejectFormRef" :model="rejectForm" :rules="rejectRules" label-width="80px">
-        <el-form-item label="驳回原因" prop="message">
-          <el-input v-model="rejectForm.message" type="textarea" :rows="3" placeholder="请输入驳回原因" />
+    <el-dialog
+      v-model="rejectOpen"
+      title="审批驳回"
+      width="500px"
+      append-to-body
+    >
+      <el-form
+        ref="rejectFormRef"
+        :model="rejectForm"
+        :rules="rejectRules"
+        label-width="80px"
+      >
+        <el-form-item
+          label="驳回原因"
+          prop="message"
+        >
+          <el-input
+            v-model="rejectForm.message"
+            type="textarea"
+            :rows="3"
+            placeholder="请输入驳回原因"
+          />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="rejectOpen = false">取消</el-button>
-        <el-button type="primary" @click="submitReject">确定</el-button>
+        <el-button @click="rejectOpen = false">
+          取消
+        </el-button>
+        <el-button
+          type="primary"
+          @click="submitReject"
+        >
+          确定
+        </el-button>
       </template>
     </el-dialog>
 
     <!-- 退回对话框 -->
-    <el-dialog title="退回上一节点" v-model="backOpen" width="500px" append-to-body>
-      <el-form ref="backFormRef" :model="backForm" :rules="backRules" label-width="80px">
-        <el-form-item label="退回原因" prop="message">
-          <el-input v-model="backForm.message" type="textarea" :rows="3" placeholder="请输入退回原因" />
+    <el-dialog
+      v-model="backOpen"
+      title="退回上一节点"
+      width="500px"
+      append-to-body
+    >
+      <el-form
+        ref="backFormRef"
+        :model="backForm"
+        :rules="backRules"
+        label-width="80px"
+      >
+        <el-form-item
+          label="退回原因"
+          prop="message"
+        >
+          <el-input
+            v-model="backForm.message"
+            type="textarea"
+            :rows="3"
+            placeholder="请输入退回原因"
+          />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="backOpen = false">取消</el-button>
-        <el-button type="primary" @click="submitBack">确定</el-button>
+        <el-button @click="backOpen = false">
+          取消
+        </el-button>
+        <el-button
+          type="primary"
+          @click="submitBack"
+        >
+          确定
+        </el-button>
       </template>
     </el-dialog>
 
     <!-- 委派对话框 -->
-    <el-dialog title="委派任务" v-model="delegateOpen" width="500px" append-to-body>
-      <el-form ref="delegateFormRef" :model="delegateForm" :rules="delegateRules" label-width="80px">
-        <el-form-item label="委派用户" prop="deputeUser">
-          <el-input v-model="delegateForm.deputeUser" placeholder="请输入委派用户ID" />
+    <el-dialog
+      v-model="delegateOpen"
+      title="委派任务"
+      width="500px"
+      append-to-body
+    >
+      <el-form
+        ref="delegateFormRef"
+        :model="delegateForm"
+        :rules="delegateRules"
+        label-width="80px"
+      >
+        <el-form-item
+          label="委派用户"
+          prop="deputeUser"
+        >
+          <el-input
+            v-model="delegateForm.deputeUser"
+            placeholder="请输入委派用户ID"
+          />
         </el-form-item>
-        <el-form-item label="委派说明" prop="message">
-          <el-input v-model="delegateForm.message" type="textarea" :rows="3" placeholder="请输入委派说明" />
+        <el-form-item
+          label="委派说明"
+          prop="message"
+        >
+          <el-input
+            v-model="delegateForm.message"
+            type="textarea"
+            :rows="3"
+            placeholder="请输入委派说明"
+          />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="delegateOpen = false">取消</el-button>
-        <el-button type="primary" @click="submitDelegate">确定</el-button>
+        <el-button @click="delegateOpen = false">
+          取消
+        </el-button>
+        <el-button
+          type="primary"
+          @click="submitDelegate"
+        >
+          确定
+        </el-button>
       </template>
     </el-dialog>
   </PageContainer>

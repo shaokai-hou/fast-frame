@@ -1,13 +1,40 @@
 <template>
-  <div class="logo-container" :class="{ collapsed: appStore.sidebarCollapsed }">
-    <router-link to="/" class="logo-link">
-      <transition name="logo-fade" mode="out-in">
-        <div v-if="!appStore.sidebarCollapsed" class="logo-full" key="full">
-          <img src="@/assets/logo.svg" alt="logo" class="logo-img" />
-          <h1 class="logo-title">Fast Frame</h1>
+  <div
+    class="logo-container"
+    :class="{ collapsed: appStore.sidebarCollapsed }"
+  >
+    <router-link
+      to="/"
+      class="logo-link"
+    >
+      <transition
+        name="logo-fade"
+        mode="out-in"
+      >
+        <div
+          v-if="!appStore.sidebarCollapsed"
+          key="full"
+          class="logo-full"
+        >
+          <img
+            src="@/assets/logo.svg"
+            alt="logo"
+            class="logo-img"
+          >
+          <h1 class="logo-title">
+            Fast Frame
+          </h1>
         </div>
-        <div v-else class="logo-mini" key="mini">
-          <img src="@/assets/logo.svg" alt="logo" class="logo-img-mini" />
+        <div
+          v-else
+          key="mini"
+          class="logo-mini"
+        >
+          <img
+            src="@/assets/logo.svg"
+            alt="logo"
+            class="logo-img-mini"
+          >
         </div>
       </transition>
     </router-link>

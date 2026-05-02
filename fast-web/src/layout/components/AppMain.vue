@@ -1,9 +1,16 @@
 <template>
   <section class="app-main">
     <router-view v-slot="{ Component, route }">
-      <transition v-if="!route.meta?.link" name="slide-fade" mode="out-in">
+      <transition
+        v-if="!route.meta?.link"
+        name="slide-fade"
+        mode="out-in"
+      >
         <keep-alive :include="appStore.cachedPages">
-          <component :is="Component" :key="route.fullPath" />
+          <component
+            :is="Component"
+            :key="route.fullPath"
+          />
         </keep-alive>
       </transition>
     </router-view>

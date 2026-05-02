@@ -4,10 +4,18 @@
     <div class="brand-section">
       <div class="brand-content">
         <div class="brand-logo">
-          <img src="@/assets/logo.svg" alt="logo" class="logo-img" />
+          <img
+            src="@/assets/logo.svg"
+            alt="logo"
+            class="logo-img"
+          >
         </div>
-        <h1 class="brand-title">Fast Frame</h1>
-        <p class="brand-subtitle">企业级后台管理系统</p>
+        <h1 class="brand-title">
+          Fast Frame
+        </h1>
+        <p class="brand-subtitle">
+          企业级后台管理系统
+        </p>
         <div class="brand-features">
           <div class="feature-item">
             <el-icon><Check /></el-icon>
@@ -25,16 +33,18 @@
       </div>
       <!-- 背景装饰 -->
       <div class="brand-decoration">
-        <div class="circle circle-1"></div>
-        <div class="circle circle-2"></div>
-        <div class="circle circle-3"></div>
+        <div class="circle circle-1" />
+        <div class="circle circle-2" />
+        <div class="circle circle-3" />
       </div>
     </div>
 
     <!-- 右侧登录表单区域 -->
     <div class="login-section">
       <div class="login-card">
-        <h2 class="login-title">欢迎登录</h2>
+        <h2 class="login-title">
+          欢迎登录
+        </h2>
         <!-- 登录方式切换 -->
         <div class="login-tabs">
           <span

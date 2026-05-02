@@ -1,14 +1,40 @@
 <template>
   <PageContainer>
     <!-- 搜索栏 -->
-    <SearchBar :model="queryParams" :visible="showSearch" @search="handleQuery" @reset="resetQuery">
-      <el-form-item label="公告标题" prop="noticeTitle">
-        <el-input v-model="queryParams.noticeTitle" placeholder="请输入公告标题" clearable @keyup.enter="handleQuery" />
+    <SearchBar
+      :model="queryParams"
+      :visible="showSearch"
+      @search="handleQuery"
+      @reset="resetQuery"
+    >
+      <el-form-item
+        label="公告标题"
+        prop="noticeTitle"
+      >
+        <el-input
+          v-model="queryParams.noticeTitle"
+          placeholder="请输入公告标题"
+          clearable
+          @keyup.enter="handleQuery"
+        />
       </el-form-item>
-      <el-form-item label="公告类型" prop="noticeType">
-        <el-select v-model="queryParams.noticeType" placeholder="全部" clearable>
-          <el-option label="通知" value="1" />
-          <el-option label="公告" value="2" />
+      <el-form-item
+        label="公告类型"
+        prop="noticeType"
+      >
+        <el-select
+          v-model="queryParams.noticeType"
+          placeholder="全部"
+          clearable
+        >
+          <el-option
+            label="通知"
+            value="1"
+          />
+          <el-option
+            label="公告"
+            value="2"
+          />
         </el-select>
       </el-form-item>
     </SearchBar>
@@ -17,88 +43,262 @@
     <div class="content-card">
       <!-- 工具栏 -->
       <div class="tool-bar">
-        <el-button type="primary" plain :icon="Plus" @click="handleAdd"
-          v-hasPermi="['system:notice:add']">新增</el-button>
-        <el-button type="danger" plain :icon="Delete" @click="handleDelete" :disabled="multiple"
-          v-hasPermi="['system:notice:delete']">删除</el-button>
+        <el-button
+          v-hasPermi="['system:notice:add']"
+          type="primary"
+          plain
+          :icon="Plus"
+          @click="handleAdd"
+        >
+          新增
+        </el-button>
+        <el-button
+          v-hasPermi="['system:notice:delete']"
+          type="danger"
+          plain
+          :icon="Delete"
+          :disabled="multiple"
+          @click="handleDelete"
+        >
+          删除
+        </el-button>
       </div>
 
       <!-- 数据表格 -->
-      <el-table v-loading="loading" :data="noticeList" row-key="id" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" align="center" />
-        <el-table-column type="index" label="序号" width="60" align="center"
-          :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
-        <el-table-column label="公告标题" prop="noticeTitle" show-overflow-tooltip />
-        <el-table-column label="公告类型" prop="noticeType" width="100">
+      <el-table
+        v-loading="loading"
+        :data="noticeList"
+        row-key="id"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column
+          type="selection"
+          width="55"
+          align="center"
+        />
+        <el-table-column
+          type="index"
+          label="序号"
+          width="60"
+          align="center"
+          :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1"
+        />
+        <el-table-column
+          label="公告标题"
+          prop="noticeTitle"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          label="公告类型"
+          prop="noticeType"
+          width="100"
+        >
           <template #default="scope">
-            <el-tag v-if="scope.row.noticeType === '1'" type="success">通知</el-tag>
-            <el-tag v-else type="info">公告</el-tag>
+            <el-tag
+              v-if="scope.row.noticeType === '1'"
+              type="success"
+            >
+              通知
+            </el-tag>
+            <el-tag
+              v-else
+              type="info"
+            >
+              公告
+            </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="状态" prop="status" width="80">
+        <el-table-column
+          label="状态"
+          prop="status"
+          width="80"
+        >
           <template #default="scope">
-            <el-tag v-if="scope.row.status === '0'" type="success">正常</el-tag>
-            <el-tag v-else type="warning">关闭</el-tag>
+            <el-tag
+              v-if="scope.row.status === '0'"
+              type="success"
+            >
+              正常
+            </el-tag>
+            <el-tag
+              v-else
+              type="warning"
+            >
+              关闭
+            </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="创建时间" prop="createTime" width="180" />
-        <el-table-column label="操作" align="center" width="240" fixed="right">
+        <el-table-column
+          label="创建时间"
+          prop="createTime"
+          width="180"
+        />
+        <el-table-column
+          label="操作"
+          align="center"
+          width="240"
+          fixed="right"
+        >
           <template #default="scope">
-            <el-button link type="primary" @click="handleView(scope.row)">查看</el-button>
-            <el-button link type="primary" @click="handleUpdate(scope.row)"
-              v-hasPermi="['system:notice:edit']">修改</el-button>
-            <el-button link type="danger" @click="handleDelete(scope.row)"
-              v-hasPermi="['system:notice:delete']">删除</el-button>
+            <el-button
+              link
+              type="primary"
+              @click="handleView(scope.row)"
+            >
+              查看
+            </el-button>
+            <el-button
+              v-hasPermi="['system:notice:edit']"
+              link
+              type="primary"
+              @click="handleUpdate(scope.row)"
+            >
+              修改
+            </el-button>
+            <el-button
+              v-hasPermi="['system:notice:delete']"
+              link
+              type="danger"
+              @click="handleDelete(scope.row)"
+            >
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
 
       <!-- 分页 -->
-      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
-        v-model:limit="queryParams.pageSize" @pagination="getList" />
+      <pagination
+        v-show="total > 0"
+        v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize"
+        :total="total"
+        @pagination="getList"
+      />
     </div>
 
     <!-- 新增/修改对话框 -->
-    <el-dialog :title="title" v-model="open" width="800px" append-to-body>
-      <el-form ref="noticeFormRef" :model="form" :rules="rules" label-width="100px">
-        <el-form-item label="公告标题" prop="noticeTitle">
-          <el-input v-model="form.noticeTitle" placeholder="请输入公告标题" />
+    <el-dialog
+      v-model="open"
+      :title="title"
+      width="800px"
+      append-to-body
+    >
+      <el-form
+        ref="noticeFormRef"
+        :model="form"
+        :rules="rules"
+        label-width="100px"
+      >
+        <el-form-item
+          label="公告标题"
+          prop="noticeTitle"
+        >
+          <el-input
+            v-model="form.noticeTitle"
+            placeholder="请输入公告标题"
+          />
         </el-form-item>
-        <el-form-item label="公告类型" prop="noticeType">
-          <el-select v-model="form.noticeType" placeholder="请选择公告类型">
-            <el-option label="通知" value="1" />
-            <el-option label="公告" value="2" />
+        <el-form-item
+          label="公告类型"
+          prop="noticeType"
+        >
+          <el-select
+            v-model="form.noticeType"
+            placeholder="请选择公告类型"
+          >
+            <el-option
+              label="通知"
+              value="1"
+            />
+            <el-option
+              label="公告"
+              value="2"
+            />
           </el-select>
         </el-form-item>
-        <el-form-item label="状态" prop="status">
+        <el-form-item
+          label="状态"
+          prop="status"
+        >
           <el-radio-group v-model="form.status">
-            <el-radio value="0">正常</el-radio>
-            <el-radio value="1">关闭</el-radio>
+            <el-radio value="0">
+              正常
+            </el-radio>
+            <el-radio value="1">
+              关闭
+            </el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="公告内容" prop="noticeContent">
-          <RichTextEditor v-model="form.noticeContent" placeholder="请输入公告内容" height="300px" />
+        <el-form-item
+          label="公告内容"
+          prop="noticeContent"
+        >
+          <RichTextEditor
+            v-model="form.noticeContent"
+            placeholder="请输入公告内容"
+            height="300px"
+          />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="open = false">取消</el-button>
-        <el-button type="primary" @click="submitForm">确定</el-button>
+        <el-button @click="open = false">
+          取消
+        </el-button>
+        <el-button
+          type="primary"
+          @click="submitForm"
+        >
+          确定
+        </el-button>
       </template>
     </el-dialog>
 
     <!-- 查看公告对话框 -->
-    <el-dialog title="查看公告" v-model="viewOpen" width="700px" append-to-body>
-      <el-descriptions :column="1" border>
-        <el-descriptions-item label="公告标题">{{ viewData.noticeTitle }}</el-descriptions-item>
+    <el-dialog
+      v-model="viewOpen"
+      title="查看公告"
+      width="700px"
+      append-to-body
+    >
+      <el-descriptions
+        :column="1"
+        border
+      >
+        <el-descriptions-item label="公告标题">
+          {{ viewData.noticeTitle }}
+        </el-descriptions-item>
         <el-descriptions-item label="公告类型">
-          <el-tag v-if="viewData.noticeType === '1'" type="success">通知</el-tag>
-          <el-tag v-else type="info">公告</el-tag>
+          <el-tag
+            v-if="viewData.noticeType === '1'"
+            type="success"
+          >
+            通知
+          </el-tag>
+          <el-tag
+            v-else
+            type="info"
+          >
+            公告
+          </el-tag>
         </el-descriptions-item>
         <el-descriptions-item label="状态">
-          <el-tag v-if="viewData.status === '0'" type="success">正常</el-tag>
-          <el-tag v-else type="warning">关闭</el-tag>
+          <el-tag
+            v-if="viewData.status === '0'"
+            type="success"
+          >
+            正常
+          </el-tag>
+          <el-tag
+            v-else
+            type="warning"
+          >
+            关闭
+          </el-tag>
         </el-descriptions-item>
-        <el-descriptions-item label="创建时间">{{ viewData.createTime }}</el-descriptions-item>
+        <el-descriptions-item label="创建时间">
+          {{ viewData.createTime }}
+        </el-descriptions-item>
         <el-descriptions-item label="公告内容">
           <RichTextViewer :content="viewData.noticeContent" />
         </el-descriptions-item>

@@ -1,10 +1,18 @@
 <template>
   <div class="user-card">
     <div class="avatar-wrapper">
-      <el-avatar :size="100" :src="userInfo.avatar">
-        <el-icon :size="40"><UserFilled /></el-icon>
+      <el-avatar
+        :size="100"
+        :src="userInfo.avatar"
+      >
+        <el-icon :size="40">
+          <UserFilled />
+        </el-icon>
       </el-avatar>
-      <div class="avatar-upload" @click="triggerAvatarUpload">
+      <div
+        class="avatar-upload"
+        @click="triggerAvatarUpload"
+      >
         <el-icon><Camera /></el-icon>
       </div>
       <input
@@ -13,10 +21,14 @@
         accept="image/*"
         style="display: none"
         @change="handleAvatarChange"
-      />
+      >
     </div>
-    <h2 class="user-name">{{ userInfo.nickname || userInfo.username }}</h2>
-    <p class="user-role">{{ roleText }}</p>
+    <h2 class="user-name">
+      {{ userInfo.nickname || userInfo.username }}
+    </h2>
+    <p class="user-role">
+      {{ roleText }}
+    </p>
     <div class="user-info-list">
       <div class="info-item">
         <el-icon><User /></el-icon>
