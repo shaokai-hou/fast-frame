@@ -1,6 +1,14 @@
 import request from '@/utils/request'
 
-// 获取用户列表
+// 获取用户列表（简化信息，用于选择器）
+export function listAllUser() {
+  return request({
+    url: '/system/user/list',
+    method: 'get'
+  })
+}
+
+// 获取用户分页列表
 export function listUser(params) {
   return request({
     url: '/system/user/page',

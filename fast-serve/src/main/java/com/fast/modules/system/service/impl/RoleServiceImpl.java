@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fast.common.constant.Constants;
 import com.fast.common.exception.BusinessException;
+import com.fast.framework.helper.AdminHelper;
 import com.fast.common.result.PageRequest;
 import com.fast.modules.system.domain.dto.RoleDTO;
 import com.fast.modules.system.domain.query.RoleQuery;
@@ -125,7 +126,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     public void updateRole(RoleDTO dto) {
         Long roleId = dto.getId();
         // 管理员角色保护
-        if (isAdminRole(roleId)) {
+        if (AdminHelper.isAdminRole(roleId)) {
             throw new BusinessException("不能修改管理员角色");
         }
         Role role = getById(roleId);
@@ -169,7 +170,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteRole(List<Long> ids) {
-        if (ids.stream().anyMatch(this::isAdminRole)) {
+        if (ids.stream().anyMatch(AdminHelper::isAdminRole)) {
             throw new BusinessException("不能删除管理员角色");
         }
         // 检查角色是否已分配给用户
@@ -184,15 +185,5 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
             baseMapper.deleteRoleMenuByRoleId(roleId);
             baseMapper.deleteRoleDeptByRoleId(roleId);
         });
-    }
-
-    /**
-     * 判断是否为管理员角色
-     *
-     * @param roleId 角色 ID
-     * @return 是否为管理员角色
-     */
-    private boolean isAdminRole(Long roleId) {
-        return roleId != null && roleId == 1L;
     }
 }

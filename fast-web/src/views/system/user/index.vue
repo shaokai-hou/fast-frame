@@ -2,6 +2,16 @@
   <PageContainer>
     <!-- 搜索栏 -->
     <SearchBar :model="queryParams" :visible="showSearch" @search="handleQuery" @reset="resetQuery">
+      <el-form-item label="部门" prop="deptId">
+        <TreeSelect
+          v-model="queryParams.deptId"
+          :data="deptOptions"
+          :field-props="{ label: 'label', children: 'children', value: 'id' }"
+          value-key="id"
+          clearable
+          placeholder="请选择部门"
+        />
+      </el-form-item>
       <el-form-item label="用户名" prop="username">
         <el-input v-model="queryParams.username" placeholder="请输入用户名" clearable @keyup.enter="handleQuery" />
       </el-form-item>
@@ -47,6 +57,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { listUser, deleteUser, resetPwd, unlockUser, exportUser } from '@/api/system/user'
 import { getDictData } from '@/api/system/dict'
+import { getDeptTree } from '@/api/system/dept'
 import UserTable from './components/UserTable.vue'
 import UserForm from './components/UserForm.vue'
 import UserImport from './components/UserImport.vue'
@@ -59,10 +70,12 @@ const formVisible = ref(false)
 const importVisible = ref(false)
 const currentUserId = ref(null)
 const statusDict = ref([])
+const deptOptions = ref([])
 
 const queryParams = reactive({
   pageNum: 1,
   pageSize: 10,
+  deptId: undefined,
   username: undefined,
   phone: undefined,
   status: undefined
@@ -85,6 +98,7 @@ const handleQuery = () => {
 }
 
 const resetQuery = () => {
+  queryParams.deptId = undefined
   queryParams.username = undefined
   queryParams.phone = undefined
   queryParams.status = undefined
@@ -153,8 +167,14 @@ const loadDictData = async () => {
   statusDict.value = res.data || []
 }
 
+const loadDeptTree = async () => {
+  const res = await getDeptTree()
+  deptOptions.value = res.data || []
+}
+
 onMounted(() => {
   getList()
   loadDictData()
+  loadDeptTree()
 })
 </script>

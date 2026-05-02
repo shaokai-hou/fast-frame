@@ -141,39 +141,46 @@ export default {
 .verifybox {
   position: relative;
   box-sizing: border-box;
-  border-radius: 2px;
-  border: 1px solid #e4e7eb;
-  background-color: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, .3);
+  border-radius: 16px;
+  border: none;
+  background-color: var(--color-surface);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.15);
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
 }
 
 .verifybox-top {
-  padding: 0 15px;
-  height: 50px;
-  line-height: 50px;
+  padding: 0 20px;
+  height: 56px;
+  line-height: 56px;
   text-align: left;
   font-size: 16px;
-  color: #45494c;
-  border-bottom: 1px solid #e4e7eb;
+  font-weight: 600;
+  color: var(--color-foreground);
+  border-bottom: 1px solid var(--color-border-light);
   box-sizing: border-box;
 }
 
 .verifybox-bottom {
-  padding: 15px;
+  padding: 20px;
   box-sizing: border-box;
 }
 
 .verifybox-close {
   position: absolute;
-  top: 13px;
-  right: 9px;
+  top: 16px;
+  right: 16px;
   width: 24px;
   height: 24px;
   text-align: center;
   cursor: pointer;
+  color: var(--color-foreground-muted);
+  transition: color 0.2s ease;
+}
+
+.verifybox-close:hover {
+  color: var(--color-foreground);
 }
 
 .mask {
@@ -183,9 +190,8 @@ export default {
   z-index: 1001;
   width: 100%;
   height: 100vh;
-  background: rgba(0, 0, 0, .3);
-  /* display: none; */
-  transition: all .5s;
+  background: rgba(0, 0, 0, .5);
+  transition: all .3s ease;
 }
 
 .verify-tips {
@@ -196,16 +202,15 @@ export default {
   height: 30px;
   line-height: 30px;
   color: #fff;
+  font-weight: 500;
 }
 
 .suc-bg {
-  background-color: rgba(92, 184, 92, .5);
-  filter: progid:DXImageTransform.Microsoft.gradient(startcolorstr=#7f5CB85C, endcolorstr=#7f5CB85C);
+  background-color: rgba(5, 150, 105, .9);
 }
 
 .err-bg {
-  background-color: rgba(217, 83, 79, .5);
-  filter: progid:DXImageTransform.Microsoft.gradient(startcolorstr=#7fD9534F, endcolorstr=#7fD9534F);
+  background-color: rgba(220, 38, 38, .9);
 }
 
 .tips-enter, .tips-leave-to {
@@ -271,43 +276,48 @@ export default {
 /*滑动验证码*/
 .verify-bar-area {
   position: relative;
-  background: #FFFFFF;
+  background: var(--color-surface);
   text-align: center;
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
-  border: 1px solid #ddd;
-  -webkit-border-radius: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
 }
 
 .verify-bar-area .verify-move-block {
   position: absolute;
   top: 0px;
   left: 0;
-  background: #fff;
+  background: var(--color-primary-lighter);
   cursor: pointer;
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
-  box-shadow: 0 0 2px #888888;
-  -webkit-border-radius: 1px;
+  border: none;
+  border-radius: 8px;
+  z-index: 2;
 }
 
 .verify-bar-area .verify-move-block:hover {
-  background-color: #337ab7;
+  background-color: var(--color-primary);
   color: #FFFFFF;
+  transition: background-color 0.2s ease;
 }
 
 .verify-bar-area .verify-left-bar {
   position: absolute;
   top: -1px;
   left: -1px;
-  background: #f0fff0;
+  background: transparent;
   cursor: pointer;
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
-  border: 1px solid #ddd;
+  border: 1px solid transparent;
+  border-radius: 8px 0 0 8px;
+  z-index: 1;
 }
 
 .verify-img-panel {
@@ -315,9 +325,9 @@ export default {
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
-  border-radius: 3px;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 8px;
   position: relative;
 }
 

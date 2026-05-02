@@ -19,20 +19,20 @@
                                               'line-height':barSize.height}">
       <span class="verify-msg" v-text="text"></span>
       <div class="verify-left-bar"
-           :style="{width: (leftBarWidth!==undefined)?leftBarWidth: barSize.height, height: barSize.height, 'border-color': leftBarBorderColor, transaction: transitionWidth}">
+           :style="{width: (leftBarWidth!==undefined)?leftBarWidth: barSize.height, height: barSize.height, 'border-color': leftBarBorderColor, 'background-color': leftBarBackgroundColor, 'border-radius': leftBarBorderRadius, transaction: transitionWidth}">
         <span class="verify-msg" v-text="finishText"></span>
         <div class="verify-move-block"
              @touchstart="start"
              @mousedown="start"
-             :style="{width: barSize.height, height: barSize.height, 'background-color': moveBlockBackgroundColor, left: moveBlockLeft, transition: transitionLeft}">
+             :style="{width: barSize.height, height: barSize.height, 'background-color': moveBlockBackgroundColor, 'border-color': moveBlockBorderColor, 'border-radius': moveBlockBorderRadius, left: moveBlockLeft, transition: transitionLeft}">
           <i :class="['verify-icon iconfont', iconClass]"
              :style="{color: iconColor}"></i>
           <div v-if="type === '2'" class="verify-sub-block"
                :style="{'width':Math.floor(parseInt(setSize.imgWidth)*47/310)+ 'px',
-                                  'height': setSize.imgHeight,
-                                  'top':'-' + (parseInt(setSize.imgHeight) + vSpace) + 'px',
-                                  'background-size': setSize.imgWidth + ' ' + setSize.imgHeight,
-                                  }">
+                                'height': setSize.imgHeight,
+                                'top':'-' + (parseInt(setSize.imgHeight) + vSpace) + 'px',
+                                'background-size': setSize.imgWidth + ' ' + setSize.imgHeight,
+                                }">
             <img :src="'data:image/png;base64,'+blockBackImgBase" alt=""
                  style="width:100%;height:100%;display:block;-webkit-user-drag:none;">
           </div>
@@ -128,7 +128,11 @@ export default {
         leftBarWidth = ref(undefined),
         // 移动中样式
         moveBlockBackgroundColor = ref(undefined),
-        leftBarBorderColor = ref('#ddd'),
+        moveBlockBorderColor = ref(undefined),
+        moveBlockBorderRadius = ref(undefined),
+        leftBarBackgroundColor = ref('transparent'),
+        leftBarBorderColor = ref('transparent'),
+        leftBarBorderRadius = ref('8px 0 0 8px'),
         iconColor = ref(undefined),
         iconClass = ref('icon-right'),
         status = ref(false),	    //鼠标状态
@@ -209,8 +213,12 @@ export default {
       startMoveTime.value = +new Date();    //开始滑动的时间
       if (isEnd.value == false) {
         text.value = ''
-        moveBlockBackgroundColor.value = '#337ab7'
-        leftBarBorderColor.value = '#337AB7'
+        moveBlockBackgroundColor.value = 'var(--color-primary)'
+        moveBlockBorderColor.value = 'var(--color-primary)'
+        moveBlockBorderRadius.value = '0 8px 8px 0'
+        leftBarBackgroundColor.value = 'var(--color-primary-lighter)'
+        leftBarBorderColor.value = 'var(--color-primary)'
+        leftBarBorderRadius.value = '8px 0 0 8px'
         iconColor.value = '#fff'
         e.stopPropagation();
         status.value = true;
@@ -257,8 +265,12 @@ export default {
         }
         reqCheck(data).then(res => {
           if (res.repCode == "0000") {
-            moveBlockBackgroundColor.value = '#5cb85c'
-            leftBarBorderColor.value = '#5cb85c'
+            moveBlockBackgroundColor.value = 'var(--color-success)'
+            moveBlockBorderColor.value = 'var(--color-success)'
+            moveBlockBorderRadius.value = '0 8px 8px 0'
+            leftBarBackgroundColor.value = 'var(--color-success-lighter)'
+            leftBarBorderColor.value = 'var(--color-success)'
+            leftBarBorderRadius.value = '8px 0 0 8px'
             iconColor.value = '#fff'
             iconClass.value = 'icon-check'
             showRefresh.value = false
@@ -275,8 +287,12 @@ export default {
               proxy.$parent.$emit('success', {captchaVerification})
             }, 1000)
           } else {
-            moveBlockBackgroundColor.value = '#d9534f'
-            leftBarBorderColor.value = '#d9534f'
+            moveBlockBackgroundColor.value = 'var(--color-danger)'
+            moveBlockBorderColor.value = 'var(--color-danger)'
+            moveBlockBorderRadius.value = '0 8px 8px 0'
+            leftBarBackgroundColor.value = 'var(--color-danger-lighter)'
+            leftBarBorderColor.value = 'var(--color-danger)'
+            leftBarBorderRadius.value = '8px 0 0 8px'
             iconColor.value = '#fff'
             iconClass.value = 'icon-close'
             passFlag.value = false
@@ -304,9 +320,13 @@ export default {
       leftBarWidth.value = undefined
       transitionWidth.value = 'width .3s'
 
-      leftBarBorderColor.value = '#ddd'
-      moveBlockBackgroundColor.value = '#fff'
-      iconColor.value = '#000'
+      leftBarBackgroundColor.value = 'transparent'
+      leftBarBorderColor.value = 'transparent'
+      leftBarBorderRadius.value = '8px 0 0 8px'
+      moveBlockBackgroundColor.value = 'var(--color-primary-lighter)'
+      moveBlockBorderColor.value = 'transparent'
+      moveBlockBorderRadius.value = undefined
+      iconColor.value = 'var(--color-foreground)'
       iconClass.value = 'icon-right'
       isEnd.value = false
 
@@ -354,7 +374,11 @@ export default {
       leftBarWidth,
       // 移动中样式
       moveBlockBackgroundColor,
+      moveBlockBorderColor,
+      moveBlockBorderRadius,
+      leftBarBackgroundColor,
       leftBarBorderColor,
+      leftBarBorderRadius,
       iconColor,
       iconClass,
       status,	    //鼠标状态

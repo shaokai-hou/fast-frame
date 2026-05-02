@@ -5,13 +5,12 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fast.common.constant.Constants;
 import com.fast.common.exception.BusinessException;
+import com.fast.framework.helper.AdminHelper;
 import com.fast.modules.system.domain.vo.MenuTreeVO;
 import com.fast.modules.system.domain.vo.MenuVO;
 import com.fast.modules.system.domain.entity.Menu;
-import com.fast.modules.system.domain.entity.User;
 import com.fast.modules.system.mapper.MenuMapper;
 import com.fast.modules.system.service.MenuService;
-import com.fast.modules.system.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,28 +26,8 @@ import java.util.List;
 @Service
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements MenuService {
 
-    private final UserService userService;
-
-    private static final String ADMIN_USERNAME = "admin";
-
-    public MenuServiceImpl(UserService userService) {
-        this.userService = userService;
-    }
-
     /**
-     * 判断用户是否为超级管理员
-     *
-     * @param userId 用户ID
-     * @return 是否为超级管理员
-     */
-    private boolean isAdmin(Long userId) {
-        User user = userService.getById(userId);
-        return user != null && ADMIN_USERNAME.equals(user.getUsername());
-    }
-
-
-    /**
-     * 查询菜单树形列表（用于菜单管理，包含禁用菜单）
+     * 查询菜单树形列表
      *
      * @return 菜单树形列表
      */
@@ -56,21 +35,21 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     public List<MenuVO> listMenuTree() {
         LambdaQueryWrapper<Menu> wrapper = new LambdaQueryWrapper<>();
         wrapper.orderByAsc(Menu::getMenuSort)
-               .orderByAsc(Menu::getCreateTime);
+                .orderByAsc(Menu::getCreateTime);
         List<Menu> menus = list(wrapper);
         return buildMenuTree(menus, 0L);
     }
 
     /**
-     * 查询正常状态的菜单树形列表（用于路由）
+     * 查询正常状态的菜单树形列表
      *
      * @return 菜单树形列表
      */
     private List<MenuVO> listActiveMenuTree() {
         LambdaQueryWrapper<Menu> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Menu::getStatus, Constants.NORMAL)
-               .orderByAsc(Menu::getMenuSort)
-               .orderByAsc(Menu::getCreateTime);
+                .orderByAsc(Menu::getMenuSort)
+                .orderByAsc(Menu::getCreateTime);
         List<Menu> menus = list(wrapper);
         return buildMenuTree(menus, 0L);
     }
@@ -83,8 +62,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
      */
     @Override
     public List<MenuVO> listMenusByUserId(Long userId) {
-        // admin 用户返回所有正常菜单
-        if (isAdmin(userId)) {
+        if (AdminHelper.isAdmin(userId)) {
             return listActiveMenuTree();
         }
         List<Menu> menus = baseMapper.selectMenusByUserId(userId);
@@ -124,7 +102,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     @Override
     public List<String> listPermissionsByUserId(Long userId) {
         // admin 用户直接返回超级权限
-        if (isAdmin(userId)) {
+        if (AdminHelper.isAdmin(userId)) {
             return Collections.singletonList("*:*:*");
         }
         return baseMapper.selectPermissionsByUserId(userId);
@@ -141,7 +119,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         // 检查菜单名称是否存在
         LambdaQueryWrapper<Menu> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Menu::getMenuName, menu.getMenuName())
-               .eq(Menu::getParentId, menu.getParentId());
+                .eq(Menu::getParentId, menu.getParentId());
         if (count(wrapper) > 0) {
             throw new BusinessException("同级菜单名称已存在");
         }
@@ -164,8 +142,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         // 检查菜单名称是否重复
         LambdaQueryWrapper<Menu> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Menu::getMenuName, menu.getMenuName())
-               .eq(Menu::getParentId, menu.getParentId())
-               .ne(Menu::getId, menu.getId());
+                .eq(Menu::getParentId, menu.getParentId())
+                .ne(Menu::getId, menu.getId());
         if (count(wrapper) > 0) {
             throw new BusinessException("同级菜单名称已存在");
         }
@@ -200,7 +178,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     /**
      * 构建菜单树
      *
-     * @param menus 菜单列表
+     * @param menus    菜单列表
      * @param parentId 父级 ID
      * @return 菜单树形列表
      */
@@ -219,7 +197,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     /**
      * 构建树形选择器
      *
-     * @param menus 菜单列表
+     * @param menus    菜单列表
      * @param parentId 父级 ID
      * @return 树形选择器列表
      */

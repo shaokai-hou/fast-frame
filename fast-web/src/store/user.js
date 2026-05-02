@@ -5,6 +5,7 @@ import { getProfile } from '@/api/profile'
 import { setToken, removeToken, getToken, setUserInfo } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 import { usePermissionStore } from './permission'
+import { useTagsViewStore } from './tagsView'
 
 export const useUserStore = defineStore('user', () => {
   // 用户信息
@@ -63,6 +64,10 @@ export const useUserStore = defineStore('user', () => {
     const permissionStore = usePermissionStore()
     permissionStore.reset()
 
+    // 清除 TagsView 状态
+    const tagsViewStore = useTagsViewStore()
+    tagsViewStore.resetTagsView()
+
     // 清除动态路由
     resetRouter()
 
@@ -76,6 +81,8 @@ export const useUserStore = defineStore('user', () => {
     userInfo.value = ''
     const permissionStore = usePermissionStore()
     permissionStore.reset()
+    const tagsViewStore = useTagsViewStore()
+    tagsViewStore.resetTagsView()
     resetRouter()
     removeToken()
   }

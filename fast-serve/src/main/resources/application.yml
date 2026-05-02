@@ -59,3 +59,11 @@ warm-flow:
   permission-handler-path: com.fast.modules.flow.handler.FlowPermissionHandler
   # 数据源类型
   data-source-type: postgres
+
+# Captcha-Plus 滑块验证码配置
+aj:
+  captcha:
+    # 水印内容，设置为空去除右下角水印
+    water-mark: 'fast-frame'
+    # 验证码类型：blockpuzzle 滑块拼图
+    type: blockpuzzle

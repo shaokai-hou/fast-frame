@@ -13,6 +13,6 @@ public class ConfigConstants {
     /** 登录失败最大次数 */
     public static final String LOGIN_MAX_FAIL_COUNT = "sys.login.maxFailCount";
 
-    /** 验证码启用 */
-    public static final String CAPTCHA_ENABLED = "sys.captcha.enabled";
+    /** 登录锁定时长（秒） */
+    public static final String LOGIN_LOCK_DURATION = "sys.login.lockDuration";
 }

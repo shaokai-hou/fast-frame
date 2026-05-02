@@ -222,6 +222,13 @@ export const useTagsViewStore = defineStore('tagsView', () => {
     }
   }
 
+  // 重置 TagsView（退出登录时调用）
+  function resetTagsView() {
+    visitedRoutes.value = []
+    cachedRoutes.value = []
+    localStorage.removeItem(STORAGE_KEY)
+  }
+
   return {
     visitedRoutes,
     cachedRoutes,
@@ -235,6 +242,7 @@ export const useTagsViewStore = defineStore('tagsView', () => {
     updateVisitedRoute,
     addCachedRoute,
     removeCachedRoute,
-    refreshRoute
+    refreshRoute,
+    resetTagsView
   }
 })

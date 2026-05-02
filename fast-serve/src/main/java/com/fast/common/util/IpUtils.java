@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * IP地址工具类
+ *
  * @author haohao
  */
 public final class IpUtils {
@@ -13,10 +14,6 @@ public final class IpUtils {
     private static final String UNKNOWN = "unknown";
     private static final String IPV6_LOCALHOST = "0:0:0:0:0:0:0:1";
     private static final String IPV4_LOCALHOST = "127.0.0.1";
-
-    private IpUtils() {
-        // 私有构造，禁止实例化
-    }
 
     /**
      * 获取客户端真实IP地址
@@ -57,5 +54,18 @@ public final class IpUtils {
             return IPV4_LOCALHOST;
         }
         return ip;
+    }
+
+    /**
+     * 获取客户端浏览器信息
+     * 用于验证码服务识别客户端
+     *
+     * @param request HTTP请求对象
+     * @return 浏览器信息(ip + ua)
+     */
+    public static String getBrowserInfo(HttpServletRequest request) {
+        String ip = getClientIp(request);
+        String ua = request.getHeader("user-agent");
+        return ip + ua;
     }
 }

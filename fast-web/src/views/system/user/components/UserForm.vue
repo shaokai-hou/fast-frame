@@ -62,7 +62,7 @@
       </el-row>
       <el-form-item label="角色" prop="roleIds">
         <el-select v-model="form.roleIds" multiple placeholder="请选择角色" style="width: 100%">
-          <el-option v-for="role in roleOptions" :key="role.id" :label="role.roleName" :value="role.id" />
+          <el-option v-for="role in filteredRoleOptions" :key="role.id" :label="role.roleName" :value="role.id" />
         </el-select>
       </el-form-item>
       <el-form-item label="备注" prop="remark">
@@ -77,7 +77,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch } from 'vue'
+import { ref, reactive, watch, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getUser, addUser, updateUser } from '@/api/system/user'
 import { listAllRole } from '@/api/system/role'
@@ -105,6 +105,11 @@ const roleOptions = ref([])
 const deptOptions = ref([])
 const genderDict = ref([])
 const statusDict = ref([])
+
+// 过滤管理员角色（ID=1）
+const filteredRoleOptions = computed(() => {
+  return roleOptions.value.filter(role => role.id != 1)
+})
 
 const form = reactive({
   id: null,
