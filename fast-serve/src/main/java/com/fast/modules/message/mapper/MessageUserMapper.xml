@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fast.modules.message.mapper.MessageUserMapper">
+
+    <!-- 批量插入消息用户关联 -->
+    <insert id="batchInsert">
+        INSERT INTO sys_message_user (message_id, receiver_id, read_status, del_flag)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.messageId}, #{item.receiverId}, #{item.readStatus}, #{item.delFlag})
+        </foreach>
+    </insert>
+
+    <!-- 标记消息已读 -->
+    <update id="markAsRead">
+        UPDATE sys_message_user
+        SET read_status = '1',
+            read_time = #{readTime}
+        WHERE message_id = #{messageId}
+          AND receiver_id = #{receiverId}
+          AND del_flag = '0'
+    </update>
+
+    <!-- 标记所有消息已读 -->
+    <update id="markAllAsRead">
+        UPDATE sys_message_user
+        SET read_status = '1',
+            read_time = #{readTime}
+        WHERE receiver_id = #{receiverId}
+          AND del_flag = '0'
+          AND read_status = '0'
+    </update>
+
+    <!-- 查询消息接收人ID列表 -->
+    <select id="selectReceiverIds" resultType="java.lang.Long">
+        SELECT receiver_id
+        FROM sys_message_user
+        WHERE message_id = #{messageId}
+          AND del_flag = '0'
+    </select>
+
+</mapper>

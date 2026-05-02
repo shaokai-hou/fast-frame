@@ -12,6 +12,7 @@ import com.fast.framework.web.BaseController;
 import com.fast.modules.system.domain.dto.UserDTO;
 import com.fast.modules.system.domain.query.UserQuery;
 import com.fast.modules.system.domain.vo.UserExportVO;
+import com.fast.modules.system.domain.vo.UserSimpleVO;
 import com.fast.modules.system.domain.dto.UserImportDTO;
 import com.fast.modules.system.domain.vo.UserVO;
 import com.fast.modules.system.service.UserService;
@@ -48,6 +49,17 @@ public class UserController extends BaseController {
     @GetMapping("/page")
     public Result<IPage<UserVO>> page(UserQuery query, PageRequest pageRequest) {
         return success(userService.pageUsers(query, pageRequest));
+    }
+
+    /**
+     * 获取用户列表（简化信息，用于选择器）
+     *
+     * @return 用户列表
+     */
+    @SaCheckPermission("system:user:list")
+    @GetMapping("/list")
+    public Result<List<UserSimpleVO>> list() {
+        return success(userService.listUsers());
     }
 
     /**

@@ -9,9 +9,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fast.common.constant.ConfigConstants;
+import com.fast.common.constant.Constants;
 import com.fast.common.constant.DictConstants;
 import com.fast.common.constant.RedisConstants;
 import com.fast.common.exception.BusinessException;
+import com.fast.framework.helper.AdminHelper;
 import com.fast.common.result.PageRequest;
 import com.fast.framework.annotation.DataScope;
 import com.fast.framework.helper.ConfigHelper;
@@ -25,7 +27,9 @@ import com.fast.modules.system.domain.query.UserQuery;
 import com.fast.modules.system.domain.vo.FileVO;
 import com.fast.modules.system.domain.vo.RoleVO;
 import com.fast.modules.system.domain.vo.UserExportVO;
+import com.fast.modules.system.domain.vo.UserSimpleVO;
 import com.fast.modules.system.domain.vo.UserVO;
+import com.fast.modules.system.domain.entity.Dept;
 import com.fast.modules.system.domain.entity.User;
 import com.fast.modules.system.mapper.UserMapper;
 import com.fast.modules.system.service.*;
@@ -73,11 +77,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             Map<Long, List<RoleVO>> roleMap = allRoles.stream()
                 .collect(Collectors.groupingBy(RoleVO::getUserId));
 
+            // 批量查询部门全路径
+            Map<Long, String> deptFullNameMap = buildDeptFullNameMap(records);
+
             // 设置角色和锁定状态
             records.forEach(vo -> {
                 vo.setRoles(roleMap.getOrDefault(vo.getId(), new ArrayList<>()));
                 Boolean locked = RedisHelper.hasKey(RedisConstants.LOGIN_LOCK_PREFIX + vo.getUsername());
                 vo.setLocked(locked);
+                // 设置部门全路径
+                vo.setDeptFullName(deptFullNameMap.get(vo.getDeptId()));
             });
         }
         return result;
@@ -171,6 +180,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (existUser != null) {
             throw new BusinessException("用户名已存在");
         }
+        // 检查是否选择管理员角色
+        if (dto.getRoleIds() != null && Arrays.stream(dto.getRoleIds()).anyMatch(AdminHelper::isAdminRole)) {
+            throw new BusinessException("不能选择管理员角色");
+        }
         // 保存用户
         User user = BeanUtil.copyProperties(dto, User.class);
         // 前端未提供密码，使用初始化密码
@@ -200,8 +213,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public void updateUser(UserDTO dto) {
         Long userId = dto.getId();
         // 管理员保护（admin 用户 ID 为特定值）
-        if (isAdmin(userId)) {
+        if (AdminHelper.isAdmin(userId)) {
             throw new BusinessException("不能修改管理员用户");
+        }
+        // 检查是否选择管理员角色
+        if (dto.getRoleIds() != null && Arrays.stream(dto.getRoleIds()).anyMatch(AdminHelper::isAdminRole)) {
+            throw new BusinessException("不能选择管理员角色");
         }
         User user = getById(userId);
         if (user == null) {
@@ -235,7 +252,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (user == null) {
             throw new BusinessException("用户不存在");
         }
-        if (isAdmin(userId)) {
+        if (AdminHelper.isAdmin(userId)) {
             throw new BusinessException("不能重置管理员密码");
         }
         // 从参数配置获取初始化密码
@@ -259,7 +276,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (user == null) {
             throw new BusinessException("用户不存在");
         }
-        if (isAdmin(userId)) {
+        if (AdminHelper.isAdmin(userId)) {
             throw new BusinessException("不能禁用管理员用户");
         }
         user.setStatus(status);
@@ -345,7 +362,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteUser(List<Long> ids) {
-        if (ids.stream().anyMatch(this::isAdmin)) {
+        if (ids.stream().anyMatch(AdminHelper::isAdmin)) {
             throw new BusinessException("不能删除管理员用户");
         }
         removeByIds(ids);
@@ -463,12 +480,109 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     /**
-     * 判断是否为管理员用户
+     * 获取用户列表（简化信息，用于选择器）
      *
-     * @param userId 用户 ID
-     * @return 是否为管理员
+     * @return 用户列表
      */
-    private boolean isAdmin(Long userId) {
-        return userId != null && userId == 1L;
+    @Override
+    public List<UserSimpleVO> listUsers() {
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(User::getStatus, Constants.NORMAL)
+               .select(User::getId, User::getNickname)
+               .orderByAsc(User::getNickname);
+        List<User> users = list(wrapper);
+        return users.stream()
+            .map(user -> {
+                UserSimpleVO vo = new UserSimpleVO();
+                vo.setId(user.getId());
+                vo.setNickname(user.getNickname());
+                return vo;
+            })
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * 批量构建部门全路径名称
+     *
+     * @param userVOList 用户列表
+     * @return 部门ID -> 部门全路径名称映射
+     */
+    private Map<Long, String> buildDeptFullNameMap(List<UserVO> userVOList) {
+        // 收集所有部门ID
+        Set<Long> deptIds = userVOList.stream()
+            .map(UserVO::getDeptId)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
+
+        if (deptIds.isEmpty()) {
+            return new HashMap<>();
+        }
+
+        // 批量查询部门信息
+        List<Dept> depts = deptService.listByIds(deptIds);
+        Map<Long, Dept> deptMap = depts.stream()
+            .collect(Collectors.toMap(Dept::getId, d -> d));
+
+        // 收集 ancestors 中涉及的所有部门ID
+        Set<Long> allDeptIds = new HashSet<>(deptIds);
+        for (Dept dept : depts) {
+            if (StrUtil.isNotBlank(dept.getAncestors())) {
+                String[] ancestorIds = dept.getAncestors().split(",");
+                for (String idStr : ancestorIds) {
+                    if (!"0".equals(idStr)) {
+                        allDeptIds.add(Long.parseLong(idStr));
+                    }
+                }
+            }
+        }
+
+        // 批量查询所有涉及的部门（包括祖先）
+        Map<Long, Dept> allDeptMap = new HashMap<>();
+        if (!allDeptIds.isEmpty()) {
+            List<Dept> allDepts = deptService.listByIds(allDeptIds);
+            allDeptMap = allDepts.stream()
+                .collect(Collectors.toMap(Dept::getId, d -> d));
+        }
+
+        // 构建部门全路径
+        Map<Long, String> result = new HashMap<>();
+        for (Long deptId : deptIds) {
+            Dept dept = deptMap.get(deptId);
+            if (dept != null) {
+                String fullName = buildFullName(dept, allDeptMap);
+                result.put(deptId, fullName);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 构建单个部门的全路径名称
+     *
+     * @param dept 部门
+     * @param deptMap 部门ID映射（包含所有祖先）
+     * @return 全路径名称（如：深圳分公司/研发部）
+     */
+    private String buildFullName(Dept dept, Map<Long, Dept> deptMap) {
+        List<String> names = new ArrayList<>();
+        // 添加当前部门名称
+        names.add(dept.getDeptName());
+
+        // 根据 ancestors 添加祖先部门名称
+        if (StrUtil.isNotBlank(dept.getAncestors())) {
+            String[] ancestorIds = dept.getAncestors().split(",");
+            // ancestors 格式：0,1,2 表示祖先链（从根到父）
+            // 需要按顺序添加：根 -> ... -> 父 -> 当前
+            for (String idStr : ancestorIds) {
+                if (!"0".equals(idStr)) {
+                    Long ancestorId = Long.parseLong(idStr);
+                    Dept ancestor = deptMap.get(ancestorId);
+                    if (ancestor != null) {
+                        names.add(0, ancestor.getDeptName()); // 在头部插入
+                    }
+                }
+            }
+        }
+        return names.stream().collect(Collectors.joining("/"));
     }
 }

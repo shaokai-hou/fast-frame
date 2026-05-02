@@ -6,6 +6,7 @@ import com.fast.common.result.PageRequest;
 import com.fast.modules.system.domain.vo.RoleVO;
 import com.fast.modules.system.domain.dto.UserDTO;
 import com.fast.modules.system.domain.vo.UserExportVO;
+import com.fast.modules.system.domain.vo.UserSimpleVO;
 import com.fast.modules.system.domain.dto.UserImportDTO;
 import com.fast.modules.system.domain.query.UserQuery;
 import com.fast.modules.system.domain.vo.UserVO;
@@ -160,4 +161,11 @@ public interface UserService extends IService<User> {
      * @param userId 用户ID
      */
     void unlockUser(Long userId);
+
+    /**
+     * 获取用户列表（简化信息，用于选择器）
+     *
+     * @return 用户列表
+     */
+    List<UserSimpleVO> listUsers();
 }

@@ -42,7 +42,7 @@
           </template>
         </el-table-column>
         <el-table-column label="创建时间" prop="createTime" width="180" />
-        <el-table-column label="操作" align="center" width="240">
+        <el-table-column label="操作" align="center" width="240" fixed="right">
           <template #default="scope">
             <el-button link type="primary" @click="handleView(scope.row)">查看</el-button>
             <el-button link type="primary" @click="handleUpdate(scope.row)"

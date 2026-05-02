@@ -60,7 +60,7 @@
           </template>
         </el-table-column>
         <el-table-column label="操作时间" prop="operTime" width="180" />
-        <el-table-column label="操作" align="center" width="100">
+        <el-table-column label="操作" align="center" width="100" fixed="right">
           <template #default="scope">
             <el-button link type="primary" @click="handleView(scope.row)"
               v-hasPermi="['log:operlog:query']">详情</el-button>

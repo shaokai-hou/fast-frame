@@ -14,6 +14,9 @@
     </div>
 
     <div class="right-menu">
+      <!-- 消息提醒 -->
+      <MessageBell />
+
       <!-- 全屏切换 -->
       <Screenfull />
 
@@ -39,6 +42,7 @@ import Breadcrumb from './Breadcrumb.vue'
 import Screenfull from './Screenfull.vue'
 import UserDropdown from './UserDropdown.vue'
 import Settings from '../Settings/index.vue'
+import MessageBell from '@/components/MessageBell/index.vue'
 
 const appStore = useAppStore()
 const settingsRef = ref(null)
@@ -90,6 +94,6 @@ function openSettings() {
 .right-menu {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 4px;
 }
 </style>

@@ -33,7 +33,7 @@
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column type="index" label="序号" width="60" align="center"
           :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1" />
-        <el-table-column label="任务名称" prop="jobName" />
+        <el-table-column label="任务名称" prop="jobName" show-overflow-tooltip />
         <el-table-column label="任务分组" prop="jobGroup" width="100">
           <template #default="scope">
             <el-tag v-if="scope.row.jobGroup === 'SYSTEM'" type="danger">系统</el-tag>
@@ -44,17 +44,12 @@
         <el-table-column label="Cron表达式" prop="cronExpression" width="150" />
         <el-table-column label="状态" align="center" width="80">
           <template #default="scope">
-            <el-switch
-              v-model="scope.row.status"
-              active-value="0"
-              inactive-value="1"
-              @change="handleStatusChange(scope.row)"
-              v-hasPermi="['monitor:job:edit']"
-            />
+            <el-switch v-model="scope.row.status" active-value="0" inactive-value="1"
+              @change="handleStatusChange(scope.row)" v-hasPermi="['monitor:job:edit']" />
           </template>
         </el-table-column>
         <el-table-column label="创建时间" prop="createTime" width="180" />
-        <el-table-column label="操作" align="center" width="200">
+        <el-table-column label="操作" align="center" width="200" fixed="right">
           <template #default="scope">
             <el-button link type="primary" @click="handleUpdate(scope.row)"
               v-hasPermi="['monitor:job:edit']">修改</el-button>

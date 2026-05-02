@@ -17,6 +17,11 @@ public class Constants {
     public static final String DISABLE = "1";
 
     /**
+     * 删除状态
+     */
+    public static final String DEL = "1";
+
+    /**
      * 数据权限 全部数据
      */
     public static final String DATA_SCOPE_ALL = "1";

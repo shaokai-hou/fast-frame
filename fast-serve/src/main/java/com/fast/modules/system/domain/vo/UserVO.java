@@ -32,6 +32,11 @@ public class UserVO implements Serializable {
     private String deptName;
 
     /**
+     * 部门全路径名称（如：深圳分公司/研发部）
+     */
+    private String deptFullName;
+
+    /**
      * 用户名
      */
     private String username;

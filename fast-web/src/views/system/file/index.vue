@@ -43,7 +43,7 @@
           </template>
         </el-table-column>
         <el-table-column label="上传时间" prop="uploadTime" width="180" />
-        <el-table-column label="操作" align="center" width="200">
+        <el-table-column label="操作" align="center" width="200" fixed="right">
           <template #default="scope">
             <el-button link type="primary" @click="handlePreview(scope.row)">预览</el-button>
             <el-button link type="success" @click="handleDownload(scope.row)">下载</el-button>

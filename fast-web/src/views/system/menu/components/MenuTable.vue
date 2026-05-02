@@ -7,19 +7,15 @@
     </div>
 
     <!-- 数据表格 -->
-    <el-table
-      v-if="refreshTable"
-      v-loading="loading"
-      :data="data"
-      row-key="id"
-      :default-expand-all="isExpandAll"
-      :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-    >
+    <el-table v-if="refreshTable" v-loading="loading" :data="data" row-key="id" :default-expand-all="isExpandAll"
+      :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
       <el-table-column type="index" label="序号" width="60" align="center" />
-      <el-table-column label="菜单名称" prop="menuName" />
+      <el-table-column label="菜单名称" prop="menuName" show-overflow-tooltip />
       <el-table-column label="图标" align="center" width="80">
         <template #default="scope">
-          <el-icon v-if="scope.row.icon"><component :is="scope.row.icon" /></el-icon>
+          <el-icon v-if="scope.row.icon">
+            <component :is="scope.row.icon" />
+          </el-icon>
         </template>
       </el-table-column>
       <el-table-column label="排序" prop="menuSort" width="80" />
@@ -41,11 +37,14 @@
         </template>
       </el-table-column>
       <el-table-column label="创建时间" prop="createTime" width="180" />
-      <el-table-column label="操作" align="center" width="200">
+      <el-table-column label="操作" align="center" width="200" fixed="right">
         <template #default="scope">
-          <el-button link type="primary" @click="$emit('edit', scope.row)" v-hasPermi="['system:menu:edit']">修改</el-button>
-          <el-button link type="success" @click="$emit('add-child', scope.row)" v-hasPermi="['system:menu:add']">新增</el-button>
-          <el-button link type="danger" @click="handleDelete(scope.row)" v-hasPermi="['system:menu:delete']">删除</el-button>
+          <el-button link type="primary" @click="$emit('edit', scope.row)"
+            v-hasPermi="['system:menu:edit']">修改</el-button>
+          <el-button link type="success" @click="$emit('add-child', scope.row)"
+            v-hasPermi="['system:menu:add']">新增</el-button>
+          <el-button link type="danger" @click="handleDelete(scope.row)"
+            v-hasPermi="['system:menu:delete']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

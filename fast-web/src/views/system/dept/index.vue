@@ -25,7 +25,7 @@
       <el-table v-if="refreshTable" v-loading="loading" :data="deptList" row-key="id" :default-expand-all="isExpandAll"
         :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
         <el-table-column type="index" label="序号" width="60" align="center" />
-        <el-table-column label="部门名称" prop="deptName" />
+        <el-table-column label="部门名称" prop="deptName" show-overflow-tooltip />
         <el-table-column label="负责人" prop="leader" width="120" />
         <el-table-column label="联系电话" prop="phone" width="140" />
         <el-table-column label="排序" prop="sort" width="80" />
@@ -37,7 +37,7 @@
           </template>
         </el-table-column>
         <el-table-column label="创建时间" prop="createTime" width="180" />
-        <el-table-column label="操作" align="center" width="200">
+        <el-table-column label="操作" align="center" width="200" fixed="right">
           <template #default="scope">
             <el-button link type="primary" @click="handleUpdate(scope.row)"
               v-hasPermi="['system:dept:edit']">修改</el-button>

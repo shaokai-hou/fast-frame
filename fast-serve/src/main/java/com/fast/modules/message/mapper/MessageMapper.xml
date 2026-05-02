@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fast.modules.message.mapper.MessageMapper">
+
+    <!-- 分页查询收件箱消息列表 -->
+    <select id="selectInboxPage" resultType="com.fast.modules.message.domain.vo.MessageListVO">
+        SELECT m.id,
+               m.message_title,
+               m.message_type,
+               m.sender_id,
+               u.nickname AS sender_name,
+               m.priority,
+               mu.read_status,
+               m.create_time
+        FROM sys_message m
+        LEFT JOIN sys_message_user mu ON m.id = mu.message_id AND mu.del_flag = '0'
+        LEFT JOIN sys_user u ON m.sender_id = u.id
+        WHERE m.del_flag = '0'
+          AND mu.receiver_id = #{receiverId}
+          AND m.status = '0'
+        <if test="query.messageTitle != null and query.messageTitle != ''">
+            AND m.message_title LIKE CONCAT('%', #{query.messageTitle}, '%')
+        </if>
+        <if test="query.messageType != null and query.messageType != ''">
+            AND m.message_type = #{query.messageType}
+        </if>
+        <if test="query.readStatus != null and query.readStatus != ''">
+            AND mu.read_status = #{query.readStatus}
+        </if>
+        <if test="query.senderId != null">
+            AND m.sender_id = #{query.senderId}
+        </if>
+        <if test="query.priority != null and query.priority != ''">
+            AND m.priority = #{query.priority}
+        </if>
+        ORDER BY m.priority DESC, m.create_time DESC
+    </select>
+
+    <!-- 分页查询已发送消息列表 -->
+    <select id="selectSentPage" resultType="com.fast.modules.message.domain.vo.SentMessageVO">
+        SELECT m.id,
+               m.message_title,
+               m.message_type,
+               m.priority,
+               m.create_time,
+               COUNT(mu.id) AS receiver_count,
+               SUM(CASE WHEN mu.read_status = '1' THEN 1 ELSE 0 END) AS read_count
+        FROM sys_message m
+        LEFT JOIN sys_message_user mu ON m.id = mu.message_id AND mu.del_flag = '0'
+        WHERE m.del_flag = '0'
+          AND m.sender_id = #{senderId}
+        <if test="query.messageTitle != null and query.messageTitle != ''">
+            AND m.message_title LIKE CONCAT('%', #{query.messageTitle}, '%')
+        </if>
+        <if test="query.messageType != null and query.messageType != ''">
+            AND m.message_type = #{query.messageType}
+        </if>
+        <if test="query.priority != null and query.priority != ''">
+            AND m.priority = #{query.priority}
+        </if>
+        GROUP BY m.id, m.message_title, m.message_type, m.priority, m.create_time
+        ORDER BY m.create_time DESC
+    </select>
+
+    <!-- 查询消息详情 -->
+    <select id="selectMessageDetail" resultType="com.fast.modules.message.domain.vo.MessageVO">
+        SELECT m.id,
+               m.message_title,
+               m.message_type,
+               m.message_content,
+               m.sender_id,
+               u.nickname AS sender_name,
+               m.priority,
+               mu.read_status,
+               mu.read_time,
+               m.create_time
+        FROM sys_message m
+        LEFT JOIN sys_message_user mu ON m.id = mu.message_id AND mu.del_flag = '0'
+        LEFT JOIN sys_user u ON m.sender_id = u.id
+        WHERE m.del_flag = '0'
+          AND m.id = #{id}
+          AND mu.receiver_id = #{receiverId}
+    </select>
+
+    <!-- 查询未读消息数量 -->
+    <select id="selectUnreadCount" resultType="com.fast.modules.message.domain.vo.UnreadCountVO">
+        SELECT COUNT(*) AS total,
+               SUM(CASE WHEN m.message_type = '1' THEN 1 ELSE 0 END) AS system_count,
+               SUM(CASE WHEN m.message_type = '2' THEN 1 ELSE 0 END) AS private_count,
+               SUM(CASE WHEN m.message_type = '3' THEN 1 ELSE 0 END) AS notice_count
+        FROM sys_message m
+        INNER JOIN sys_message_user mu ON m.id = mu.message_id
+        WHERE m.del_flag = '0'
+          AND mu.del_flag = '0'
+          AND mu.receiver_id = #{receiverId}
+          AND mu.read_status = '0'
+          AND m.status = '0'
+    </select>
+
+</mapper>
