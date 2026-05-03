@@ -47,3 +47,6 @@ secrets.json
 
 # Claude Code project instructions (local only)
 CLAUDE.md
+
+# Playwright MCP
+.playwright-mcp/
