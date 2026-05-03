@@ -1,9 +1,9 @@
 package com.fast.modules.monitor.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fast.common.result.PageRequest;
 import com.fast.modules.monitor.domain.query.OnlineUserQuery;
 import com.fast.modules.monitor.domain.vo.OnlineUserVO;
-
-import java.util.List;
 
 /**
  * 在线用户Service
@@ -13,17 +13,11 @@ import java.util.List;
 public interface OnlineService {
 
     /**
-     * 查询在线用户列表
+     * 分页查询在线用户列表
      *
-     * @param query    查询条件
-     * @return 在线用户列表
+     * @param query      查询条件
+     * @param pageRequest 分页参数
+     * @return 在线用户分页结果
      */
-    List<OnlineUserVO> listOnlineUsers(OnlineUserQuery query);
-
-    /**
-     * 强制退出
-     *
-     * @param tokenId Token ID
-     */
-    void forceLogout(String tokenId);
+    IPage<OnlineUserVO> pageOnlineUsers(OnlineUserQuery query, PageRequest pageRequest);
 }

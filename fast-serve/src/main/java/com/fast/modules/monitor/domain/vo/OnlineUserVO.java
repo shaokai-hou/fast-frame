@@ -16,11 +16,6 @@ public class OnlineUserVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 会话ID
-     */
-    private String tokenId;
-
-    /**
      * 用户ID
      */
     private Long userId;

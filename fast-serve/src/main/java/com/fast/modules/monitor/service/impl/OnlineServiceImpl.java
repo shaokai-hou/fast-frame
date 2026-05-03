@@ -2,10 +2,12 @@ package com.fast.modules.monitor.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fast.common.result.PageRequest;
 import com.fast.modules.monitor.domain.query.OnlineUserQuery;
 import com.fast.modules.monitor.domain.vo.OnlineUserVO;
 import com.fast.modules.monitor.service.OnlineService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -19,16 +21,23 @@ import java.util.List;
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class OnlineServiceImpl implements OnlineService {
 
     @Override
-    public List<OnlineUserVO> listOnlineUsers(OnlineUserQuery query) {
-        List<OnlineUserVO> result = new ArrayList<>();
+    public IPage<OnlineUserVO> pageOnlineUsers(OnlineUserQuery query, PageRequest pageRequest) {
+        // 获取总数
+        List<String> allSessionIds = StpUtil.searchSessionId("", 0, -1, false);
+        long total = allSessionIds.size();
 
-        // 使用 searchSessionId 获取所有登录用户的 session
-        List<String> sessionIds = StpUtil.searchSessionId("", 0, -1, false);
+        // 分页参数
+        int pageNum = pageRequest.getPageNum();
+        int pageSize = pageRequest.getPageSize();
+        int start = (pageNum - 1) * pageSize;
 
+        // 分页获取 session
+        List<String> sessionIds = StpUtil.searchSessionId("", start, pageSize, false);
+
+        List<OnlineUserVO> list = new ArrayList<>();
         for (String sessionId : sessionIds) {
             try {
                 // 从 session 中获取存储的用户信息
@@ -45,25 +54,16 @@ public class OnlineServiceImpl implements OnlineService {
                     continue;
                 }
 
-                // 获取 IP
-                String ip = (String) StpUtil.getSessionBySessionId(sessionId).get("ip");
-                user.setIp(ip);
-
-                // 获取当前有效 token
-                String token = StpUtil.getTokenValueByLoginId(user.getUserId());
-                user.setTokenId(token);
-
-                result.add(user);
+                list.add(user);
             } catch (Exception e) {
                 log.warn("获取 session {} 失败: {}", sessionId, e.getMessage());
             }
         }
 
-        return result;
-    }
-
-    @Override
-    public void forceLogout(String tokenId) {
-        StpUtil.kickoutByTokenValue(tokenId);
+        // 返回分页结果
+        Page<OnlineUserVO> page = new Page<>(pageNum, pageSize);
+        page.setRecords(list);
+        page.setTotal(total);
+        return page;
     }
 }
