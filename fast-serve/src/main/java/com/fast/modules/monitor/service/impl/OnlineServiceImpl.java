@@ -36,26 +36,23 @@ public class OnlineServiceImpl implements OnlineService {
         int start = (pageNum - 1) * pageSize;
         int end = Math.min(start + pageSize, sessionIds.size());
 
+
         // 遍历获取登录信息（手动分页）
         for (int i = start; i < end; i++) {
-            try {
-                OnlineUserVO user = StpUtil.getSessionBySessionId(sessionIds.get(i))
-                        .getModel("online_user", OnlineUserVO.class);
+            OnlineUserVO user = StpUtil.getSessionBySessionId(sessionIds.get(i))
+                    .getModel("online_user", OnlineUserVO.class);
 
-                if (user == null) {
-                    continue;
-                }
-
-                // 过滤用户名
-                if (StrUtil.isNotBlank(query.getUsername()) &&
-                    !user.getUsername().contains(query.getUsername())) {
-                    continue;
-                }
-
-                list.add(user);
-            } catch (Exception e) {
-                log.warn("获取 session {} 失败: {}", sessionIds.get(i), e.getMessage());
+            if (user == null) {
+                continue;
             }
+
+            // 过滤用户名
+            if (StrUtil.isNotBlank(query.getUsername()) &&
+                !user.getUsername().contains(query.getUsername())) {
+                continue;
+            }
+
+            list.add(user);
         }
 
         // 返回分页结果
