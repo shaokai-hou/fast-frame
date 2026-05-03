@@ -2,23 +2,15 @@ package com.fast.modules.monitor.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.StrUtil;
-import com.fast.common.constant.RedisConstants;
-import com.fast.framework.helper.RedisHelper;
 import com.fast.modules.monitor.domain.query.OnlineUserQuery;
 import com.fast.modules.monitor.domain.vo.OnlineUserVO;
-import com.fast.modules.system.domain.entity.User;
 import com.fast.modules.monitor.service.OnlineService;
-import com.fast.modules.system.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 在线用户Service实现
@@ -30,74 +22,41 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OnlineServiceImpl implements OnlineService {
 
-    private final UserService userService;
-
     @Override
     public List<OnlineUserVO> listOnlineUsers(OnlineUserQuery query) {
         List<OnlineUserVO> result = new ArrayList<>();
 
-        // 使用 session key 搜索（sa-token:login:session:{loginId}）
-        // is-concurrent=false 时，一个用户只有一个 session，比 token key 更稳定
-        Set<String> sessionKeys = RedisHelper.scan(RedisConstants.SA_TOKEN_SESSION_PREFIX + "*");
-        if (sessionKeys.isEmpty()) {
-            return result;
-        }
+        // 使用 searchSessionId 获取所有登录用户的 session
+        List<String> sessionIds = StpUtil.searchSessionId("", 0, -1, false);
 
-        // 收集用户 ID
-        List<Long> userIds = new ArrayList<>();
-        for (String key : sessionKeys) {
-            // 从 key 中提取 loginId: sa-token:login:session:{loginId}
-            String loginId = key.substring(RedisConstants.SA_TOKEN_SESSION_PREFIX.length());
+        for (String sessionId : sessionIds) {
             try {
-                userIds.add(Long.parseLong(loginId));
-            } catch (NumberFormatException e) {
-                log.warn("无效的 loginId: {}", loginId);
+                // 从 session 中获取存储的用户信息
+                OnlineUserVO user = StpUtil.getSessionBySessionId(sessionId)
+                        .getModel("online_user", OnlineUserVO.class);
+
+                if (user == null) {
+                    continue;
+                }
+
+                // 过滤用户名
+                if (StrUtil.isNotBlank(query.getUsername()) &&
+                    !user.getUsername().contains(query.getUsername())) {
+                    continue;
+                }
+
+                // 获取 IP
+                String ip = (String) StpUtil.getSessionBySessionId(sessionId).get("ip");
+                user.setIp(ip);
+
+                // 获取当前有效 token
+                String token = StpUtil.getTokenValueByLoginId(user.getUserId());
+                user.setTokenId(token);
+
+                result.add(user);
+            } catch (Exception e) {
+                log.warn("获取 session {} 失败: {}", sessionId, e.getMessage());
             }
-        }
-
-        if (userIds.isEmpty()) {
-            return result;
-        }
-
-        // 批量查询用户信息
-        List<User> users = userService.listByIds(userIds);
-        Map<Long, User> userMap = users.stream()
-                .collect(Collectors.toMap(User::getId, Function.identity()));
-
-        // 构建结果 - 每个用户一条记录
-        for (Long userId : userIds) {
-            User user = userMap.get(userId);
-
-            if (user == null) {
-                continue;
-            }
-
-            // 过滤用户名
-            if (StrUtil.isNotBlank(query.getUsername()) && !user.getUsername().contains(query.getUsername())) {
-                continue;
-            }
-
-            // 获取当前有效 token（is-concurrent=false 时每个用户只有一个）
-            String token = StpUtil.getTokenValueByLoginId(userId);
-            if (token == null) {
-                continue;
-            }
-
-            OnlineUserVO vo = new OnlineUserVO();
-            vo.setTokenId(token);
-            vo.setUserId(userId);
-            vo.setUsername(user.getUsername());
-            vo.setNickname(user.getNickname());
-
-            // 获取登录时间
-            long createTime = StpUtil.getTokenSessionByToken(token).getCreateTime();
-            vo.setLoginTime(LocalDateTime.ofInstant(Instant.ofEpochMilli(createTime), ZoneId.systemDefault()));
-
-            // 获取登录 IP
-            String ip = (String) StpUtil.getTokenSessionByToken(token).get("ip");
-            vo.setIp(ip);
-
-            result.add(vo);
         }
 
         return result;

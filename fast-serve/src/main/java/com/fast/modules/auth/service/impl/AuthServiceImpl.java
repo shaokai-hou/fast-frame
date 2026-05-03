@@ -22,6 +22,7 @@ import com.fast.modules.auth.service.AuthService;
 import com.fast.modules.auth.service.SmsService;
 import com.fast.modules.log.domain.entity.LoginLog;
 import com.fast.modules.log.service.LoginLogService;
+import com.fast.modules.monitor.domain.vo.OnlineUserVO;
 import com.fast.modules.system.domain.entity.Menu;
 import com.fast.modules.system.domain.entity.User;
 import com.fast.modules.system.domain.vo.MenuVO;
@@ -119,10 +120,14 @@ public class AuthServiceImpl implements AuthService {
         // 登录
         StpUtil.login(user.getId());
 
-        // 将 IP 地址存入 token session（同一用户不同设备登录 IP 可能不同）
-        StpUtil.getTokenSession()
-                .set("ip", ip)
-                .set("username", user.getUsername());
+        // 将用户信息存入 session（用于在线用户查询）
+        OnlineUserVO onlineUser = new OnlineUserVO();
+        onlineUser.setUserId(user.getId());
+        onlineUser.setUsername(user.getUsername());
+        onlineUser.setNickname(user.getNickname());
+        StpUtil.getSession()
+                .set("online_user", onlineUser)
+                .set("ip", ip);
 
         // 记录登录日志
         recordLoginLog(username, ip, Constants.NORMAL, "登录成功");
@@ -164,9 +169,15 @@ public class AuthServiceImpl implements AuthService {
 
         // 4. 登录
         StpUtil.login(user.getId());
-        StpUtil.getTokenSession()
-            .set("ip", ip)
-            .set("username", user.getUsername());
+
+        // 将用户信息存入 session（用于在线用户查询）
+        OnlineUserVO onlineUser = new OnlineUserVO();
+        onlineUser.setUserId(user.getId());
+        onlineUser.setUsername(user.getUsername());
+        onlineUser.setNickname(user.getNickname());
+        StpUtil.getSession()
+            .set("online_user", onlineUser)
+            .set("ip", ip);
 
         // 5. 记录登录日志
         recordLoginLog(user.getUsername(), ip, Constants.NORMAL, "手机号登录成功");
