@@ -67,10 +67,10 @@ export function getRoleMenuIds(roleId) {
   })
 }
 
-// 修改角色状态
+// 修改状态
 export function changeStatus(data) {
   return request({
-    url: '/system/role/status',
+    url: '/system/role/changeStatus',
     method: 'put',
     data
   })

@@ -85,6 +85,20 @@ public interface DictService extends IService<DictType> {
     void deleteDictData(List<Long> ids);
 
     /**
+     * 修改字典类型状态
+     *
+     * @param dictType 字典类型状态参数
+     */
+    void updateDictTypeStatus(DictType dictType);
+
+    /**
+     * 修改字典数据状态
+     *
+     * @param dictData 字典数据状态参数
+     */
+    void updateDictDataStatus(DictData dictData);
+
+    /**
      * 刷新字典缓存
      */
     void refreshCache();

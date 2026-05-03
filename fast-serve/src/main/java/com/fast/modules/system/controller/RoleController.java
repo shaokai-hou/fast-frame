@@ -6,6 +6,7 @@ import com.fast.common.enums.BusinessType;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
+import com.fast.modules.system.domain.dto.StatusUpdateDTO;
 import com.fast.modules.system.domain.vo.MenuTreeVO;
 import com.fast.modules.system.domain.dto.RoleDTO;
 import com.fast.modules.system.domain.query.RoleQuery;
@@ -136,13 +137,16 @@ public class RoleController extends BaseController {
     /**
      * 修改角色状态
      *
-     * @param role 角色状态参数
+     * @param dto 状态参数
      * @return 成功结果
      */
     @SaCheckPermission("system:role:edit")
     @Log(title = "角色管理", businessType = BusinessType.UPDATE)
-    @PutMapping("/status")
-    public Result<Void> changeStatus(@RequestBody Role role) {
+    @PutMapping("/changeStatus")
+    public Result<Void> changeStatus(@Validated @RequestBody StatusUpdateDTO dto) {
+        Role role = new Role();
+        role.setId(dto.getId());
+        role.setStatus(dto.getStatus());
         roleService.updateById(role);
         return success();
     }

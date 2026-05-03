@@ -6,15 +6,16 @@ import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
 import com.fast.modules.system.domain.dto.DeptDTO;
+import com.fast.modules.system.domain.dto.StatusUpdateDTO;
 import com.fast.modules.system.domain.query.DeptQuery;
 import com.fast.modules.system.domain.vo.DeptTreeVO;
 import com.fast.modules.system.domain.vo.DeptVO;
 import com.fast.modules.system.domain.entity.Dept;
 import com.fast.modules.system.service.DeptService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -24,10 +25,10 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/system/dept")
+@RequiredArgsConstructor
 public class DeptController extends BaseController {
 
-    @Resource
-    private DeptService deptService;
+    private final DeptService deptService;
 
     /**
      * 查询部门树
@@ -115,6 +116,23 @@ public class DeptController extends BaseController {
     @DeleteMapping("/{id}")
     public Result<Void> remove(@PathVariable Long id) {
         deptService.deleteDept(id);
+        return success();
+    }
+
+    /**
+     * 修改部门状态
+     *
+     * @param dto 状态参数
+     * @return 成功结果
+     */
+    @SaCheckPermission("system:dept:edit")
+    @Log(title = "部门管理", businessType = BusinessType.UPDATE)
+    @PutMapping("/changeStatus")
+    public Result<Void> changeStatus(@Validated @RequestBody StatusUpdateDTO dto) {
+        Dept dept = new Dept();
+        dept.setId(dto.getId());
+        dept.setStatus(dto.getStatus());
+        deptService.updateById(dept);
         return success();
     }
 }

@@ -124,20 +124,23 @@
           align="center"
         />
         <el-table-column
+          label="备注"
+          prop="remark"
+        />
+        <el-table-column
           label="状态"
           align="center"
           width="80"
         >
           <template #default="scope">
-            <el-tag :type="scope.row.status === '0' ? 'success' : 'danger'">
-              {{ scope.row.status === '0' ? '正常' : '禁用' }}
-            </el-tag>
+            <el-switch
+              v-model="scope.row.status"
+              active-value="0"
+              inactive-value="1"
+              @change="handleStatusChange(scope.row)"
+            />
           </template>
         </el-table-column>
-        <el-table-column
-          label="备注"
-          prop="remark"
-        />
         <el-table-column
           label="创建时间"
           prop="createTime"
@@ -269,8 +272,8 @@
 import { ref, reactive, onMounted, getCurrentInstance } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { ArrowLeft, Search, Refresh, Plus, Delete } from '@element-plus/icons-vue'
-import { listDictData, addDictData, updateDictData, deleteDictData } from '@/api/system/dict/data'
+import { ArrowLeft, Plus, Delete } from '@element-plus/icons-vue'
+import { listDictData, addDictData, updateDictData, deleteDictData, changeDataStatus } from '@/api/system/dict/data'
 
 const router = useRouter()
 const route = useRoute()
@@ -402,6 +405,17 @@ const reset = () => {
     dictSort: 0,
     status: '0',
     remark: undefined
+  }
+}
+
+// 状态切换
+const handleStatusChange = async (row) => {
+  const text = row.status === '0' ? '启用' : '禁用'
+  try {
+    await changeDataStatus({ id: row.id, status: row.status })
+    ElMessage.success(`${text}成功`)
+  } catch {
+    row.status = row.status === '0' ? '1' : '0'
   }
 }
 

@@ -102,9 +102,12 @@
           width="80"
         >
           <template #default="scope">
-            <el-tag :type="scope.row.status === '0' ? 'success' : 'danger'">
-              {{ scope.row.status === '0' ? '正常' : '禁用' }}
-            </el-tag>
+            <el-switch
+              v-model="scope.row.status"
+              active-value="0"
+              inactive-value="1"
+              @change="handleStatusChange(scope.row)"
+            />
           </template>
         </el-table-column>
         <el-table-column
@@ -287,8 +290,9 @@
 <script setup>
 import { ref, reactive, getCurrentInstance, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Search, Refresh, Plus, Sort } from '@element-plus/icons-vue'
-import { listDept, getDept, addDept, updateDept, deleteDept, getDeptTree } from '@/api/system/dept'
+import { Plus, Sort } from '@element-plus/icons-vue'
+import { listDept, getDept, addDept, updateDept, deleteDept, getDeptTree, changeStatus } from '@/api/system/dept'
+import { handleTree } from '@/utils/tree'
 
 const { proxy } = getCurrentInstance()
 
@@ -323,50 +327,6 @@ const getList = async () => {
   } finally {
     loading.value = false
   }
-}
-
-// 树形数据处理
-const handleTree = (data, id, parentId, children) => {
-  const config = {
-    id: id || 'id',
-    parentId: parentId || 'parentId',
-    childrenList: children || 'children'
-  }
-  const childrenListMap = {}
-  const nodeIds = {}
-  const tree = []
-
-  for (const d of data) {
-    const pId = d[config.parentId]
-    if (!childrenListMap[pId]) {
-      childrenListMap[pId] = []
-    }
-    nodeIds[d[config.id]] = d
-    childrenListMap[pId].push(d)
-  }
-
-  for (const d of data) {
-    const pId = d[config.parentId]
-    if (!nodeIds[pId]) {
-      tree.push(d)
-    }
-  }
-
-  for (const t of tree) {
-    adaptToChildren(t)
-  }
-
-  function adaptToChildren(o) {
-    if (childrenListMap[o[config.id]]) {
-      o[config.childrenList] = childrenListMap[o[config.id]]
-    }
-    if (o[config.childrenList]) {
-      for (const c of o[config.childrenList]) {
-        adaptToChildren(c)
-      }
-    }
-  }
-  return tree
 }
 
 // 搜索
@@ -420,6 +380,17 @@ const handleDelete = async (row) => {
   await deleteDept(row.id)
   ElMessage.success('删除成功')
   getList()
+}
+
+// 状态切换
+const handleStatusChange = async (row) => {
+  const text = row.status === '0' ? '启用' : '禁用'
+  try {
+    await changeStatus({ id: row.id, status: row.status })
+    ElMessage.success(`${text}成功`)
+  } catch {
+    row.status = row.status === '0' ? '1' : '0'
+  }
 }
 
 // 提交表单

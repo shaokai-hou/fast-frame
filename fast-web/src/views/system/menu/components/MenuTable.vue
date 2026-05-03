@@ -86,9 +86,12 @@
         width="80"
       >
         <template #default="scope">
-          <el-tag :type="scope.row.status === '0' ? 'success' : 'danger'">
-            {{ scope.row.status === '0' ? '正常' : '禁用' }}
-          </el-tag>
+          <el-switch
+            v-model="scope.row.status"
+            active-value="0"
+            inactive-value="1"
+            @change="handleStatusChange(scope.row)"
+          />
         </template>
       </el-table-column>
       <el-table-column
@@ -137,7 +140,7 @@
 import { ref, getCurrentInstance } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Sort } from '@element-plus/icons-vue'
-import { deleteMenu } from '@/api/system/menu'
+import { deleteMenu, changeStatus } from '@/api/system/menu'
 
 const props = defineProps({
   data: {
@@ -188,5 +191,16 @@ const handleDelete = async (row) => {
   await deleteMenu(row.id)
   ElMessage.success('删除成功')
   emit('refresh')
+}
+
+// 状态切换
+const handleStatusChange = async (row) => {
+  const text = row.status === '0' ? '启用' : '禁用'
+  try {
+    await changeStatus({ id: row.id, status: row.status })
+    ElMessage.success(`${text}成功`)
+  } catch {
+    row.status = row.status === '0' ? '1' : '0'
+  }
 }
 </script>

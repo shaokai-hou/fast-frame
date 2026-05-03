@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 字典Service实现
@@ -152,17 +153,30 @@ public class DictServiceImpl extends ServiceImpl<DictTypeMapper, DictType> imple
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteDictType(List<Long> ids) {
-        for (Long id : ids) {
-            DictType dictType = getById(id);
-            if (Objects.nonNull(dictType)) {
-                // 删除字典数据
-                LambdaQueryWrapper<DictData> wrapper = new LambdaQueryWrapper<>();
-                wrapper.eq(DictData::getDictType, dictType.getDictType());
-                dictDataMapper.delete(wrapper);
-                // 删除缓存
-                RedisHelper.delete(RedisConstants.DICT_PREFIX + dictType.getDictType());
-            }
+        // 批量查询所有字典类型
+        List<DictType> dictTypes = listByIds(ids);
+        if (CollUtil.isEmpty(dictTypes)) {
+            return;
         }
+
+        // 收集所有字典类型键
+        Set<String> dictTypeKeys = dictTypes.stream()
+            .map(DictType::getDictType)
+            .collect(Collectors.toSet());
+
+        // 批量删除字典数据（一条 SQL）
+        if (!dictTypeKeys.isEmpty()) {
+            LambdaQueryWrapper<DictData> wrapper = new LambdaQueryWrapper<>();
+            wrapper.in(DictData::getDictType, dictTypeKeys);
+            dictDataMapper.delete(wrapper);
+        }
+
+        // 批量清理缓存
+        for (String key : dictTypeKeys) {
+            RedisHelper.delete(RedisConstants.DICT_PREFIX + key);
+        }
+
+        // 批量删除字典类型
         removeByIds(ids);
     }
 
@@ -193,6 +207,38 @@ public class DictServiceImpl extends ServiceImpl<DictTypeMapper, DictType> imple
             long count = RedisHelper.delete(keys);
             log.info("刷新字典缓存完成，删除 {} 个缓存Key", count);
         }
+    }
+
+    /**
+     * 修改字典类型状态
+     *
+     * @param dictType 字典类型状态参数
+     */
+    @Override
+    public void updateDictTypeStatus(DictType dictType) {
+        DictType exist = getById(dictType.getId());
+        if (Objects.isNull(exist)) {
+            throw new BusinessException("字典类型不存在");
+        }
+        updateById(dictType);
+        // 清理缓存
+        RedisHelper.delete(RedisConstants.DICT_PREFIX + exist.getDictType());
+    }
+
+    /**
+     * 修改字典数据状态
+     *
+     * @param dictData 字典数据状态参数
+     */
+    @Override
+    public void updateDictDataStatus(DictData dictData) {
+        DictData exist = dictDataMapper.selectById(dictData.getId());
+        if (Objects.isNull(exist)) {
+            throw new BusinessException("字典数据不存在");
+        }
+        dictDataMapper.updateById(dictData);
+        // 清理缓存
+        RedisHelper.delete(RedisConstants.DICT_PREFIX + exist.getDictType());
     }
 
 }

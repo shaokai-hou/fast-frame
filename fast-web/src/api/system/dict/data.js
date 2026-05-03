@@ -34,3 +34,12 @@ export function deleteDictData(ids) {
     method: 'delete'
   })
 }
+
+// 修改字典数据状态
+export function changeDataStatus(data) {
+  return request({
+    url: '/system/dict/data/changeStatus',
+    method: 'put',
+    data
+  })
+}

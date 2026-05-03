@@ -50,3 +50,12 @@ export function refreshDictCache() {
     method: 'delete'
   })
 }
+
+// 修改字典类型状态
+export function changeTypeStatus(data) {
+  return request({
+    url: '/system/dict/type/changeStatus',
+    method: 'put',
+    data
+  })
+}

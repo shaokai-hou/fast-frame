@@ -58,3 +58,12 @@ export function deleteDept(id) {
     method: 'delete'
   })
 }
+
+// 修改状态
+export function changeStatus(data) {
+  return request({
+    url: '/system/dept/changeStatus',
+    method: 'put',
+    data
+  })
+}

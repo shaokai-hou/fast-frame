@@ -6,6 +6,7 @@ import com.fast.common.enums.BusinessType;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
+import com.fast.modules.system.domain.dto.StatusUpdateDTO;
 import com.fast.modules.system.domain.query.DictDataQuery;
 import com.fast.modules.system.domain.vo.DictDataVO;
 import com.fast.modules.system.domain.vo.DictVO;
@@ -148,6 +149,40 @@ public class DictController extends BaseController {
     @DeleteMapping("/data/{ids}")
     public Result<Void> removeData(@PathVariable Long[] ids) {
         dictService.deleteDictData(Arrays.asList(ids));
+        return success();
+    }
+
+    /**
+     * 修改字典类型状态
+     *
+     * @param dto 状态参数
+     * @return 成功结果
+     */
+    @SaCheckPermission("system:dict:edit")
+    @Log(title = "字典管理", businessType = BusinessType.UPDATE)
+    @PutMapping("/type/changeStatus")
+    public Result<Void> changeTypeStatus(@Validated @RequestBody StatusUpdateDTO dto) {
+        DictType dictType = new DictType();
+        dictType.setId(dto.getId());
+        dictType.setStatus(dto.getStatus());
+        dictService.updateDictTypeStatus(dictType);
+        return success();
+    }
+
+    /**
+     * 修改字典数据状态
+     *
+     * @param dto 状态参数
+     * @return 成功结果
+     */
+    @SaCheckPermission("system:dict:edit")
+    @Log(title = "字典管理", businessType = BusinessType.UPDATE)
+    @PutMapping("/data/changeStatus")
+    public Result<Void> changeDataStatus(@Validated @RequestBody StatusUpdateDTO dto) {
+        DictData dictData = new DictData();
+        dictData.setId(dto.getId());
+        dictData.setStatus(dto.getStatus());
+        dictService.updateDictDataStatus(dictData);
         return success();
     }
 

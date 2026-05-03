@@ -5,6 +5,7 @@ import com.fast.common.enums.BusinessType;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
+import com.fast.modules.system.domain.dto.StatusUpdateDTO;
 import com.fast.modules.system.domain.vo.MenuTreeVO;
 import com.fast.modules.system.domain.vo.MenuVO;
 import com.fast.modules.system.domain.entity.Menu;
@@ -100,6 +101,23 @@ public class MenuController extends BaseController {
     @DeleteMapping("/{id}")
     public Result<Void> remove(@PathVariable Long id) {
         menuService.deleteMenu(id);
+        return success();
+    }
+
+    /**
+     * 修改菜单状态
+     *
+     * @param dto 状态参数
+     * @return 成功结果
+     */
+    @SaCheckPermission("system:menu:edit")
+    @Log(title = "菜单管理", businessType = BusinessType.UPDATE)
+    @PutMapping("/changeStatus")
+    public Result<Void> changeStatus(@Validated @RequestBody StatusUpdateDTO dto) {
+        Menu menu = new Menu();
+        menu.setId(dto.getId());
+        menu.setStatus(dto.getStatus());
+        menuService.updateById(menu);
         return success();
     }
 }

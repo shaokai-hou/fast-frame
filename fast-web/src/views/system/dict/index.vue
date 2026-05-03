@@ -116,21 +116,24 @@
           show-overflow-tooltip
         />
         <el-table-column
-          label="状态"
-          align="center"
-          width="120"
-        >
-          <template #default="scope">
-            <el-tag :type="scope.row.status === '0' ? 'success' : 'danger'">
-              {{ scope.row.status === '0' ? '正常' : '禁用' }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column
           label="备注"
           prop="remark"
           show-overflow-tooltip
         />
+        <el-table-column
+          label="状态"
+          align="center"
+          width="80"
+        >
+          <template #default="scope">
+            <el-switch
+              v-model="scope.row.status"
+              active-value="0"
+              inactive-value="1"
+              @change="handleStatusChange(scope.row)"
+            />
+          </template>
+        </el-table-column>
         <el-table-column
           label="创建时间"
           prop="createTime"
@@ -255,8 +258,8 @@
 import { ref, reactive, getCurrentInstance, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Search, Refresh, Plus, Delete, RefreshRight } from '@element-plus/icons-vue'
-import { listDictType, addDictType, updateDictType, deleteDictType, refreshDictCache } from '@/api/system/dict'
+import { Plus, Delete, RefreshRight } from '@element-plus/icons-vue'
+import { listDictType, addDictType, updateDictType, deleteDictType, refreshDictCache, changeTypeStatus } from '@/api/system/dict'
 
 const router = useRouter()
 const { proxy } = getCurrentInstance()
@@ -384,6 +387,17 @@ const handleRefreshCache = async () => {
   await ElMessageBox.confirm('确认要刷新字典缓存吗？', '提示', { type: 'warning' })
   await refreshDictCache()
   ElMessage.success('刷新缓存成功')
+}
+
+// 状态切换
+const handleStatusChange = async (row) => {
+  const text = row.status === '0' ? '启用' : '禁用'
+  try {
+    await changeTypeStatus({ id: row.id, status: row.status })
+    ElMessage.success(`${text}成功`)
+  } catch {
+    row.status = row.status === '0' ? '1' : '0'
+  }
 }
 
 // 使用 onMounted 确保只在组件挂载后调用一次

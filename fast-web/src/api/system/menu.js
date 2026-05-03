@@ -50,3 +50,12 @@ export function deleteMenu(id) {
     method: 'delete'
   })
 }
+
+// 修改状态
+export function changeStatus(data) {
+  return request({
+    url: '/system/menu/changeStatus',
+    method: 'put',
+    data
+  })
+}
