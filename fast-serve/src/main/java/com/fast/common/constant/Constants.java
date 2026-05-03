@@ -20,7 +20,6 @@ public class Constants {
      * 删除状态
      */
     public static final String DEL = "1";
-
     /**
      * 成功状态
      */
@@ -29,25 +28,4 @@ public class Constants {
      * 失败状态
      */
     public static final String FAIL = "1";
-
-    /**
-     * 数据权限 全部数据
-     */
-    public static final String DATA_SCOPE_ALL = "1";
-    /**
-     * 数据权限 - 自定义数据
-     */
-    public static final String DATA_SCOPE_CUSTOM = "2";
-    /**
-     * 数据权限 - 本部门数据
-     */
-    public static final String DATA_SCOPE_DEPT = "3";
-    /**
-     * 数据权限 - 本部门及以下
-     */
-    public static final String DATA_SCOPE_DEPT_AND_CHILD = "4";
-    /**
-     * 数据权限 - 仅本人数据
-     */
-    public static final String DATA_SCOPE_SELF = "5";
 }

@@ -3,7 +3,6 @@ package com.fast.modules.system.controller;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fast.common.enums.BusinessType;
-import com.fast.common.result.PageRequest;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
@@ -33,14 +32,13 @@ public class NoticeController extends BaseController {
     /**
      * 分页查询公告列表
      *
-     * @param pageRequest 分页参数
-     * @param query       查询条件
+     * @param query 查询条件
      * @return 公告分页结果
      */
     @SaCheckPermission("system:notice:page")
     @GetMapping("/page")
-    public Result<IPage<NoticeVO>> page(PageRequest pageRequest, NoticeQuery query) {
-        return success(noticeService.pageNotices(pageRequest, query));
+    public Result<IPage<NoticeVO>> page(NoticeQuery query) {
+        return success(noticeService.pageNotices(query));
     }
 
     /**

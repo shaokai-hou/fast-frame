@@ -1,6 +1,9 @@
 package com.fast.modules.log.domain.query;
 
+import com.fast.framework.web.PageRequest;
 import lombok.Data;
+
+import lombok.EqualsAndHashCode;
 
 /**
  * 登录日志查询参数
@@ -8,7 +11,8 @@ import lombok.Data;
  * @author fast-frame
  */
 @Data
-public class LoginLogQuery {
+@EqualsAndHashCode(callSuper = true)
+public class LoginLogQuery extends PageRequest {
 
     /**
      * 用户名

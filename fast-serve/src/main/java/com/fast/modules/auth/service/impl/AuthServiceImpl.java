@@ -156,7 +156,7 @@ public class AuthServiceImpl implements AuthService {
 
         // 2. 查询用户
         User user = userService.getByPhone(phone);
-        if (user == null) {
+        if (Objects.isNull(user)) {
             recordLoginLog(phone, ip, Constants.DISABLE, "手机号未注册");
             throw new BusinessException("手机号未注册");
         }

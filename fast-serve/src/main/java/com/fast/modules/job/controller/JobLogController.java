@@ -3,7 +3,6 @@ package com.fast.modules.job.controller;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fast.common.enums.BusinessType;
-import com.fast.common.result.PageRequest;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
@@ -31,14 +30,13 @@ public class JobLogController extends BaseController {
     /**
      * 分页查询任务日志
      *
-     * @param query    查询条件
-     * @param pageRequest 分页参数
+     * @param query 查询条件
      * @return 日志分页结果
      */
     @SaCheckPermission("monitor:jobLog:page")
     @GetMapping("/page")
-    public Result<IPage<JobLogVO>> page(JobLogQuery query, PageRequest pageRequest) {
-        return success(jobLogService.pageJobLogs(query, pageRequest));
+    public Result<IPage<JobLogVO>> page(JobLogQuery query) {
+        return success(jobLogService.pageJobLogs(query));
     }
 
     /**

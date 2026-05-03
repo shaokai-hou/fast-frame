@@ -2,8 +2,8 @@ package com.fast.modules.monitor.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fast.common.constant.RedisConstants;
-import com.fast.common.result.PageRequest;
 import com.fast.modules.monitor.domain.query.CacheQuery;
 import com.fast.modules.monitor.domain.vo.CacheInfoVO;
 import com.fast.modules.monitor.domain.vo.CacheKeyVO;
@@ -67,7 +67,7 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
-    public IPage<CacheKeyVO> pageCacheKeys(CacheQuery query, PageRequest pageRequest) {
+    public IPage<CacheKeyVO> pageCacheKeys(CacheQuery query) {
         List<CacheKeyVO> allKeys = new ArrayList<>();
 
         // 遍历从常量类反射获取的缓存前缀
@@ -103,14 +103,14 @@ public class CacheServiceImpl implements CacheService {
         long total = allKeys.size();
 
         // 内存分页
-        int fromIndex = Math.toIntExact(pageRequest.getOffset());
-        int toIndex = Math.toIntExact(Math.min(pageRequest.getOffset() + pageRequest.getPageSize(), allKeys.size()));
+        int fromIndex = Math.toIntExact((query.getPageNum() - 1) * query.getPageSize());
+        int toIndex = Math.toIntExact(Math.min((query.getPageNum() - 1) * query.getPageSize() + query.getPageSize(), allKeys.size()));
 
         List<CacheKeyVO> pageData = fromIndex < allKeys.size()
             ? allKeys.subList(fromIndex, toIndex)
             : new ArrayList<>();
 
-        Page<CacheKeyVO> resultPage = pageRequest.toPage();
+        Page<CacheKeyVO> resultPage = Page.of(query.getPageNum(), query.getPageSize());
         resultPage.setRecords(pageData);
         resultPage.setTotal(total);
         return resultPage;
@@ -134,7 +134,7 @@ public class CacheServiceImpl implements CacheService {
         vo.setTtl(ttl);
 
         // 计算缓存大小
-        if (value != null) {
+        if (Objects.nonNull(value)) {
             vo.setSize((long) value.length());
         } else {
             vo.setSize(0L);
@@ -168,7 +168,7 @@ public class CacheServiceImpl implements CacheService {
     @Override
     public String getRedisInfo() {
         Properties info = RedisHelper.getInfo();
-        if (info != null) {
+        if (Objects.nonNull(info)) {
             StringBuilder sb = new StringBuilder();
             for (String key : info.stringPropertyNames()) {
                 sb.append(key).append(": ").append(info.getProperty(key)).append("\n");

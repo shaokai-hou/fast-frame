@@ -1,8 +1,9 @@
 package com.fast.modules.flow.domain.query;
 
+import com.fast.framework.web.PageRequest;
 import lombok.Data;
 
-import java.io.Serializable;
+import lombok.EqualsAndHashCode;
 
 /**
  * 流程定义查询参数
@@ -10,7 +11,8 @@ import java.io.Serializable;
  * @author fast-frame
  */
 @Data
-public class FlowDefQuery implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+public class FlowDefQuery extends PageRequest {
 
     private static final long serialVersionUID = 1L;
 

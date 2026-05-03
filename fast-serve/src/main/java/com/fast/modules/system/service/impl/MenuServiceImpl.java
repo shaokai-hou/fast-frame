@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 菜单Service实现
@@ -120,7 +121,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         LambdaQueryWrapper<Menu> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Menu::getMenuName, menu.getMenuName())
                 .eq(Menu::getParentId, menu.getParentId());
-        if (count(wrapper) > 0) {
+        if (exists(wrapper)) {
             throw new BusinessException("同级菜单名称已存在");
         }
         save(menu);
@@ -136,7 +137,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     @Transactional(rollbackFor = Exception.class)
     public void updateMenu(Menu menu) {
         Menu existMenu = getById(menu.getId());
-        if (existMenu == null) {
+        if (Objects.isNull(existMenu)) {
             throw new BusinessException("菜单不存在");
         }
         // 检查菜单名称是否重复
@@ -144,7 +145,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         wrapper.eq(Menu::getMenuName, menu.getMenuName())
                 .eq(Menu::getParentId, menu.getParentId())
                 .ne(Menu::getId, menu.getId());
-        if (count(wrapper) > 0) {
+        if (exists(wrapper)) {
             throw new BusinessException("同级菜单名称已存在");
         }
         // 不能将父菜单设置为自己
@@ -166,7 +167,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         // 检查是否存在子菜单
         LambdaQueryWrapper<Menu> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Menu::getParentId, id);
-        if (count(wrapper) > 0) {
+        if (exists(wrapper)) {
             throw new BusinessException("存在子菜单，不能删除");
         }
         removeById(id);

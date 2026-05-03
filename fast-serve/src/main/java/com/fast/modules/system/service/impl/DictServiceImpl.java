@@ -4,10 +4,10 @@ import cn.hutool.core.collection.CollUtil;
 import com.alibaba.fastjson2.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fast.common.constant.RedisConstants;
 import com.fast.common.exception.BusinessException;
-import com.fast.common.result.PageRequest;
 import com.fast.framework.helper.RedisHelper;
 import com.fast.modules.system.domain.query.DictDataQuery;
 import com.fast.modules.system.domain.vo.DictDataVO;
@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -41,13 +42,12 @@ public class DictServiceImpl extends ServiceImpl<DictTypeMapper, DictType> imple
     /**
      * 分页查询字典类型
      *
-     * @param query      查询条件
-     * @param pageRequest 分页参数
+     * @param query 查询条件
      * @return 字典类型分页结果
      */
     @Override
-    public IPage<DictVO> pageDictTypes(DictTypeQuery query, PageRequest pageRequest) {
-        return baseMapper.selectDictTypePage(pageRequest.toPage(), query);
+    public IPage<DictVO> pageDictTypes(DictTypeQuery query) {
+        return baseMapper.selectDictTypePage(Page.of(query.getPageNum(), query.getPageSize()), query);
     }
 
     /**
@@ -62,7 +62,7 @@ public class DictServiceImpl extends ServiceImpl<DictTypeMapper, DictType> imple
         String cacheKey = RedisConstants.DICT_PREFIX + dictType;
         List<DictDataVO> cached = RedisHelper.getJson(cacheKey, new TypeReference<List<DictDataVO>>() {
         });
-        if (cached != null) {
+        if (Objects.nonNull(cached)) {
             return cached;
         }
         List<DictDataVO> list = dictDataMapper.selectDictDataListByType(dictType);
@@ -75,13 +75,12 @@ public class DictServiceImpl extends ServiceImpl<DictTypeMapper, DictType> imple
     /**
      * 分页查询字典数据
      *
-     * @param query      查询条件
-     * @param pageRequest 分页参数
+     * @param query 查询条件
      * @return 字典数据分页结果
      */
     @Override
-    public IPage<DictDataVO> pageDictData(DictDataQuery query, PageRequest pageRequest) {
-        return dictDataMapper.selectDictDataPage(pageRequest.toPage(), query);
+    public IPage<DictDataVO> pageDictData(DictDataQuery query) {
+        return dictDataMapper.selectDictDataPage(Page.of(query.getPageNum(), query.getPageSize()), query);
     }
 
     /**
@@ -93,7 +92,7 @@ public class DictServiceImpl extends ServiceImpl<DictTypeMapper, DictType> imple
     public void addDictType(DictType dictType) {
         LambdaQueryWrapper<DictType> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(DictType::getDictType, dictType.getDictType());
-        if (count(wrapper) > 0) {
+        if (exists(wrapper)) {
             throw new BusinessException("字典类型已存在");
         }
         save(dictType);
@@ -118,14 +117,14 @@ public class DictServiceImpl extends ServiceImpl<DictTypeMapper, DictType> imple
     @Override
     public void updateDictType(DictType dictType) {
         DictType exist = getById(dictType.getId());
-        if (exist == null) {
+        if (Objects.isNull(exist)) {
             throw new BusinessException("字典类型不存在");
         }
         String oldType = exist.getDictType();
         if (!oldType.equals(dictType.getDictType())) {
             LambdaQueryWrapper<DictType> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(DictType::getDictType, dictType.getDictType());
-            if (count(wrapper) > 0) {
+            if (exists(wrapper)) {
                 throw new BusinessException("字典类型已存在");
             }
             RedisHelper.delete(RedisConstants.DICT_PREFIX + oldType);
@@ -155,7 +154,7 @@ public class DictServiceImpl extends ServiceImpl<DictTypeMapper, DictType> imple
     public void deleteDictType(List<Long> ids) {
         for (Long id : ids) {
             DictType dictType = getById(id);
-            if (dictType != null) {
+            if (Objects.nonNull(dictType)) {
                 // 删除字典数据
                 LambdaQueryWrapper<DictData> wrapper = new LambdaQueryWrapper<>();
                 wrapper.eq(DictData::getDictType, dictType.getDictType());
@@ -177,7 +176,7 @@ public class DictServiceImpl extends ServiceImpl<DictTypeMapper, DictType> imple
         // 清理相关缓存
         for (Long id : ids) {
             DictData data = dictDataMapper.selectById(id);
-            if (data != null) {
+            if (Objects.nonNull(data)) {
                 RedisHelper.delete(RedisConstants.DICT_PREFIX + data.getDictType());
             }
         }

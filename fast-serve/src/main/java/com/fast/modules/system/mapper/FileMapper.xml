@@ -3,7 +3,7 @@
 <mapper namespace="com.fast.modules.system.mapper.FileMapper">
 
     <!-- 分页查询文件列表 -->
-    <select id="selectFilePage" resultType="com.fast.modules.system.domain.vo.FileVO">
+    <select id="selectFilePage" resultType="FileVO">
         SELECT id, bucket_type as bucket, file_name, original_filename, file_size as size, content_type, create_time as uploadTime
         FROM sys_file
         WHERE del_flag = '0'

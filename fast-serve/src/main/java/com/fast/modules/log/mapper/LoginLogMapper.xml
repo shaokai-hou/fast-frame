@@ -3,7 +3,7 @@
 <mapper namespace="com.fast.modules.log.mapper.LoginLogMapper">
 
     <!-- 分页查询登录日志列表 -->
-    <select id="selectLoginLogPage" resultType="com.fast.modules.log.domain.vo.LoginLogVO">
+    <select id="selectLoginLogPage" resultType="LoginLogVO">
         SELECT id, username, ip_address, login_location, browser, os, status, msg, login_time
         FROM sys_login_log
         <where>

@@ -91,7 +91,6 @@
           <RichTextEditor
             v-model="form.messageContent"
             placeholder="请输入消息内容"
-            height="300px"
           />
         </el-form-item>
         <el-form-item>

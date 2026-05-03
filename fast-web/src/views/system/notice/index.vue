@@ -237,7 +237,6 @@
           <RichTextEditor
             v-model="form.noticeContent"
             placeholder="请输入公告内容"
-            height="300px"
           />
         </el-form-item>
       </el-form>

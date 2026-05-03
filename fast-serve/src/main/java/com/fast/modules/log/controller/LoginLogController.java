@@ -4,7 +4,6 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fast.common.enums.BusinessType;
-import com.fast.common.result.PageRequest;
 import com.fast.common.result.Result;
 import com.fast.common.util.ExcelUtil;
 import com.fast.framework.annotation.Log;
@@ -35,14 +34,13 @@ public class LoginLogController extends BaseController {
     /**
      * 分页查询登录日志
      *
-     * @param query       查询条件
-     * @param pageRequest 分页参数
+     * @param query 查询条件
      * @return 登录日志分页结果
      */
     @SaCheckPermission("log:loginlog:page")
     @GetMapping("/page")
-    public Result<IPage<LoginLogVO>> page(LoginLogQuery query, PageRequest pageRequest) {
-        return success(loginLogService.pageLoginLogs(query, pageRequest));
+    public Result<IPage<LoginLogVO>> page(LoginLogQuery query) {
+        return success(loginLogService.pageLoginLogs(query));
     }
 
     /**

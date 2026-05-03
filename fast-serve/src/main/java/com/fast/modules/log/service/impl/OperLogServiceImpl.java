@@ -3,10 +3,10 @@ package com.fast.modules.log.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fast.common.constant.Constants;
-import com.fast.common.result.PageRequest;
 import com.fast.modules.log.domain.query.OperLogQuery;
 import com.fast.modules.log.domain.vo.OperLogExportVO;
 import com.fast.modules.log.domain.vo.OperLogVO;
@@ -33,13 +33,12 @@ public class OperLogServiceImpl extends ServiceImpl<OperLogMapper, OperLog> impl
     /**
      * 分页查询操作日志列表
      *
-     * @param query    查询参数
-     * @param pageRequest 分页参数
+     * @param query 查询条件
      * @return 操作日志分页结果
      */
     @Override
-    public IPage<OperLogVO> pageOperLogs(OperLogQuery query, PageRequest pageRequest) {
-        return baseMapper.selectOperLogPage(pageRequest.toPage(), query);
+    public IPage<OperLogVO> pageOperLogs(OperLogQuery query) {
+        return baseMapper.selectOperLogPage(Page.of(query.getPageNum(), query.getPageSize()), query);
     }
 
     /**

@@ -1044,12 +1044,6 @@ INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, perms, menu_sort, sta
 VALUES (117, 108, '服务器详情', 'B', 'monitor:server:detail', 1, '0', '0', 1);
 
 -- =============================================
--- 数据库监控菜单
--- =============================================
-INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon, link, menu_sort, status, del_flag, create_by)
-VALUES (109, 100, '数据库监控', 'M', '/monitor/druid', 'monitor/druid/index', 'Coin', '/api/druid/index.html', 6, '0', '0', 1);
-
--- =============================================
 -- 通知公告菜单
 -- =============================================
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, path, component, icon, menu_sort, status, del_flag, create_by)

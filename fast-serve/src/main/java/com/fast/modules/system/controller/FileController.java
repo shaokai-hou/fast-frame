@@ -3,7 +3,6 @@ package com.fast.modules.system.controller;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fast.common.enums.BusinessType;
-import com.fast.common.result.PageRequest;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.properties.MinioProperties;
@@ -52,8 +51,8 @@ public class FileController extends BaseController {
      */
     @SaCheckPermission("system:file:page")
     @GetMapping("/page")
-    public Result<IPage<FileVO>> pageFile(FileQuery query, PageRequest pageRequest) {
-        return success(fileService.pageFiles(query, pageRequest));
+    public Result<IPage<FileVO>> pageFile(FileQuery query) {
+        return success(fileService.pageFiles(query));
     }
 
     /**

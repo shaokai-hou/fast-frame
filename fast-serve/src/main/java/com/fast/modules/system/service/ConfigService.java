@@ -2,7 +2,6 @@ package com.fast.modules.system.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.fast.common.result.PageRequest;
 import com.fast.modules.system.domain.query.ConfigQuery;
 import com.fast.modules.system.domain.vo.ConfigVO;
 import com.fast.modules.system.domain.entity.Config;
@@ -19,11 +18,10 @@ public interface ConfigService extends IService<Config> {
     /**
      * 分页查询参数配置列表
      *
-     * @param query    查询条件
-     * @param pageRequest 分页参数
+     * @param query 查询条件
      * @return 配置分页结果
      */
-    IPage<ConfigVO> pageConfigs(ConfigQuery query, PageRequest pageRequest);
+    IPage<ConfigVO> pageConfigs(ConfigQuery query);
 
     /**
      * 根据参数键名查询参数值

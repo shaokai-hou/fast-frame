@@ -1,8 +1,9 @@
 package com.fast.modules.system.domain.query;
 
+import com.fast.framework.web.PageRequest;
 import lombok.Data;
 
-import java.io.Serializable;
+import lombok.EqualsAndHashCode;
 
 /**
  * 文件查询DTO
@@ -10,7 +11,8 @@ import java.io.Serializable;
  * @author fast-frame
  */
 @Data
-public class FileQuery implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+public class FileQuery extends PageRequest {
 
     private static final long serialVersionUID = 1L;
 

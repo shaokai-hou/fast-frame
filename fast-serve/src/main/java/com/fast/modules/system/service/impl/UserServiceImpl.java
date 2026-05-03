@@ -7,6 +7,7 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fast.common.constant.ConfigConstants;
 import com.fast.common.constant.Constants;
@@ -14,7 +15,6 @@ import com.fast.common.constant.DictConstants;
 import com.fast.common.constant.RedisConstants;
 import com.fast.common.exception.BusinessException;
 import com.fast.framework.helper.AdminHelper;
-import com.fast.common.result.PageRequest;
 import com.fast.framework.annotation.DataScope;
 import com.fast.framework.helper.ConfigHelper;
 import com.fast.framework.helper.DictHelper;
@@ -58,14 +58,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     /**
      * 分页查询用户列表
      *
-     * @param query    查询条件
-     * @param pageRequest 分页参数
+     * @param query 查询条件
      * @return 用户分页结果
      */
     @Override
     @DataScope
-    public IPage<UserVO> pageUsers(UserQuery query, PageRequest pageRequest) {
-        IPage<UserVO> result = baseMapper.selectUserPage(pageRequest.toPage(), query);
+    public IPage<UserVO> pageUsers(UserQuery query) {
+        IPage<UserVO> result = baseMapper.selectUserPage(Page.of(query.getPageNum(), query.getPageSize()), query);
         List<UserVO> records = result.getRecords();
 
         if (!records.isEmpty()) {
@@ -139,7 +138,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public UserVO getUserDetailById(Long id) {
         User user = getById(id);
-        if (user == null) {
+        if (Objects.isNull(user)) {
             throw new BusinessException("用户不存在");
         }
         UserVO vo = BeanUtil.copyProperties(user, UserVO.class);
@@ -191,7 +190,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public void addUser(UserDTO dto) {
         // 检查用户名是否存在
         User existUser = getByUsername(dto.getUsername());
-        if (existUser != null) {
+        if (Objects.nonNull(existUser)) {
             throw new BusinessException("用户名已存在");
         }
         // 检查是否选择管理员角色
@@ -235,13 +234,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BusinessException("不能选择管理员角色");
         }
         User user = getById(userId);
-        if (user == null) {
+        if (Objects.isNull(user)) {
             throw new BusinessException("用户不存在");
         }
         // 检查用户名是否重复
         if (!user.getUsername().equals(dto.getUsername())) {
             User existUser = getByUsername(dto.getUsername());
-            if (existUser != null) {
+            if (Objects.nonNull(existUser)) {
                 throw new BusinessException("用户名已存在");
             }
         }
@@ -263,7 +262,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public void resetPwd(Long userId) {
         User user = getById(userId);
-        if (user == null) {
+        if (Objects.isNull(user)) {
             throw new BusinessException("用户不存在");
         }
         if (AdminHelper.isAdmin(userId)) {
@@ -287,7 +286,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public void updateStatus(Long userId, String status) {
         User user = getById(userId);
-        if (user == null) {
+        if (Objects.isNull(user)) {
             throw new BusinessException("用户不存在");
         }
         if (AdminHelper.isAdmin(userId)) {
@@ -306,7 +305,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public void updateAvatar(Long userId, String avatar) {
         User user = getById(userId);
-        if (user == null) {
+        if (Objects.isNull(user)) {
             throw new BusinessException("用户不存在");
         }
         user.setAvatar(avatar);
@@ -323,7 +322,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public void updatePassword(Long userId, String oldPassword, String newPassword) {
         User user = getById(userId);
-        if (user == null) {
+        if (Objects.isNull(user)) {
             throw new BusinessException("用户不存在");
         }
         if (!BCrypt.checkpw(oldPassword, user.getPassword())) {
@@ -343,7 +342,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public void updateCurrentUserProfile(UserDTO dto) {
         Long userId = StpUtil.getLoginIdAsLong();
         User user = getById(userId);
-        if (user == null) {
+        if (Objects.isNull(user)) {
             throw new BusinessException("用户不存在");
         }
         // 更新允许修改的字段
@@ -441,7 +440,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 }
                 // 检查用户名是否已存在
                 User existUser = getByUsername(dto.getUsername());
-                if (existUser != null) {
+                if (Objects.nonNull(existUser)) {
                     errorMessages.add("第 " + rowNum + " 行：用户名「" + dto.getUsername() + "」已存在");
                     continue;
                 }
@@ -487,7 +486,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public void unlockUser(Long userId) {
         User user = getById(userId);
-        if (user == null) {
+        if (Objects.isNull(user)) {
             throw new BusinessException("用户不存在");
         }
         RedisHelper.delete(RedisConstants.LOGIN_LOCK_PREFIX + user.getUsername());

@@ -120,7 +120,7 @@
           <el-form-item prop="link">
             <template #label>
               <el-tooltip
-                content="iframe外链地址，如：/api/druid/index.html"
+                content="iframe外链地址，如：https://example.com"
                 placement="top"
               >
                 <el-icon class="label-tip">
@@ -131,7 +131,7 @@
             </template>
             <el-input
               v-model="form.link"
-              placeholder="如果是iframe页面，填写外链地址，如：/api/druid/index.html"
+              placeholder="如果是iframe页面，填写外链地址"
             />
           </el-form-item>
         </el-col>

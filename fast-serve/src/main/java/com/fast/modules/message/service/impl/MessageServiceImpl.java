@@ -3,9 +3,9 @@ package com.fast.modules.message.service.impl;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fast.common.constant.Constants;
 import com.fast.common.exception.BusinessException;
-import com.fast.common.result.PageRequest;
 import com.fast.framework.websocket.MessageWebSocketHandler;
 import com.fast.modules.message.domain.dto.MessageSendDTO;
 import com.fast.modules.message.domain.entity.Message;
@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 消息Service实现
@@ -100,27 +101,25 @@ public class MessageServiceImpl implements MessageService {
     /**
      * 分页查询收件箱消息列表
      *
-     * @param pageRequest 分页参数
-     * @param query       查询条件
+     * @param query 查询条件
      * @return 消息列表
      */
     @Override
-    public IPage<MessageListVO> pageInbox(PageRequest pageRequest, MessageQuery query) {
+    public IPage<MessageListVO> pageInbox(MessageQuery query) {
         Long receiverId = getCurrentUserId();
-        return messageMapper.selectInboxPage(pageRequest.toPage(), query, receiverId);
+        return messageMapper.selectInboxPage(Page.of(query.getPageNum(), query.getPageSize()), query, receiverId);
     }
 
     /**
      * 分页查询已发送消息列表
      *
-     * @param pageRequest 分页参数
-     * @param query       查询条件
+     * @param query 查询条件
      * @return 已发送消息列表
      */
     @Override
-    public IPage<SentMessageVO> pageSent(PageRequest pageRequest, SentMessageQuery query) {
+    public IPage<SentMessageVO> pageSent(SentMessageQuery query) {
         Long senderId = getCurrentUserId();
-        return messageMapper.selectSentPage(pageRequest.toPage(), query, senderId);
+        return messageMapper.selectSentPage(Page.of(query.getPageNum(), query.getPageSize()), query, senderId);
     }
 
     /**
@@ -133,7 +132,7 @@ public class MessageServiceImpl implements MessageService {
     public MessageVO getMessageDetail(Long id) {
         Long receiverId = getCurrentUserId();
         MessageVO messageVO = messageMapper.selectMessageDetail(id, receiverId);
-        if (messageVO == null) {
+        if (Objects.isNull(messageVO)) {
             throw new BusinessException("消息不存在或无权查看");
         }
 

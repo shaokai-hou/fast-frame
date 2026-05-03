@@ -1,6 +1,9 @@
 package com.fast.modules.log.domain.query;
 
+import com.fast.framework.web.PageRequest;
 import lombok.Data;
+
+import lombok.EqualsAndHashCode;
 
 /**
  * 操作日志查询参数
@@ -8,7 +11,8 @@ import lombok.Data;
  * @author fast-frame
  */
 @Data
-public class OperLogQuery {
+@EqualsAndHashCode(callSuper = true)
+public class OperLogQuery extends PageRequest {
 
     /**
      * 模块标题

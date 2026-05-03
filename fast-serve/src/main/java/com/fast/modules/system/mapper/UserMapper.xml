@@ -3,7 +3,7 @@
 <mapper namespace="com.fast.modules.system.mapper.UserMapper">
 
     <!-- 用户VO结果映射 -->
-    <resultMap id="UserVOResultMap" type="com.fast.modules.system.domain.vo.UserVO">
+    <resultMap id="UserVOResultMap" type="UserVO">
         <id property="id" column="id"/>
         <result property="username" column="username"/>
         <result property="nickname" column="nickname"/>
@@ -94,7 +94,7 @@
     </select>
 
     <!-- 批量查询用户角色 -->
-    <select id="selectRolesByUserIds" resultType="com.fast.modules.system.domain.vo.RoleVO">
+    <select id="selectRolesByUserIds" resultType="RoleVO">
         SELECT r.id, r.role_name, r.role_key, ur.user_id
         FROM sys_role r
         INNER JOIN sys_user_role ur ON r.id = ur.role_id

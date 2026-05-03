@@ -3,7 +3,6 @@ package com.fast.modules.system.controller;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fast.common.enums.BusinessType;
-import com.fast.common.result.PageRequest;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
@@ -36,14 +35,13 @@ public class DictController extends BaseController {
     /**
      * 分页查询字典类型列表
      *
-     * @param query       查询条件
-     * @param pageRequest 分页参数
+     * @param query 查询条件
      * @return 字典类型分页结果
      */
     @SaCheckPermission("system:dict:page")
     @GetMapping("/type/page")
-    public Result<IPage<DictVO>> pageType(DictTypeQuery query, PageRequest pageRequest) {
-        return success(dictService.pageDictTypes(query, pageRequest));
+    public Result<IPage<DictVO>> pageType(DictTypeQuery query) {
+        return success(dictService.pageDictTypes(query));
     }
 
     /**
@@ -60,17 +58,13 @@ public class DictController extends BaseController {
     /**
      * 分页查询字典数据
      *
-     * @param dictType    字典类型
-     * @param dictLabel   字典标签
-     * @param dictValue   字典值
-     * @param status      状态
-     * @param pageRequest 分页参数
+     * @param query 查询条件
      * @return 字典数据分页结果
      */
     @SaCheckPermission("system:dict:page")
     @GetMapping("/data/page")
-    public Result<IPage<DictDataVO>> pageData(DictDataQuery query, PageRequest pageRequest) {
-        return success(dictService.pageDictData(query, pageRequest));
+    public Result<IPage<DictDataVO>> pageData(DictDataQuery query) {
+        return success(dictService.pageDictData(query));
     }
 
     /**

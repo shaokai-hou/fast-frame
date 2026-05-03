@@ -6,9 +6,9 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fast.common.constant.FileConstants;
 import com.fast.common.exception.BusinessException;
-import com.fast.common.result.PageRequest;
 import com.fast.framework.helper.MinioHelper;
 import com.fast.framework.properties.MinioProperties;
 import com.fast.modules.system.domain.query.FileQuery;
@@ -55,13 +55,12 @@ public class FileServiceImpl implements FileService {
     /**
      * 分页查询文件列表
      *
-     * @param query       查询参数
-     * @param pageRequest 分页参数
+     * @param query 查询参数
      * @return 文件分页结果
      */
     @Override
-    public IPage<FileVO> pageFiles(FileQuery query, PageRequest pageRequest) {
-        return fileMapper.selectFilePage(pageRequest.toPage(), query);
+    public IPage<FileVO> pageFiles(FileQuery query) {
+        return fileMapper.selectFilePage(Page.of(query.getPageNum(), query.getPageSize()), query);
     }
 
     /**
@@ -176,7 +175,7 @@ public class FileServiceImpl implements FileService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteFileById(Long id) {
         File file = fileMapper.selectById(id);
-        if (file == null) {
+        if (Objects.isNull(file)) {
             throw new BusinessException("文件不存在");
         }
         // 删除 MinIO 文件

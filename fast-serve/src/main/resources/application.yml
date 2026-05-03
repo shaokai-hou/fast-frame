@@ -12,7 +12,7 @@ spring:
 # MyBatis Plus 配置
 mybatis-plus:
   mapper-locations: classpath*:com/fast/modules/**/mapper/*.xml
-  type-aliases-package: com.fast.modules.*.domain.entity
+  type-aliases-package: com.fast.modules.*.domain.entity,com.fast.modules.*.domain.vo
   configuration:
     map-underscore-to-camel-case: true
   global-config:

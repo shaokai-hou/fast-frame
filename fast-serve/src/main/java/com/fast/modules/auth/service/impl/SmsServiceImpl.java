@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -95,7 +96,7 @@ public class SmsServiceImpl implements SmsService {
     public boolean verifyCode(String phone, String code) {
         String codeKey = RedisConstants.SMS_CODE_PREFIX + phone;
         Object cachedCode = RedisHelper.get(codeKey);
-        if (cachedCode == null) {
+        if (Objects.isNull(cachedCode)) {
             return false;
         }
         // 验证成功后删除验证码（一次性使用）

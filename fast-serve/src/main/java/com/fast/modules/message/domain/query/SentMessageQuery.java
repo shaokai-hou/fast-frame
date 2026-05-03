@@ -1,6 +1,9 @@
 package com.fast.modules.message.domain.query;
 
+import com.fast.framework.web.PageRequest;
 import lombok.Data;
+
+import lombok.EqualsAndHashCode;
 
 /**
  * 已发送消息查询条件
@@ -8,7 +11,8 @@ import lombok.Data;
  * @author fast-frame
  */
 @Data
-public class SentMessageQuery {
+@EqualsAndHashCode(callSuper = true)
+public class SentMessageQuery extends PageRequest {
 
     /**
      * 消息标题

@@ -1,7 +1,6 @@
 package com.fast.modules.monitor.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.fast.common.result.PageRequest;
 import com.fast.modules.monitor.domain.query.OnlineUserQuery;
 import com.fast.modules.monitor.domain.vo.OnlineUserVO;
 
@@ -15,9 +14,8 @@ public interface OnlineService {
     /**
      * 分页查询在线用户列表
      *
-     * @param query      查询条件
-     * @param pageRequest 分页参数
+     * @param query 查询条件
      * @return 在线用户分页结果
      */
-    IPage<OnlineUserVO> pageOnlineUsers(OnlineUserQuery query, PageRequest pageRequest);
+    IPage<OnlineUserVO> pageOnlineUsers(OnlineUserQuery query);
 }

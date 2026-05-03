@@ -3,7 +3,6 @@ package com.fast.modules.monitor.controller;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fast.common.enums.BusinessType;
-import com.fast.common.result.PageRequest;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
@@ -43,14 +42,13 @@ public class CacheController extends BaseController {
     /**
      * 分页查询缓存键名列表
      *
-     * @param query    查询条件
-     * @param pageRequest 分页参数
+     * @param query 查询条件
      * @return 缓存键名分页结果
      */
     @SaCheckPermission("monitor:cache:page")
     @GetMapping("/page")
-    public Result<IPage<CacheKeyVO>> page(CacheQuery query, PageRequest pageRequest) {
-        return success(cacheService.pageCacheKeys(query, pageRequest));
+    public Result<IPage<CacheKeyVO>> page(CacheQuery query) {
+        return success(cacheService.pageCacheKeys(query));
     }
 
     /**

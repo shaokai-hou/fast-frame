@@ -2,7 +2,6 @@ package com.fast.modules.system.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.fast.common.result.PageRequest;
 import com.fast.modules.system.domain.query.DictDataQuery;
 import com.fast.modules.system.domain.vo.DictDataVO;
 import com.fast.modules.system.domain.query.DictTypeQuery;
@@ -22,11 +21,10 @@ public interface DictService extends IService<DictType> {
     /**
      * 分页查询字典类型列表
      *
-     * @param query    查询条件
-     * @param pageRequest 分页参数
+     * @param query 查询条件
      * @return 字典类型分页结果
      */
-    IPage<DictVO> pageDictTypes(DictTypeQuery query, PageRequest pageRequest);
+    IPage<DictVO> pageDictTypes(DictTypeQuery query);
 
     /**
      * 根据字典类型查询字典数据
@@ -39,11 +37,10 @@ public interface DictService extends IService<DictType> {
     /**
      * 分页查询字典数据
      *
-     * @param query    查询条件
-     * @param pageRequest 分页参数
+     * @param query 查询条件
      * @return 字典数据分页结果
      */
-    IPage<DictDataVO> pageDictData(DictDataQuery query, PageRequest pageRequest);
+    IPage<DictDataVO> pageDictData(DictDataQuery query);
 
     /**
      * 新增字典类型

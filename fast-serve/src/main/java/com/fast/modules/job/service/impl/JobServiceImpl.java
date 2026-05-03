@@ -4,10 +4,10 @@ import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fast.common.constant.Constants;
 import com.fast.common.exception.BusinessException;
-import com.fast.common.result.PageRequest;
 import com.fast.modules.job.domain.dto.JobDTO;
 import com.fast.modules.job.domain.query.JobQuery;
 import com.fast.modules.job.domain.vo.JobVO;
@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 定时任务服务实现
@@ -39,7 +40,7 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
     private final Scheduler scheduler;
 
     @Override
-    public IPage<JobVO> pageJobs(JobQuery query, PageRequest pageRequest) {
+    public IPage<JobVO> pageJobs(JobQuery query) {
         LambdaQueryWrapper<Job> wrapper = new LambdaQueryWrapper<>();
         wrapper.like(query.getJobName() != null, Job::getJobName, query.getJobName());
         wrapper.eq(query.getJobGroup() != null, Job::getJobGroup, query.getJobGroup());
@@ -47,7 +48,7 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
         wrapper.like(query.getInvokeTarget() != null, Job::getInvokeTarget, query.getInvokeTarget());
         wrapper.orderByDesc(Job::getCreateTime);
 
-        Page<Job> page = page(pageRequest.toPage(), wrapper);
+        Page<Job> page = page(Page.of(query.getPageNum(), query.getPageSize()), wrapper);
 
         return page.convert(job -> {
             JobVO vo = BeanUtil.copyProperties(job, JobVO.class);
@@ -94,7 +95,7 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
         }
 
         Job job = getById(dto.getId());
-        if (job == null) {
+        if (Objects.isNull(job)) {
             throw new BusinessException("任务不存在");
         }
 
@@ -115,7 +116,7 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
     public boolean deleteJobs(List<Long> ids) {
         for (Long id : ids) {
             Job job = getById(id);
-            if (job != null) {
+            if (Objects.nonNull(job)) {
                 try {
                     ScheduleUtils.deleteJob(scheduler, id, job.getJobGroup());
                 } catch (Exception e) {
@@ -130,7 +131,7 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
     @Transactional(rollbackFor = Exception.class)
     public boolean changeStatus(Long id, String status) {
         Job job = getById(id);
-        if (job == null) {
+        if (Objects.isNull(job)) {
             throw new BusinessException("任务不存在");
         }
 
@@ -153,7 +154,7 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
     @Override
     public boolean runJob(Long id) {
         Job job = getById(id);
-        if (job == null) {
+        if (Objects.isNull(job)) {
             throw new BusinessException("任务不存在");
         }
 

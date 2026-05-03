@@ -3,7 +3,7 @@
 <mapper namespace="com.fast.modules.message.mapper.MessageMapper">
 
     <!-- 分页查询收件箱消息列表 -->
-    <select id="selectInboxPage" resultType="com.fast.modules.message.domain.vo.MessageListVO">
+    <select id="selectInboxPage" resultType="MessageListVO">
         SELECT m.id,
                m.message_title,
                m.message_type,
@@ -37,7 +37,7 @@
     </select>
 
     <!-- 分页查询已发送消息列表 -->
-    <select id="selectSentPage" resultType="com.fast.modules.message.domain.vo.SentMessageVO">
+    <select id="selectSentPage" resultType="SentMessageVO">
         SELECT m.id,
                m.message_title,
                m.message_type,
@@ -63,7 +63,7 @@
     </select>
 
     <!-- 查询消息详情 -->
-    <select id="selectMessageDetail" resultType="com.fast.modules.message.domain.vo.MessageVO">
+    <select id="selectMessageDetail" resultType="MessageVO">
         SELECT m.id,
                m.message_title,
                m.message_type,
@@ -83,7 +83,7 @@
     </select>
 
     <!-- 查询未读消息数量 -->
-    <select id="selectUnreadCount" resultType="com.fast.modules.message.domain.vo.UnreadCountVO">
+    <select id="selectUnreadCount" resultType="UnreadCountVO">
         SELECT COUNT(*) AS total,
                SUM(CASE WHEN m.message_type = '1' THEN 1 ELSE 0 END) AS system_count,
                SUM(CASE WHEN m.message_type = '2' THEN 1 ELSE 0 END) AS private_count,

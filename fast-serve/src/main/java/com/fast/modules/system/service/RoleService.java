@@ -2,7 +2,6 @@ package com.fast.modules.system.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.fast.common.result.PageRequest;
 import com.fast.modules.system.domain.dto.RoleDTO;
 import com.fast.modules.system.domain.query.RoleQuery;
 import com.fast.modules.system.domain.vo.RoleVO;
@@ -20,11 +19,10 @@ public interface RoleService extends IService<Role> {
     /**
      * 分页查询角色列表
      *
-     * @param query    查询条件
-     * @param pageRequest 分页参数
+     * @param query 查询条件
      * @return 角色分页结果
      */
-    IPage<RoleVO> pageRoles(RoleQuery query, PageRequest pageRequest);
+    IPage<RoleVO> pageRoles(RoleQuery query);
 
     /**
      * 查询所有角色

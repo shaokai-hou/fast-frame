@@ -32,10 +32,9 @@ service.interceptors.response.use(
     }
     const res = response.data
     if (res.code !== 200) {
-      ElMessage.error(res.msg || '请求失败')
       // 401 未授权
       if (res.code === 401) {
-        ElMessageBox.confirm('登录状态已过期，请重新登录', '提示', {
+        ElMessageBox.confirm(res.msg || '登录状态已过期，请重新登录', '提示', {
           confirmButtonText: '重新登录',
           cancelButtonText: '取消',
           type: 'warning'
@@ -48,6 +47,7 @@ service.interceptors.response.use(
         })
         return Promise.reject(new Error(res.msg || '请求失败'))
       }
+      ElMessage.error(res.msg || '请求失败')
       return Promise.reject(new Error(res.msg || '请求失败'))
     }
     return res

@@ -3,7 +3,6 @@ package com.fast.modules.message.controller;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fast.common.enums.BusinessType;
-import com.fast.common.result.PageRequest;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
@@ -51,27 +50,25 @@ public class MessageController extends BaseController {
     /**
      * 分页查询收件箱消息列表
      *
-     * @param pageRequest 分页参数
-     * @param query       查询条件
+     * @param query 查询条件
      * @return 消息列表
      */
     @SaCheckPermission("message:page")
     @GetMapping("/inbox")
-    public Result<IPage<MessageListVO>> inbox(PageRequest pageRequest, MessageQuery query) {
-        return success(messageService.pageInbox(pageRequest, query));
+    public Result<IPage<MessageListVO>> inbox(MessageQuery query) {
+        return success(messageService.pageInbox(query));
     }
 
     /**
      * 分页查询已发送消息列表
      *
-     * @param pageRequest 分页参数
-     * @param query       查询条件
+     * @param query 查询条件
      * @return 已发送消息列表
      */
     @SaCheckPermission("message:sent")
     @GetMapping("/sent")
-    public Result<IPage<SentMessageVO>> sent(PageRequest pageRequest, SentMessageQuery query) {
-        return success(messageService.pageSent(pageRequest, query));
+    public Result<IPage<SentMessageVO>> sent(SentMessageQuery query) {
+        return success(messageService.pageSent(query));
     }
 
     /**

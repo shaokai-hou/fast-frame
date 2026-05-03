@@ -1,7 +1,6 @@
 package com.fast.modules.message.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.fast.common.result.PageRequest;
 import com.fast.modules.message.domain.dto.MessageSendDTO;
 import com.fast.modules.message.domain.query.MessageQuery;
 import com.fast.modules.message.domain.query.SentMessageQuery;
@@ -29,20 +28,18 @@ public interface MessageService {
     /**
      * 分页查询收件箱消息列表
      *
-     * @param pageRequest 分页参数
-     * @param query       查询条件
+     * @param query 查询条件
      * @return 消息列表
      */
-    IPage<MessageListVO> pageInbox(PageRequest pageRequest, MessageQuery query);
+    IPage<MessageListVO> pageInbox(MessageQuery query);
 
     /**
      * 分页查询已发送消息列表
      *
-     * @param pageRequest 分页参数
-     * @param query       查询条件
+     * @param query 查询条件
      * @return 已发送消息列表
      */
-    IPage<SentMessageVO> pageSent(PageRequest pageRequest, SentMessageQuery query);
+    IPage<SentMessageVO> pageSent(SentMessageQuery query);
 
     /**
      * 查看消息详情（同时标记已读）

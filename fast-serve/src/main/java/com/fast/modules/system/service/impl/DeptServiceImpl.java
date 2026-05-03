@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -130,7 +131,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         LambdaQueryWrapper<Dept> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Dept::getDeptName, dept.getDeptName())
                .eq(Dept::getParentId, dept.getParentId() == null ? 0L : dept.getParentId());
-        if (count(wrapper) > 0) {
+        if (exists(wrapper)) {
             throw new BusinessException("同级部门名称已存在");
         }
         // 设置祖级列表
@@ -139,7 +140,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
             dept.setAncestors("0");
         } else {
             Dept parentDept = getById(dept.getParentId());
-            if (parentDept == null) {
+            if (Objects.isNull(parentDept)) {
                 throw new BusinessException("父部门不存在");
             }
             dept.setAncestors(parentDept.getAncestors() + "," + parentDept.getId());
@@ -157,7 +158,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     @Transactional(rollbackFor = Exception.class)
     public void updateDept(Dept dept) {
         Dept existDept = getById(dept.getId());
-        if (existDept == null) {
+        if (Objects.isNull(existDept)) {
             throw new BusinessException("部门不存在");
         }
         // 检查部门名称是否重复
@@ -165,7 +166,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         wrapper.eq(Dept::getDeptName, dept.getDeptName())
                .eq(Dept::getParentId, dept.getParentId() == null ? 0L : dept.getParentId())
                .ne(Dept::getId, dept.getId());
-        if (count(wrapper) > 0) {
+        if (exists(wrapper)) {
             throw new BusinessException("同级部门名称已存在");
         }
         // 不能将父部门设置为自己
@@ -178,7 +179,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
                 dept.setAncestors("0");
             } else {
                 Dept parentDept = getById(dept.getParentId());
-                if (parentDept == null) {
+                if (Objects.isNull(parentDept)) {
                     throw new BusinessException("父部门不存在");
                 }
                 dept.setAncestors(parentDept.getAncestors() + "," + parentDept.getId());
@@ -199,13 +200,13 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         // 检查是否存在子部门
         LambdaQueryWrapper<Dept> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Dept::getParentId, id);
-        if (count(wrapper) > 0) {
+        if (exists(wrapper)) {
             throw new BusinessException("存在子部门，不能删除");
         }
         // 检查部门下是否存在用户
         LambdaQueryWrapper<User> userWrapper = new LambdaQueryWrapper<>();
         userWrapper.eq(User::getDeptId, id);
-        if (userMapper.selectCount(userWrapper) > 0) {
+        if (userMapper.exists(userWrapper)) {
             throw new BusinessException("部门下存在用户，不能删除");
         }
         removeById(id);

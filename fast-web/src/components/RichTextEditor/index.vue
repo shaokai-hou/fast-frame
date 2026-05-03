@@ -42,7 +42,7 @@ const props = defineProps({
   },
   height: {
     type: String,
-    default: '300px'
+    default: '400px'
   },
   mode: {
     type: String,
@@ -109,8 +109,12 @@ onBeforeUnmount(() => {
   }
 
   .editor {
-    height: v-bind(height);
+    height: 250px !important;
     overflow-y: auto;
+  }
+
+  :deep(.w-e-text-container) {
+    height: 250px !important;
   }
 
   &.is-disabled {

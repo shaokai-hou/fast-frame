@@ -14,38 +14,14 @@ spring:
     url: jdbc:postgresql://${POSTGRES_HOST:postgres}:${POSTGRES_PORT:5432}/${POSTGRES_DB:fast_frame}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
     username: ${POSTGRES_USER:postgres}
     password: ${POSTGRES_PASSWORD:fast123}
-    type: com.alibaba.druid.pool.DruidDataSource
-    druid:
-      initial-size: 5
-      min-idle: 5
-      max-active: 20
-      max-wait: 60000
-      time-between-eviction-runs-millis: 60000
-      min-evictable-idle-time-millis: 300000
-      validation-query: SELECT 1
-      test-while-idle: true
-      test-on-borrow: false
-      test-on-return: false
-      pool-prepared-statements: true
-      max-pool-prepared-statement-per-connection-size: 20
-      filters: stat,wall
-      stat-view-servlet:
-        enabled: true
-        url-pattern: /druid/*
-        login-username: admin
-        login-password: admin123
-        reset-enable: false
-      web-stat-filter:
-        enabled: true
-        url-pattern: /*
-        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*"
-      filter:
-        stat:
-          enabled: true
-          log-slow-sql: true
-          slow-sql-millis: 1000
-        wall:
-          enabled: true
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+      pool-name: HikariPool-FastFrame
 
   redis:
     host: ${REDIS_HOST:redis}

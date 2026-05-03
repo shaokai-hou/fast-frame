@@ -1,7 +1,6 @@
 package com.fast.modules.system.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.fast.common.result.PageRequest;
 import com.fast.modules.system.domain.query.FileQuery;
 import com.fast.modules.system.domain.vo.FileVO;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,10 +19,9 @@ public interface FileService {
      * 分页查询文件列表
      *
      * @param query 查询参数
-     * @param pageRequest 分页参数
      * @return 文件分页结果
      */
-    IPage<FileVO> pageFiles(FileQuery query, PageRequest pageRequest);
+    IPage<FileVO> pageFiles(FileQuery query);
 
     /**
      * 上传文件

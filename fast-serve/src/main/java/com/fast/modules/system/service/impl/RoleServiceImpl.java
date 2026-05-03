@@ -5,12 +5,12 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fast.common.enums.DataScope;
 import com.fast.common.exception.BusinessException;
 import com.fast.framework.helper.AdminHelper;
-import com.fast.common.result.PageRequest;
 import com.fast.modules.system.domain.dto.RoleDTO;
 import com.fast.modules.system.domain.query.RoleQuery;
 import com.fast.modules.system.domain.vo.RoleVO;
@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -37,13 +38,12 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     /**
      * 分页查询角色列表
      *
-     * @param query    查询条件
-     * @param pageRequest 分页参数
+     * @param query 查询条件
      * @return 角色分页结果
      */
     @Override
-    public IPage<RoleVO> pageRoles(RoleQuery query, PageRequest pageRequest) {
-        return baseMapper.selectRolePage(pageRequest.toPage(), query);
+    public IPage<RoleVO> pageRoles(RoleQuery query) {
+        return baseMapper.selectRolePage(Page.of(query.getPageNum(), query.getPageSize()), query);
     }
 
     /**
@@ -93,13 +93,13 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         // 检查角色名称是否存在
         LambdaQueryWrapper<Role> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Role::getRoleName, dto.getRoleName());
-        if (count(wrapper) > 0) {
+        if (exists(wrapper)) {
             throw new BusinessException("角色名称已存在");
         }
         // 检查角色权限字符串是否存在
         wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Role::getRoleKey, dto.getRoleKey());
-        if (count(wrapper) > 0) {
+        if (exists(wrapper)) {
             throw new BusinessException("角色权限字符串已存在");
         }
         // 保存角色
@@ -130,21 +130,21 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
             throw new BusinessException("不能修改管理员角色");
         }
         Role role = getById(roleId);
-        if (role == null) {
+        if (Objects.isNull(role)) {
             throw new BusinessException("角色不存在");
         }
         // 检查角色名称是否重复
         LambdaQueryWrapper<Role> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Role::getRoleName, dto.getRoleName())
                 .ne(Role::getId, dto.getId());
-        if (count(wrapper) > 0) {
+        if (exists(wrapper)) {
             throw new BusinessException("角色名称已存在");
         }
         // 检查角色权限字符串是否重复
         wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Role::getRoleKey, dto.getRoleKey())
                 .ne(Role::getId, dto.getId());
-        if (count(wrapper) > 0) {
+        if (exists(wrapper)) {
             throw new BusinessException("角色权限字符串已存在");
         }
         // 更新角色

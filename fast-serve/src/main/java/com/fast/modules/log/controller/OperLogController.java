@@ -4,7 +4,6 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fast.common.enums.BusinessType;
-import com.fast.common.result.PageRequest;
 import com.fast.common.result.Result;
 import com.fast.common.util.ExcelUtil;
 import com.fast.framework.annotation.Log;
@@ -36,14 +35,13 @@ public class OperLogController extends BaseController {
     /**
      * 分页查询操作日志
      *
-     * @param query    查询条件
-     * @param pageRequest 分页参数
+     * @param query 查询条件
      * @return 操作日志分页结果
      */
     @SaCheckPermission("log:operlog:page")
     @GetMapping("/page")
-    public Result<IPage<OperLogVO>> page(OperLogQuery query, PageRequest pageRequest) {
-        return success(operLogService.pageOperLogs(query, pageRequest));
+    public Result<IPage<OperLogVO>> page(OperLogQuery query) {
+        return success(operLogService.pageOperLogs(query));
     }
 
     /**

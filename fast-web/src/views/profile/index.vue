@@ -1,14 +1,16 @@
 <template>
   <PageContainer>
-    <!-- 顶部返回按钮 -->
-    <div class="back-bar">
-      <div
-        class="back-button"
+    <!-- 顶部标题栏 -->
+    <div class="header-bar">
+      <el-button
+        :icon="ArrowLeft"
         @click="goBack"
       >
-        <el-icon><ArrowLeft /></el-icon>
-        <span class="back-text">返回</span>
-      </div>
+        返回
+      </el-button>
+      <h2 class="page-title">
+        个人中心
+      </h2>
     </div>
 
     <!-- 内容区域 -->
@@ -106,53 +108,24 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-.back-bar {
+.header-bar {
   display: flex;
   align-items: center;
-  background: var(--color-surface);
-  border-radius: 12px;
-  border: 1px solid var(--color-border-light);
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-  padding: 12px 16px;
-}
+  gap: 16px;
+  margin-bottom: 16px;
 
-.back-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: color 0.2s ease;
-
-  .el-icon {
+  .page-title {
+    margin: 0;
     font-size: 18px;
-    color: var(--color-foreground-muted);
-    transition: color 0.2s ease;
-  }
-
-  .back-text {
-    color: var(--color-foreground-muted);
-    transition: all 0.2s ease;
-    padding: 4px 8px;
-    border-radius: 6px;
-
-    &:hover {
-      background: var(--color-primary-lighter);
-      color: var(--color-primary);
-    }
-  }
-
-  &:hover .el-icon {
-    color: var(--color-primary);
+    font-weight: 600;
+    color: var(--color-foreground);
   }
 }
 
 .profile-content {
   display: flex;
   gap: 24px;
-  margin-top: 16px;
-  height: calc(100vh - 60px - 48px - 24px - 24px - 16px - 44px);
+  height: calc(100vh - 60px - 48px - 24px - 24px - 16px - 32px);
 }
 
 .profile-aside {

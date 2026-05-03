@@ -1,6 +1,9 @@
 package com.fast.modules.job.domain.query;
 
+import com.fast.framework.web.PageRequest;
 import lombok.Data;
+
+import lombok.EqualsAndHashCode;
 
 /**
  * 定时任务查询DTO
@@ -8,7 +11,8 @@ import lombok.Data;
  * @author fast-frame
  */
 @Data
-public class JobQuery {
+@EqualsAndHashCode(callSuper = true)
+public class JobQuery extends PageRequest {
 
     /**
      * 任务名称

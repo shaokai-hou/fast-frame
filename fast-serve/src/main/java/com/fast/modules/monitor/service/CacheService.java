@@ -1,7 +1,6 @@
 package com.fast.modules.monitor.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.fast.common.result.PageRequest;
 import com.fast.modules.monitor.domain.query.CacheQuery;
 import com.fast.modules.monitor.domain.vo.CacheInfoVO;
 import com.fast.modules.monitor.domain.vo.CacheKeyVO;
@@ -26,11 +25,10 @@ public interface CacheService {
     /**
      * 分页查询缓存键名列表
      *
-     * @param query    查询条件
-     * @param pageRequest 分页参数
+     * @param query 查询条件
      * @return 缓存键名分页结果
      */
-    IPage<CacheKeyVO> pageCacheKeys(CacheQuery query, PageRequest pageRequest);
+    IPage<CacheKeyVO> pageCacheKeys(CacheQuery query);
 
     /**
      * 获取缓存详情

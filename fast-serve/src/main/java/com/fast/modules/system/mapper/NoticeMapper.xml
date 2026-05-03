@@ -3,7 +3,7 @@
 <mapper namespace="com.fast.modules.system.mapper.NoticeMapper">
 
     <!-- 分页查询通知公告列表 -->
-    <select id="selectNoticePage" resultType="com.fast.modules.system.domain.vo.NoticeVO">
+    <select id="selectNoticePage" resultType="NoticeVO">
         SELECT id, notice_title, notice_type, notice_content, status, create_by, create_time, update_by, update_time
         FROM sys_notice
         WHERE del_flag = '0'

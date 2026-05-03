@@ -3,7 +3,7 @@
 <mapper namespace="com.fast.modules.system.mapper.DictTypeMapper">
 
     <!-- 分页查询字典类型列表 -->
-    <select id="selectDictTypePage" resultType="com.fast.modules.system.domain.vo.DictVO">
+    <select id="selectDictTypePage" resultType="DictVO">
         SELECT id, dict_name, dict_type, status, remark, create_time
         FROM sys_dict_type
         WHERE del_flag = '0'

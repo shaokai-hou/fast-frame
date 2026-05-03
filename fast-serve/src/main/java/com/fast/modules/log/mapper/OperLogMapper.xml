@@ -3,7 +3,7 @@
 <mapper namespace="com.fast.modules.log.mapper.OperLogMapper">
 
     <!-- 分页查询操作日志列表 -->
-    <select id="selectOperLogPage" resultType="com.fast.modules.log.domain.vo.OperLogVO">
+    <select id="selectOperLogPage" resultType="OperLogVO">
         SELECT id, title, business_type, method, request_method, oper_name, oper_url, oper_ip, oper_location, status, error_msg, oper_time, trace_id
         FROM sys_oper_log
         <where>

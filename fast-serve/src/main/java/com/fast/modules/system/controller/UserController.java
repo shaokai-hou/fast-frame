@@ -4,7 +4,6 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fast.common.enums.BusinessType;
 import com.fast.common.exception.BusinessException;
-import com.fast.common.result.PageRequest;
 import com.fast.common.result.Result;
 import com.fast.common.util.ExcelUtil;
 import com.fast.framework.annotation.Log;
@@ -41,14 +40,13 @@ public class UserController extends BaseController {
     /**
      * 分页查询用户列表
      *
-     * @param query    查询条件
-     * @param pageRequest 分页参数
+     * @param query 查询条件
      * @return 用户分页结果
      */
     @SaCheckPermission("system:user:page")
     @GetMapping("/page")
-    public Result<IPage<UserVO>> page(UserQuery query, PageRequest pageRequest) {
-        return success(userService.pageUsers(query, pageRequest));
+    public Result<IPage<UserVO>> page(UserQuery query) {
+        return success(userService.pageUsers(query));
     }
 
     /**

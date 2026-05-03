@@ -3,7 +3,6 @@ package com.fast.modules.system.controller;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fast.common.enums.BusinessType;
-import com.fast.common.result.PageRequest;
 import com.fast.common.result.Result;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
@@ -37,14 +36,13 @@ public class RoleController extends BaseController {
     /**
      * 分页查询角色列表
      *
-     * @param query    查询条件
-     * @param pageRequest 分页参数
+     * @param query 查询条件
      * @return 角色分页结果
      */
     @SaCheckPermission("system:role:page")
     @GetMapping("/page")
-    public Result<IPage<RoleVO>> page(RoleQuery query, PageRequest pageRequest) {
-        return success(roleService.pageRoles(query, pageRequest));
+    public Result<IPage<RoleVO>> page(RoleQuery query) {
+        return success(roleService.pageRoles(query));
     }
 
     /**

@@ -1,6 +1,9 @@
 package com.fast.modules.system.domain.query;
 
+import com.fast.framework.web.PageRequest;
 import lombok.Data;
+
+import lombok.EqualsAndHashCode;
 
 /**
  * 通知公告查询DTO
@@ -8,7 +11,8 @@ import lombok.Data;
  * @author fast-frame
  */
 @Data
-public class NoticeQuery {
+@EqualsAndHashCode(callSuper = true)
+public class NoticeQuery extends PageRequest {
 
     /**
      * 公告标题

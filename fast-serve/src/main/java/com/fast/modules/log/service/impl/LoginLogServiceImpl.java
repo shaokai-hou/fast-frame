@@ -3,10 +3,10 @@ package com.fast.modules.log.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fast.common.constant.Constants;
-import com.fast.common.result.PageRequest;
 import com.fast.modules.log.domain.query.LoginLogQuery;
 import com.fast.modules.log.domain.vo.LoginLogExportVO;
 import com.fast.modules.log.domain.vo.LoginLogVO;
@@ -30,13 +30,12 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
     /**
      * 分页查询登录日志列表
      *
-     * @param query    查询条件
-     * @param pageRequest 分页参数
+     * @param query 查询条件
      * @return 登录日志分页结果
      */
     @Override
-    public IPage<LoginLogVO> pageLoginLogs(LoginLogQuery query, PageRequest pageRequest) {
-        return baseMapper.selectLoginLogPage(pageRequest.toPage(), query);
+    public IPage<LoginLogVO> pageLoginLogs(LoginLogQuery query) {
+        return baseMapper.selectLoginLogPage(Page.of(query.getPageNum(), query.getPageSize()), query);
     }
 
     /**
