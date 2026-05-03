@@ -3,10 +3,10 @@ package com.fast.modules.monitor.service.impl;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.StrUtil;
 import com.fast.common.constant.RedisConstants;
+import com.fast.framework.helper.RedisHelper;
 import com.fast.modules.monitor.domain.query.OnlineUserQuery;
 import com.fast.modules.monitor.domain.vo.OnlineUserVO;
 import com.fast.modules.system.domain.entity.User;
-import com.fast.framework.helper.RedisHelper;
 import com.fast.modules.monitor.service.OnlineService;
 import com.fast.modules.system.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +17,8 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 在线用户Service实现
@@ -34,33 +36,22 @@ public class OnlineServiceImpl implements OnlineService {
     public List<OnlineUserVO> listOnlineUsers(OnlineUserQuery query) {
         List<OnlineUserVO> result = new ArrayList<>();
 
-        // 使用 SCAN 命令替代 KEYS，避免阻塞 Redis
-        Set<String> keys = scanKeys(RedisConstants.SA_TOKEN_PREFIX);
-        if (keys.isEmpty()) {
+        // 使用 session key 搜索（sa-token:login:session:{loginId}）
+        // is-concurrent=false 时，一个用户只有一个 session，比 token key 更稳定
+        Set<String> sessionKeys = RedisHelper.scan(RedisConstants.SA_TOKEN_SESSION_PREFIX + "*");
+        if (sessionKeys.isEmpty()) {
             return result;
         }
 
-        // 收集所有用户 ID，避免 N+1 查询
-        Map<String, Long> tokenUserIdMap = new HashMap<>();
+        // 收集用户 ID
         List<Long> userIds = new ArrayList<>();
-
-        for (String key : keys) {
-            String token = key.substring(RedisConstants.SA_TOKEN_PREFIX.length());
-
-            // 检查token是否真正有效（过滤已冻结/过期的token）
+        for (String key : sessionKeys) {
+            // 从 key 中提取 loginId: sa-token:login:session:{loginId}
+            String loginId = key.substring(RedisConstants.SA_TOKEN_SESSION_PREFIX.length());
             try {
-                // 尝试获取token session，如果token已失效会抛出NotLoginException
-                StpUtil.getTokenSessionByToken(token);
-            } catch (Exception e) {
-                // token已失效（冻结、过期、被踢等），跳过
-                continue;
-            }
-
-            Object loginId = StpUtil.getLoginIdByToken(token);
-            if (loginId != null) {
-                Long userId = Long.parseLong(loginId.toString());
-                tokenUserIdMap.put(token, userId);
-                userIds.add(userId);
+                userIds.add(Long.parseLong(loginId));
+            } catch (NumberFormatException e) {
+                log.warn("无效的 loginId: {}", loginId);
             }
         }
 
@@ -70,15 +61,11 @@ public class OnlineServiceImpl implements OnlineService {
 
         // 批量查询用户信息
         List<User> users = userService.listByIds(userIds);
-        Map<Long, User> userMap = new HashMap<>();
-        for (User user : users) {
-            userMap.put(user.getId(), user);
-        }
+        Map<Long, User> userMap = users.stream()
+                .collect(Collectors.toMap(User::getId, Function.identity()));
 
-        // 构建结果
-        for (Map.Entry<String, Long> entry : tokenUserIdMap.entrySet()) {
-            String token = entry.getKey();
-            Long userId = entry.getValue();
+        // 构建结果 - 每个用户一条记录
+        for (Long userId : userIds) {
             User user = userMap.get(userId);
 
             if (user == null) {
@@ -87,6 +74,12 @@ public class OnlineServiceImpl implements OnlineService {
 
             // 过滤用户名
             if (StrUtil.isNotBlank(query.getUsername()) && !user.getUsername().contains(query.getUsername())) {
+                continue;
+            }
+
+            // 获取当前有效 token（is-concurrent=false 时每个用户只有一个）
+            String token = StpUtil.getTokenValueByLoginId(userId);
+            if (token == null) {
                 continue;
             }
 
@@ -106,21 +99,12 @@ public class OnlineServiceImpl implements OnlineService {
 
             result.add(vo);
         }
+
         return result;
     }
 
     @Override
     public void forceLogout(String tokenId) {
         StpUtil.kickoutByTokenValue(tokenId);
-    }
-
-    /**
-     * 使用 SCAN 命令遍历 key，避免 KEYS 命令阻塞 Redis
-     *
-     * @param pattern key 匹配模式
-     * @return 匹配的 key 集合
-     */
-    private Set<String> scanKeys(String pattern) {
-        return RedisHelper.scan(pattern + "*");
     }
 }
