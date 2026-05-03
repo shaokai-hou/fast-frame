@@ -10,9 +10,9 @@ export function listOnlineUsers(params) {
 }
 
 // 强制退出
-export function forceLogout(tokenId) {
+export function forceLogout(userId) {
   return request({
-    url: `/monitor/online/${tokenId}`,
+    url: `/monitor/online/${userId}`,
     method: 'delete'
   })
 }

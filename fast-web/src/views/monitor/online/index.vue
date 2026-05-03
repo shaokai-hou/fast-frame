@@ -26,7 +26,7 @@
       <el-table
         v-loading="loading"
         :data="onlineList"
-        row-key="tokenId"
+        row-key="userId"
       >
         <el-table-column
           type="index"
@@ -34,11 +34,6 @@
           width="60"
           align="center"
           :index="(index) => (queryParams.pageNum - 1) * queryParams.pageSize + index + 1"
-        />
-        <el-table-column
-          label="会话ID"
-          prop="tokenId"
-          width="400"
         />
         <el-table-column
           label="用户名"
@@ -132,7 +127,7 @@ const resetQuery = () => {
 // 强制退出
 const handleForceLogout = async (row) => {
   await ElMessageBox.confirm(`是否确认强制退出用户【${row.username}】?`, '警告', { type: 'warning' })
-  await forceLogout(row.tokenId)
+  await forceLogout(row.userId)
   ElMessage.success('强制退出成功')
   getList()
 }

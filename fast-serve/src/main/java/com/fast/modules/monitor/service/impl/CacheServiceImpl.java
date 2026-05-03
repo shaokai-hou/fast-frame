@@ -103,8 +103,8 @@ public class CacheServiceImpl implements CacheService {
         long total = allKeys.size();
 
         // 内存分页
-        int fromIndex = (pageRequest.getPageNum() - 1) * pageRequest.getPageSize();
-        int toIndex = Math.min(fromIndex + pageRequest.getPageSize(), allKeys.size());
+        int fromIndex = Math.toIntExact(pageRequest.getOffset());
+        int toIndex = Math.toIntExact(Math.min(pageRequest.getOffset() + pageRequest.getPageSize(), allKeys.size()));
 
         List<CacheKeyVO> pageData = fromIndex < allKeys.size()
             ? allKeys.subList(fromIndex, toIndex)

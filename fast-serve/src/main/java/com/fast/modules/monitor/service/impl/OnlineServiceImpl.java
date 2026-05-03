@@ -29,7 +29,7 @@ public class OnlineServiceImpl implements OnlineService {
 
         // Stream 分页 + 映射 + 过滤
         List<OnlineUserVO> list = sessionIds.stream()
-                .skip((pageRequest.getPageNum() - 1) * pageRequest.getPageSize())
+                .skip(pageRequest.getOffset())
                 .limit(pageRequest.getPageSize())
                 .map(sessionId -> StpUtil.getSessionBySessionId(sessionId)
                         .getModel("online_user", OnlineUserVO.class))
@@ -39,7 +39,7 @@ public class OnlineServiceImpl implements OnlineService {
                 .collect(Collectors.toList());
 
         // 返回分页结果
-        Page<OnlineUserVO> page = new Page<>(pageRequest.getPageNum(), pageRequest.getPageSize());
+        Page<OnlineUserVO> page = pageRequest.toPage();
         page.setRecords(list);
         page.setTotal(sessionIds.size());
         return page;

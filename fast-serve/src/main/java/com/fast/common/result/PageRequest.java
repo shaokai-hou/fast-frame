@@ -18,21 +18,21 @@ public class PageRequest {
      * 页码（从 1 开始）
      */
     @Min(1)
-    private Integer pageNum = 1;
+    private Long pageNum = 1L;
 
     /**
      * 每页数量
      */
     @Min(1)
     @Max(100)
-    private Integer pageSize = 10;
+    private Long pageSize = 10L;
 
     /**
      * 获取起始偏移量（用于 SQL LIMIT offset）
      *
      * @return 偏移量
      */
-    public int getOffset() {
+    public long getOffset() {
         return (pageNum - 1) * pageSize;
     }
 

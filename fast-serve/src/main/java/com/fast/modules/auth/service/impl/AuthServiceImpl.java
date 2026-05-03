@@ -126,6 +126,7 @@ public class AuthServiceImpl implements AuthService {
         onlineUser.setUsername(user.getUsername());
         onlineUser.setNickname(user.getNickname());
         onlineUser.setIp(ip);
+        onlineUser.setLoginTime(LocalDateTime.now());
         StpUtil.getSession().set("online_user", onlineUser);
 
         // 记录登录日志
@@ -175,6 +176,7 @@ public class AuthServiceImpl implements AuthService {
         onlineUser.setUsername(user.getUsername());
         onlineUser.setNickname(user.getNickname());
         onlineUser.setIp(ip);
+        onlineUser.setLoginTime(LocalDateTime.now());
         StpUtil.getSession().set("online_user", onlineUser);
 
         // 5. 记录登录日志

@@ -14,6 +14,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -117,7 +118,7 @@ public class DataScopeAspect {
             if (params != null) {
                 try {
                     // 通过反射设置 dataScope 参数
-                    java.lang.reflect.Field field = params.getClass().getDeclaredField("dataScope");
+                    Field field = params.getClass().getDeclaredField("dataScope");
                     field.setAccessible(true);
                     String dataScopeSql = " AND (" + sqlString.substring(4) + ")";
                     // 验证生成的 SQL 格式

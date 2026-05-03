@@ -3,6 +3,7 @@ package com.fast.modules.job.domain.vo;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 /**
  * 定时任务日志VO
@@ -74,8 +75,8 @@ public class JobLogVO {
      */
     public Long getDuration() {
         if (startTime != null && endTime != null) {
-            return endTime.minusNanos(startTime.toEpochSecond(java.time.ZoneOffset.UTC) * 1000000000 + startTime.getNano())
-                    .toEpochSecond(java.time.ZoneOffset.UTC) * 1000;
+            return endTime.minusNanos(startTime.toEpochSecond(ZoneOffset.UTC) * 1000000000 + startTime.getNano())
+                    .toEpochSecond(ZoneOffset.UTC) * 1000;
         }
         return null;
     }

@@ -93,13 +93,6 @@
             <version>${sa-token.version}</version>
         </dependency>
 
-        <!-- Sa-Token 整合 JWT -->
-        <dependency>
-            <groupId>cn.dev33</groupId>
-            <artifactId>sa-token-jwt</artifactId>
-            <version>${sa-token.version}</version>
-        </dependency>
-
         <!-- Sa-Token 整合 Redis -->
         <dependency>
             <groupId>cn.dev33</groupId>

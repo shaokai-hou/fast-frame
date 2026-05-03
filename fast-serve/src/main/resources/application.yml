@@ -29,8 +29,10 @@ sa-token:
   token-prefix: Bearer
   timeout: 86400
   active-timeout: 1800
-  is-concurrent: true
-  is-share: true
+  # 禁止并发登录：同一账号新登录会自动踢掉旧登录，旧会话收到"已被踢下线"提示
+  is-concurrent: false
+  # 每次登录生成新 token，不共用
+  is-share: false
   token-style: uuid
   is-log: false
   is-read-header: true

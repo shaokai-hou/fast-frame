@@ -1,5 +1,6 @@
 package com.fast.modules.job.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -21,6 +22,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,23 +49,17 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
 
         Page<Job> page = page(pageRequest.toPage(), wrapper);
 
-        List<JobVO> voList = page.getRecords().stream().map(job -> {
-            JobVO vo = new JobVO();
-            BeanUtils.copyProperties(job, vo);
+        return page.convert(job -> {
+            JobVO vo = BeanUtil.copyProperties(job, JobVO.class);
             // 获取下次执行时间
             if ("0".equals(job.getStatus()) && CronUtils.isValid(job.getCronExpression())) {
-                java.util.Date nextTime = CronUtils.getNextExecution(job.getCronExpression());
+                Date nextTime = CronUtils.getNextExecution(job.getCronExpression());
                 if (nextTime != null) {
-                    vo.setNextValidTime(java.time.LocalDateTime.ofInstant(nextTime.toInstant(), java.time.ZoneId.systemDefault()));
+                    vo.setNextValidTime(LocalDateTime.ofInstant(nextTime.toInstant(), ZoneId.systemDefault()));
                 }
             }
             return vo;
-        }).collect(java.util.stream.Collectors.toList());
-
-        Page<JobVO> resultPage = pageRequest.toPage();
-        resultPage.setRecords(voList);
-        resultPage.setTotal(page.getTotal());
-        return resultPage;
+        });
     }
 
     @Override

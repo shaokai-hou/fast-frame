@@ -13,7 +13,9 @@ import com.fast.modules.job.service.JobLogService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 定时任务日志服务实现
@@ -38,11 +40,11 @@ public class JobLogServiceImpl extends ServiceImpl<JobLogMapper, JobLog> impleme
             BeanUtils.copyProperties(jobLog, vo);
             // 计算耗时
             if (jobLog.getStartTime() != null && jobLog.getEndTime() != null) {
-                long duration = java.time.Duration.between(jobLog.getStartTime(), jobLog.getEndTime()).toMillis();
+                long duration = Duration.between(jobLog.getStartTime(), jobLog.getEndTime()).toMillis();
                 vo.setDuration(duration);
             }
             return vo;
-        }).collect(java.util.stream.Collectors.toList());
+        }).collect(Collectors.toList());
 
         Page<JobLogVO> resultPage = pageRequest.toPage();
         resultPage.setRecords(voList);

@@ -1,8 +1,9 @@
-package com.fast.common.exception;
+package com.fast.framework.exception;
 
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotPermissionException;
 import cn.dev33.satoken.exception.NotRoleException;
+import com.fast.common.exception.BusinessException;
 import com.fast.common.result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -46,7 +47,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotLoginException.class)
     public Result<Void> handleNotLoginException(NotLoginException e) {
         log.error("[TraceId: {}] 未登录异常: {}", MDC.get("traceId"), e.getMessage());
-        return Result.fail(401, "未登录或登录已过期");
+        String message;
+        String type = e.getType();
+        if ("-5".equals(type)) {
+            message = "您已被管理员踢下线";
+        } else if ("-4".equals(type)) {
+            message = "您的账号已在其他设备登录，当前设备已被下线";
+        } else {
+            message = "未登录或登录已过期";
+        }
+        return Result.fail(401, message);
     }
 
     /**
