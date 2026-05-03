@@ -25,23 +25,21 @@ public class OnlineServiceImpl implements OnlineService {
 
     @Override
     public IPage<OnlineUserVO> pageOnlineUsers(OnlineUserQuery query, PageRequest pageRequest) {
-        // 获取总数
-        List<String> allSessionIds = StpUtil.searchSessionId("", 0, -1, false);
-        long total = allSessionIds.size();
+        List<OnlineUserVO> list = new ArrayList<>();
+
+        // 获取所有登录用户的 sessionIds
+        List<String> sessionIds = StpUtil.searchSessionId("", 0, -1, false);
 
         // 分页参数
         int pageNum = pageRequest.getPageNum();
         int pageSize = pageRequest.getPageSize();
         int start = (pageNum - 1) * pageSize;
+        int end = Math.min(start + pageSize, sessionIds.size());
 
-        // 分页获取 session
-        List<String> sessionIds = StpUtil.searchSessionId("", start, pageSize, false);
-
-        List<OnlineUserVO> list = new ArrayList<>();
-        for (String sessionId : sessionIds) {
+        // 遍历获取登录信息（手动分页）
+        for (int i = start; i < end; i++) {
             try {
-                // 从 session 中获取存储的用户信息
-                OnlineUserVO user = StpUtil.getSessionBySessionId(sessionId)
+                OnlineUserVO user = StpUtil.getSessionBySessionId(sessionIds.get(i))
                         .getModel("online_user", OnlineUserVO.class);
 
                 if (user == null) {
@@ -56,14 +54,14 @@ public class OnlineServiceImpl implements OnlineService {
 
                 list.add(user);
             } catch (Exception e) {
-                log.warn("获取 session {} 失败: {}", sessionId, e.getMessage());
+                log.warn("获取 session {} 失败: {}", sessionIds.get(i), e.getMessage());
             }
         }
 
         // 返回分页结果
         Page<OnlineUserVO> page = new Page<>(pageNum, pageSize);
         page.setRecords(list);
-        page.setTotal(total);
+        page.setTotal(sessionIds.size());
         return page;
     }
 }
