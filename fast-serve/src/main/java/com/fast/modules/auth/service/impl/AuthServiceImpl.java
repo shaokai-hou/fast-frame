@@ -125,9 +125,8 @@ public class AuthServiceImpl implements AuthService {
         onlineUser.setUserId(user.getId());
         onlineUser.setUsername(user.getUsername());
         onlineUser.setNickname(user.getNickname());
-        StpUtil.getSession()
-                .set("online_user", onlineUser)
-                .set("ip", ip);
+        onlineUser.setIp(ip);
+        StpUtil.getSession().set("online_user", onlineUser);
 
         // 记录登录日志
         recordLoginLog(username, ip, Constants.NORMAL, "登录成功");
@@ -175,9 +174,8 @@ public class AuthServiceImpl implements AuthService {
         onlineUser.setUserId(user.getId());
         onlineUser.setUsername(user.getUsername());
         onlineUser.setNickname(user.getNickname());
-        StpUtil.getSession()
-            .set("online_user", onlineUser)
-            .set("ip", ip);
+        onlineUser.setIp(ip);
+        StpUtil.getSession().set("online_user", onlineUser);
 
         // 5. 记录登录日志
         recordLoginLog(user.getUsername(), ip, Constants.NORMAL, "手机号登录成功");
