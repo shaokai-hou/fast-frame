@@ -6,6 +6,7 @@ import { setToken, removeToken, getToken, setUserInfo } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 import { usePermissionStore } from './permission'
 import { useTagsViewStore } from './tagsView'
+import { useMessageStore } from './message'
 
 export const useUserStore = defineStore('user', () => {
   // 用户信息
@@ -68,6 +69,10 @@ export const useUserStore = defineStore('user', () => {
     token.value = ''
     userInfo.value = {}
 
+    // 断开 WebSocket 连接
+    const messageStore = useMessageStore()
+    messageStore.disconnectWebSocket()
+
     // 清除权限和路由状态
     const permissionStore = usePermissionStore()
     permissionStore.reset()
@@ -87,6 +92,11 @@ export const useUserStore = defineStore('user', () => {
   function resetToken() {
     token.value = ''
     userInfo.value = ''
+
+    // 断开 WebSocket 连接
+    const messageStore = useMessageStore()
+    messageStore.disconnectWebSocket()
+
     const permissionStore = usePermissionStore()
     permissionStore.reset()
     const tagsViewStore = useTagsViewStore()

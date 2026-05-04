@@ -3,7 +3,6 @@ import { ref } from "vue";
 import { ElMessage } from "element-plus";
 import { getUnreadCount } from "@/api/message/message";
 import { useUserStore } from "./user";
-import router from "@/router";
 
 export const useMessageStore = defineStore("message", () => {
   // 未读消息数量
@@ -12,8 +11,6 @@ export const useMessageStore = defineStore("message", () => {
   // WebSocket 连接
   let ws = null;
   let reconnectTimer = null;
-  let reconnectCount = 0;
-  const MAX_RECONNECT = 3;
 
   // 获取未读消息数量（初始化时调用）
   async function fetchUnreadCount() {
@@ -42,7 +39,6 @@ export const useMessageStore = defineStore("message", () => {
 
     ws.onopen = () => {
       console.log("WebSocket 连接成功");
-      reconnectCount = 0;
       if (reconnectTimer) {
         clearInterval(reconnectTimer);
         reconnectTimer = null;
@@ -69,26 +65,17 @@ export const useMessageStore = defineStore("message", () => {
     };
 
     ws.onclose = (event) => {
-      console.log("WebSocket 连接关闭, code=", event.code);
-      ws = null;
-
-      // 1008 表示 policy violation（通常是 token 无效）
-      if (event.code === 1008) {
-        console.warn("Token 无效，跳转登录页");
-        userStore.resetToken();
-        router.push("/login");
+      console.log("WebSocket 连接关闭", event.code);
+      // 正常关闭（1000）或主动断开时不重连
+      if (event.code === 1000) {
         return;
       }
-
-      // 断线重连（最多 3 次）
-      if (reconnectCount < MAX_RECONNECT && !reconnectTimer) {
-        reconnectCount++;
+      // 断线重连（仅当有 token 时）
+      const userStore = useUserStore();
+      if (!reconnectTimer && userStore.token) {
         reconnectTimer = setInterval(() => {
-          if (useUserStore().token && reconnectCount < MAX_RECONNECT) {
+          if (useUserStore().token) {
             connectWebSocket();
-          } else {
-            clearInterval(reconnectTimer);
-            reconnectTimer = null;
           }
         }, 5000);
       }
@@ -105,7 +92,6 @@ export const useMessageStore = defineStore("message", () => {
       clearInterval(reconnectTimer);
       reconnectTimer = null;
     }
-    reconnectCount = 0;
   }
 
   return {
