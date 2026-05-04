@@ -1,6 +1,8 @@
 package com.fast.framework.websocket;
 
+import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.ServerHttpRequest;
@@ -34,9 +36,15 @@ public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
                 return false;
             }
 
+            // 去掉 Bearer 前缀（如果存在）
+            String tokenPrefix = SaManager.getConfig().getTokenPrefix();
+            if (StrUtil.isNotBlank(tokenPrefix) && token.startsWith(tokenPrefix + " ")) {
+                token = token.substring(tokenPrefix.length() + 1);
+            }
+
             Object loginId = StpUtil.getLoginIdByToken(token);
             if (loginId == null) {
-                log.warn("WebSocket握手失败: token无效");
+                log.warn("WebSocket握手失败: token无效, token={}", token);
                 return false;
             }
 

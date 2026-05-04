@@ -3,6 +3,7 @@ package com.fast.modules.system.controller;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.fast.common.enums.BusinessType;
 import com.fast.common.result.Result;
+import com.fast.framework.annotation.Debounce;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
 import com.fast.modules.system.domain.dto.StatusUpdateDTO;
@@ -70,6 +71,7 @@ public class MenuController extends BaseController {
      */
     @SaCheckPermission("system:menu:add")
     @Log(title = "菜单管理", businessType = BusinessType.INSERT)
+    @Debounce
     @PostMapping
     public Result<Void> add(@Validated @RequestBody Menu menu) {
         menuService.addMenu(menu);
@@ -84,6 +86,7 @@ public class MenuController extends BaseController {
      */
     @SaCheckPermission("system:menu:edit")
     @Log(title = "菜单管理", businessType = BusinessType.UPDATE)
+    @Debounce
     @PutMapping
     public Result<Void> edit(@Validated @RequestBody Menu menu) {
         menuService.updateMenu(menu);
@@ -98,6 +101,7 @@ public class MenuController extends BaseController {
      */
     @SaCheckPermission("system:menu:delete")
     @Log(title = "菜单管理", businessType = BusinessType.DELETE)
+    @Debounce
     @DeleteMapping("/{id}")
     public Result<Void> remove(@PathVariable Long id) {
         menuService.deleteMenu(id);
@@ -112,6 +116,7 @@ public class MenuController extends BaseController {
      */
     @SaCheckPermission("system:menu:edit")
     @Log(title = "菜单管理", businessType = BusinessType.UPDATE)
+    @Debounce(suffix = "status")
     @PutMapping("/changeStatus")
     public Result<Void> changeStatus(@Validated @RequestBody StatusUpdateDTO dto) {
         Menu menu = new Menu();

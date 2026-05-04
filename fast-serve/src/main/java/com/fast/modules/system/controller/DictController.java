@@ -4,6 +4,7 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fast.common.enums.BusinessType;
 import com.fast.common.result.Result;
+import com.fast.framework.annotation.Debounce;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
 import com.fast.modules.system.domain.dto.StatusUpdateDTO;
@@ -76,6 +77,7 @@ public class DictController extends BaseController {
      */
     @SaCheckPermission("system:dict:add")
     @Log(title = "字典管理", businessType = BusinessType.INSERT)
+    @Debounce(suffix = "type")
     @PostMapping("/type")
     public Result<Void> addType(@Validated @RequestBody DictType dictType) {
         dictService.addDictType(dictType);
@@ -90,6 +92,7 @@ public class DictController extends BaseController {
      */
     @SaCheckPermission("system:dict:edit")
     @Log(title = "字典管理", businessType = BusinessType.UPDATE)
+    @Debounce(suffix = "type")
     @PutMapping("/type")
     public Result<Void> editType(@Validated @RequestBody DictType dictType) {
         dictService.updateDictType(dictType);
@@ -104,6 +107,7 @@ public class DictController extends BaseController {
      */
     @SaCheckPermission("system:dict:delete")
     @Log(title = "字典管理", businessType = BusinessType.DELETE)
+    @Debounce(suffix = "type")
     @DeleteMapping("/type/{ids}")
     public Result<Void> removeType(@PathVariable Long[] ids) {
         dictService.deleteDictType(Arrays.asList(ids));
@@ -118,6 +122,7 @@ public class DictController extends BaseController {
      */
     @SaCheckPermission("system:dict:add")
     @Log(title = "字典管理", businessType = BusinessType.INSERT)
+    @Debounce(suffix = "data")
     @PostMapping("/data")
     public Result<Void> addData(@Validated @RequestBody DictData dictData) {
         dictService.addDictData(dictData);
@@ -132,6 +137,7 @@ public class DictController extends BaseController {
      */
     @SaCheckPermission("system:dict:edit")
     @Log(title = "字典管理", businessType = BusinessType.UPDATE)
+    @Debounce(suffix = "data")
     @PutMapping("/data")
     public Result<Void> editData(@Validated @RequestBody DictData dictData) {
         dictService.updateDictData(dictData);
@@ -146,6 +152,7 @@ public class DictController extends BaseController {
      */
     @SaCheckPermission("system:dict:delete")
     @Log(title = "字典管理", businessType = BusinessType.DELETE)
+    @Debounce(suffix = "data")
     @DeleteMapping("/data/{ids}")
     public Result<Void> removeData(@PathVariable Long[] ids) {
         dictService.deleteDictData(Arrays.asList(ids));
@@ -160,6 +167,7 @@ public class DictController extends BaseController {
      */
     @SaCheckPermission("system:dict:edit")
     @Log(title = "字典管理", businessType = BusinessType.UPDATE)
+    @Debounce(suffix = "typeStatus")
     @PutMapping("/type/changeStatus")
     public Result<Void> changeTypeStatus(@Validated @RequestBody StatusUpdateDTO dto) {
         DictType dictType = new DictType();
@@ -177,6 +185,7 @@ public class DictController extends BaseController {
      */
     @SaCheckPermission("system:dict:edit")
     @Log(title = "字典管理", businessType = BusinessType.UPDATE)
+    @Debounce(suffix = "dataStatus")
     @PutMapping("/data/changeStatus")
     public Result<Void> changeDataStatus(@Validated @RequestBody StatusUpdateDTO dto) {
         DictData dictData = new DictData();
@@ -193,6 +202,7 @@ public class DictController extends BaseController {
      */
     @SaCheckPermission("system:dict:edit")
     @Log(title = "字典管理", businessType = BusinessType.CLEAN)
+    @Debounce(suffix = "cache")
     @DeleteMapping("/cache")
     public Result<Void> refreshCache() {
         dictService.refreshCache();

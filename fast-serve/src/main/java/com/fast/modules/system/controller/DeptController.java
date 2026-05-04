@@ -3,6 +3,7 @@ package com.fast.modules.system.controller;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.fast.common.enums.BusinessType;
 import com.fast.common.result.Result;
+import com.fast.framework.annotation.Debounce;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
 import com.fast.modules.system.domain.dto.DeptDTO;
@@ -85,6 +86,7 @@ public class DeptController extends BaseController {
      */
     @SaCheckPermission("system:dept:add")
     @Log(title = "部门管理", businessType = BusinessType.INSERT)
+    @Debounce
     @PostMapping
     public Result<Void> add(@Validated @RequestBody Dept dept) {
         deptService.addDept(dept);
@@ -99,6 +101,7 @@ public class DeptController extends BaseController {
      */
     @SaCheckPermission("system:dept:edit")
     @Log(title = "部门管理", businessType = BusinessType.UPDATE)
+    @Debounce
     @PutMapping
     public Result<Void> edit(@Validated @RequestBody Dept dept) {
         deptService.updateDept(dept);
@@ -113,6 +116,7 @@ public class DeptController extends BaseController {
      */
     @SaCheckPermission("system:dept:delete")
     @Log(title = "部门管理", businessType = BusinessType.DELETE)
+    @Debounce
     @DeleteMapping("/{id}")
     public Result<Void> remove(@PathVariable Long id) {
         deptService.deleteDept(id);
@@ -127,6 +131,7 @@ public class DeptController extends BaseController {
      */
     @SaCheckPermission("system:dept:edit")
     @Log(title = "部门管理", businessType = BusinessType.UPDATE)
+    @Debounce(suffix = "status")
     @PutMapping("/changeStatus")
     public Result<Void> changeStatus(@Validated @RequestBody StatusUpdateDTO dto) {
         Dept dept = new Dept();

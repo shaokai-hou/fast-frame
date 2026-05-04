@@ -235,6 +235,19 @@ public class RedisHelper {
     }
 
     /**
+     * 设置缓存值（仅当key不存在时设置，SETNX）
+     *
+     * @param key     缓存键
+     * @param value   缓存值（String）
+     * @param timeout 过期时间（秒）
+     * @return 是否设置成功（true表示key不存在且设置成功）
+     */
+    public static boolean setIfAbsent(String key, String value, long timeout) {
+        Boolean result = getRedisTemplate().opsForValue().setIfAbsent(key, value, timeout, TimeUnit.SECONDS);
+        return result != null && result;
+    }
+
+    /**
      * 扫描匹配的key
      *
      * @param pattern key匹配模式

@@ -6,6 +6,7 @@ import com.fast.common.enums.BusinessType;
 import com.fast.common.exception.BusinessException;
 import com.fast.common.result.Result;
 import com.fast.common.util.ExcelUtil;
+import com.fast.framework.annotation.Debounce;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
 import com.fast.modules.system.domain.dto.UserDTO;
@@ -128,6 +129,7 @@ public class UserController extends BaseController {
      */
     @SaCheckPermission("system:user:add")
     @Log(title = "用户管理", businessType = BusinessType.INSERT)
+    @Debounce
     @PostMapping
     public Result<Void> add(@Validated @RequestBody UserDTO dto) {
         userService.addUser(dto);
@@ -142,6 +144,7 @@ public class UserController extends BaseController {
      */
     @SaCheckPermission("system:user:edit")
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
+    @Debounce
     @PutMapping
     public Result<Void> edit(@Validated @RequestBody UserDTO dto) {
         userService.updateUser(dto);
@@ -156,6 +159,7 @@ public class UserController extends BaseController {
      */
     @SaCheckPermission("system:user:delete")
     @Log(title = "用户管理", businessType = BusinessType.DELETE)
+    @Debounce
     @DeleteMapping("/{ids}")
     public Result<Void> remove(@PathVariable Long[] ids) {
         userService.deleteUser(Arrays.asList(ids));
@@ -170,6 +174,7 @@ public class UserController extends BaseController {
      */
     @SaCheckPermission("system:user:resetPwd")
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
+    @Debounce(suffix = "resetPwd")
     @PutMapping("/resetPwd/{userId}")
     public Result<Void> resetPwd(@PathVariable Long userId) {
         userService.resetPwd(userId);
@@ -184,6 +189,7 @@ public class UserController extends BaseController {
      */
     @SaCheckPermission("system:user:edit")
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
+    @Debounce(suffix = "status")
     @PutMapping("/changeStatus")
     public Result<Void> changeStatus(@RequestBody UserDTO dto) {
         userService.updateStatus(dto.getId(), dto.getStatus());
@@ -212,6 +218,7 @@ public class UserController extends BaseController {
      */
     @SaCheckPermission("system:user:import")
     @Log(title = "用户管理", businessType = BusinessType.INSERT)
+    @Debounce(suffix = "import")
     @PostMapping("/import")
     public Result<Map<String, Object>> importUsers(@RequestParam("file") MultipartFile file) {
         try {
@@ -242,6 +249,7 @@ public class UserController extends BaseController {
      */
     @SaCheckPermission("system:user:edit")
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
+    @Debounce(suffix = "unlock")
     @PutMapping("/unlock/{userId}")
     public Result<Void> unlock(@PathVariable Long userId) {
         userService.unlockUser(userId);

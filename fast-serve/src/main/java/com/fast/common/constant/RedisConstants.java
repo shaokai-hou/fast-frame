@@ -57,4 +57,10 @@ public class RedisConstants {
      * 短信验证码发送频率限制Key前缀
      */
     public static final String SMS_LIMIT_PREFIX = "sms:limit:";
+
+    /**
+     * 接口防抖缓存Key前缀
+     * 格式: debounce:{userId}:{className}:{methodName}
+     */
+    public static final String DEBOUNCE_PREFIX = "debounce:";
 }

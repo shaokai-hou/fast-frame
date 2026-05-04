@@ -4,6 +4,7 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fast.common.enums.BusinessType;
 import com.fast.common.result.Result;
+import com.fast.framework.annotation.Debounce;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
 import com.fast.modules.system.domain.dto.StatusUpdateDTO;
@@ -77,6 +78,7 @@ public class RoleController extends BaseController {
      */
     @SaCheckPermission("system:role:add")
     @Log(title = "角色管理", businessType = BusinessType.INSERT)
+    @Debounce
     @PostMapping
     public Result<Void> add(@Validated @RequestBody RoleDTO dto) {
         roleService.addRole(dto);
@@ -91,6 +93,7 @@ public class RoleController extends BaseController {
      */
     @SaCheckPermission("system:role:edit")
     @Log(title = "角色管理", businessType = BusinessType.UPDATE)
+    @Debounce
     @PutMapping
     public Result<Void> edit(@Validated @RequestBody RoleDTO dto) {
         roleService.updateRole(dto);
@@ -105,6 +108,7 @@ public class RoleController extends BaseController {
      */
     @SaCheckPermission("system:role:delete")
     @Log(title = "角色管理", businessType = BusinessType.DELETE)
+    @Debounce
     @DeleteMapping("/{ids}")
     public Result<Void> remove(@PathVariable Long[] ids) {
         roleService.deleteRole(Arrays.asList(ids));
@@ -142,6 +146,7 @@ public class RoleController extends BaseController {
      */
     @SaCheckPermission("system:role:edit")
     @Log(title = "角色管理", businessType = BusinessType.UPDATE)
+    @Debounce(suffix = "status")
     @PutMapping("/changeStatus")
     public Result<Void> changeStatus(@Validated @RequestBody StatusUpdateDTO dto) {
         Role role = new Role();

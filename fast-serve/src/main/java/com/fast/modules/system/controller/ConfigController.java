@@ -4,6 +4,7 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fast.common.enums.BusinessType;
 import com.fast.common.result.Result;
+import com.fast.framework.annotation.Debounce;
 import com.fast.framework.annotation.Log;
 import com.fast.framework.web.BaseController;
 import com.fast.modules.system.domain.query.ConfigQuery;
@@ -72,6 +73,7 @@ public class ConfigController extends BaseController {
      */
     @SaCheckPermission("system:config:add")
     @Log(title = "参数配置", businessType = BusinessType.INSERT)
+    @Debounce
     @PostMapping
     public Result<Void> add(@Validated @RequestBody Config config) {
         configService.addConfig(config);
@@ -86,6 +88,7 @@ public class ConfigController extends BaseController {
      */
     @SaCheckPermission("system:config:edit")
     @Log(title = "参数配置", businessType = BusinessType.UPDATE)
+    @Debounce
     @PutMapping
     public Result<Void> edit(@Validated @RequestBody Config config) {
         configService.updateConfig(config);
@@ -100,6 +103,7 @@ public class ConfigController extends BaseController {
      */
     @SaCheckPermission("system:config:delete")
     @Log(title = "参数配置", businessType = BusinessType.DELETE)
+    @Debounce
     @DeleteMapping("/{ids}")
     public Result<Void> remove(@PathVariable Long[] ids) {
         configService.deleteConfig(Arrays.asList(ids));
@@ -113,6 +117,7 @@ public class ConfigController extends BaseController {
      */
     @SaCheckPermission("system:config:edit")
     @Log(title = "参数配置", businessType = BusinessType.CLEAN)
+    @Debounce(suffix = "cache")
     @DeleteMapping("/cache")
     public Result<Void> refreshCache() {
         configService.refreshCache();
