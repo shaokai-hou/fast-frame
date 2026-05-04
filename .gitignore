@@ -50,3 +50,6 @@ CLAUDE.md
 
 # Playwright MCP
 .playwright-mcp/
+
+# Claude worktrees
+.claude/worktrees/
