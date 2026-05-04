@@ -5,6 +5,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -33,6 +34,7 @@ public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
 
             if (token == null || token.isEmpty()) {
                 log.warn("WebSocket握手失败: 缺少token参数");
+                response.setStatusCode(HttpStatus.BAD_REQUEST);
                 return false;
             }
 
@@ -44,7 +46,10 @@ public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
 
             Object loginId = StpUtil.getLoginIdByToken(token);
             if (loginId == null) {
-                log.warn("WebSocket握手失败: token无效, token={}", token);
+                // token 无效，返回 401 状态码
+                String tokenName = SaManager.getConfig().getTokenName();
+                log.warn("WebSocket握手失败: token无效, token={}, tokenName={}", token, tokenName);
+                response.setStatusCode(HttpStatus.UNAUTHORIZED);
                 return false;
             }
 
@@ -53,7 +58,8 @@ public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
             log.info("WebSocket握手成功: userId={}", userId);
             return true;
         } catch (Exception e) {
-            log.error("WebSocket握手异常: {}", e.getMessage());
+            log.error("WebSocket握手异常: {}", e.getMessage(), e);
+            response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
             return false;
         }
     }

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fast.modules.monitor.mapper.IpBlacklistMapper">
+
+    <resultMap id="IpBlacklistVOResult" type="com.fast.modules.monitor.domain.vo.IpBlacklistVO">
+        <id property="id" column="id"/>
+        <result property="ipAddress" column="ip_address"/>
+        <result property="ipType" column="ip_type"/>
+        <result property="reason" column="reason"/>
+        <result property="expireTime" column="expire_time"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createByName" column="create_by_name"/>
+    </resultMap>
+
+    <select id="selectPageList" resultMap="IpBlacklistVOResult">
+        SELECT b.id, b.ip_address, b.ip_type, b.reason, b.expire_time, b.status, b.create_time,
+               u.nick_name AS create_by_name
+        FROM sys_ip_blacklist b
+        LEFT JOIN sys_user u ON b.create_by = u.id
+        WHERE b.del_flag = '0'
+        <if test="query.ipAddress != null and query.ipAddress != ''">
+            AND b.ip_address LIKE CONCAT('%', #{query.ipAddress}, '%')
+        </if>
+        <if test="query.ipType != null and query.ipType != ''">
+            AND b.ip_type = #{query.ipType}
+        </if>
+        <if test="query.status != null and query.status != ''">
+            AND b.status = #{query.status}
+        </if>
+        ORDER BY b.create_time DESC
+    </select>
+
+    <select id="selectActiveList" resultMap="IpBlacklistVOResult">
+        SELECT id, ip_address, ip_type, reason, expire_time, status
+        FROM sys_ip_blacklist
+        WHERE del_flag = '0' AND status = '0'
+    </select>
+
+</mapper>

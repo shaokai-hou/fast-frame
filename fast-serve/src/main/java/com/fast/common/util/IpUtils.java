@@ -68,4 +68,66 @@ public final class IpUtils {
         String ua = request.getHeader("user-agent");
         return ip + ua;
     }
+
+    /**
+     * 判断 IP 是否在 CIDR 范围内
+     * 支持 IPv4 CIDR 格式如 192.168.1.0/24
+     *
+     * @param ip   待检查的 IP 地址
+     * @param cidr CIDR 格式的网段（如 192.168.1.0/24）
+     * @return 是否属于该网段
+     */
+    public static boolean isIpInCidr(String ip, String cidr) {
+        if (StrUtil.isEmpty(ip) || StrUtil.isEmpty(cidr)) {
+            return false;
+        }
+
+        // 解析 CIDR
+        String[] cidrParts = cidr.split("/");
+        if (cidrParts.length != 2) {
+            // 如果不是 CIDR 格式，按单 IP 匹配
+            return ip.equals(cidr);
+        }
+
+        String networkAddress = cidrParts[0];
+        int prefixLength = Integer.parseInt(cidrParts[1]);
+
+        // IPv4 前缀长度范围 0-32
+        if (prefixLength < 0 || prefixLength > 32) {
+            return false;
+        }
+
+        try {
+            long ipLong = ipToLong(ip);
+            long networkLong = ipToLong(networkAddress);
+
+            // 计算掩码
+            long mask = 0xFFFFFFFFL << (32 - prefixLength);
+
+            // 判断 IP 是否在网段内
+            return (ipLong & mask) == (networkLong & mask);
+        } catch (Exception e) {
+            // IP 格式不正确，按单 IP 匹配
+            return ip.equals(cidr);
+        }
+    }
+
+    /**
+     * 将 IPv4 地址转换为长整型
+     *
+     * @param ip IPv4 地址字符串
+     * @return 长整型表示
+     */
+    private static long ipToLong(String ip) {
+        String[] parts = ip.split("\\.");
+        if (parts.length != 4) {
+            throw new IllegalArgumentException("Invalid IPv4 address: " + ip);
+        }
+
+        long result = 0;
+        for (int i = 0; i < 4; i++) {
+            result |= (Long.parseLong(parts[i]) << (24 - i * 8));
+        }
+        return result;
+    }
 }

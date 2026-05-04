@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { ElMessage } from "element-plus";
 import { getUnreadCount } from "@/api/message/message";
 import { useUserStore } from "./user";
+import router from "@/router";
 
 export const useMessageStore = defineStore("message", () => {
   // 未读消息数量
@@ -11,6 +12,8 @@ export const useMessageStore = defineStore("message", () => {
   // WebSocket 连接
   let ws = null;
   let reconnectTimer = null;
+  let reconnectCount = 0;
+  const MAX_RECONNECT = 3;
 
   // 获取未读消息数量（初始化时调用）
   async function fetchUnreadCount() {
@@ -39,6 +42,7 @@ export const useMessageStore = defineStore("message", () => {
 
     ws.onopen = () => {
       console.log("WebSocket 连接成功");
+      reconnectCount = 0;
       if (reconnectTimer) {
         clearInterval(reconnectTimer);
         reconnectTimer = null;
@@ -64,13 +68,27 @@ export const useMessageStore = defineStore("message", () => {
       console.error("WebSocket 错误", error);
     };
 
-    ws.onclose = () => {
-      console.log("WebSocket 连接关闭");
-      // 断线重连
-      if (!reconnectTimer) {
+    ws.onclose = (event) => {
+      console.log("WebSocket 连接关闭, code=", event.code);
+      ws = null;
+
+      // 1008 表示 policy violation（通常是 token 无效）
+      if (event.code === 1008) {
+        console.warn("Token 无效，跳转登录页");
+        userStore.resetToken();
+        router.push("/login");
+        return;
+      }
+
+      // 断线重连（最多 3 次）
+      if (reconnectCount < MAX_RECONNECT && !reconnectTimer) {
+        reconnectCount++;
         reconnectTimer = setInterval(() => {
-          if (useUserStore().token) {
+          if (useUserStore().token && reconnectCount < MAX_RECONNECT) {
             connectWebSocket();
+          } else {
+            clearInterval(reconnectTimer);
+            reconnectTimer = null;
           }
         }, 5000);
       }
@@ -87,6 +105,7 @@ export const useMessageStore = defineStore("message", () => {
       clearInterval(reconnectTimer);
       reconnectTimer = null;
     }
+    reconnectCount = 0;
   }
 
   return {

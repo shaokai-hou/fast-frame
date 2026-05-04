@@ -63,4 +63,10 @@ public class RedisConstants {
      * 格式: debounce:{userId}:{className}:{methodName}
      */
     public static final String DEBOUNCE_PREFIX = "debounce:";
+
+    /**
+     * IP黑名单缓存Key
+     * 存储所有启用状态的IP黑名单列表（JSON数组）
+     */
+    public static final String IP_BLACKLIST_KEY = "ip:blacklist:list";
 }
